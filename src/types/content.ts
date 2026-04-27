@@ -16,6 +16,7 @@ export interface PublicProfile {
 export interface PublicAssetRef {
   assetId: string;
   fileName?: string;
+  mimeType?: string;
   url: string;
   previewUrl: string;
   downloadUrl?: string;
@@ -56,6 +57,8 @@ export interface ProjectDetail {
   period: string;
   cover: PublicAssetRef;
   pdf?: PublicAssetRef | null;
+  downloadAsset?: PublicAssetRef | null;
+  downloadLabel?: string;
   links: PublicProjectLink[];
   images: PublicProjectImage[];
   role?: string;

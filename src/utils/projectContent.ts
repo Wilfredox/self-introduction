@@ -7,7 +7,16 @@ export function getPrimaryProjectLink(links: PublicProjectLink[] | undefined) {
 }
 
 export function formatExternalUrl(url: string | undefined) {
-  return url ? url.replace(/^https?:\/\//, "") : "待补充";
+  if (!url) {
+    return "待补充";
+  }
+
+  if (/^https?:\/\//.test(url)) {
+    return url.replace(/^https?:\/\//, "");
+  }
+
+  const fileName = url.split("/").filter(Boolean).pop();
+  return fileName ?? url;
 }
 
 export function getProjectTone(seed: string | number) {
@@ -19,4 +28,12 @@ export function getProjectTone(seed: string | number) {
   }
 
   return TONES[hash % TONES.length];
+}
+
+export function getFileExtension(fileName: string | undefined) {
+  if (!fileName || !fileName.includes(".")) {
+    return "FILE";
+  }
+
+  return fileName.split(".").pop()?.toUpperCase() ?? "FILE";
 }

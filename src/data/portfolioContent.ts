@@ -4,7 +4,6 @@ import { FeaturedProject, ProjectDetail, PublicBootstrap, ResumeContent } from "
 
 const featuredProjects: FeaturedProject[] = portfolioProjects
   .filter((project) => project.featuredOnHome)
-  .slice(0, 6)
   .map(({ cover, excerpt, id, links, period, slug, title }) => ({
     id,
     slug,

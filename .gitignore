@@ -1,0 +1,9 @@
+node_modules/
+dist/
+legacy/
+.playwright-cli/
+*.log
+*.tsbuildinfo
+*.zip
+.DS_Store
+Thumbs.db

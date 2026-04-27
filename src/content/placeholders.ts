@@ -16,6 +16,15 @@ function svgDataUrl(markup: string) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(markup)}`;
 }
 
+function fileDataUrl(text: string, mimeType: string) {
+  return `data:${mimeType};charset=UTF-8,${encodeURIComponent(text)}`;
+}
+
+function publicAssetUrl(path: string) {
+  const normalized = path.replace(/^\/+/, "");
+  return `${import.meta.env.BASE_URL}${normalized}`;
+}
+
 function createPosterSvg(title: string, subtitle: string, accent: string, badge: string) {
   return svgDataUrl(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 960">
@@ -86,8 +95,45 @@ export function createPdfAsset(id: string, fileName: string): PublicAssetRef {
   return {
     assetId: id,
     fileName,
+    mimeType: "application/pdf",
     url: PDF_DATA_URL,
     previewUrl: PDF_DATA_URL,
     downloadUrl: PDF_DATA_URL
+  };
+}
+
+export function createDownloadAsset(
+  id: string,
+  fileName: string,
+  text: string,
+  mimeType = "text/plain"
+): PublicAssetRef {
+  const downloadUrl = fileDataUrl(text, mimeType);
+
+  return {
+    assetId: id,
+    fileName,
+    mimeType,
+    url: downloadUrl,
+    previewUrl: downloadUrl,
+    downloadUrl
+  };
+}
+
+export function createStaticAsset(
+  id: string,
+  fileName: string,
+  path: string,
+  mimeType?: string
+): PublicAssetRef {
+  const url = publicAssetUrl(path);
+
+  return {
+    assetId: id,
+    fileName,
+    mimeType,
+    url,
+    previewUrl: url,
+    downloadUrl: url
   };
 }

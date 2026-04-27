@@ -2747,3 +2747,308 @@ Tencent CloudBase 国内友好免费路线
 4. GitHub Pages workflow 已检查，可直接用于 `main` 分支发布
 5. 本地 preview 和 in-app browser 首发 smoke check 已通过
 6. 当前距离“正式公开上线”只差远端 push 与 GitHub Actions 实际发布
+
+9. 本轮口径补充（按最新确认）
+
+时间：2026-04-27
+
+1）本轮不执行 GitHub 远端提交与正式发布
+
+- 按最新口径：
+  - 这轮前端只完成本地代码交付、构建验证、workflow 检查和首发验收准备
+  - 不再继续执行 `git push origin main`
+
+2）当前交付完成到什么程度
+
+- 静态版主线代码已收口
+- 公开文案微调已落进代码
+- `npm install` 已通过
+- `npm run build` 已通过
+- GitHub Pages workflow 已检查可用
+- 本地 preview 与 in-app browser smoke check 已完成
+
+3）当前仓库状态说明
+
+- 已生成本地提交：
+  - `9484cf6 feat: finalize static portfolio for github pages`
+- 该提交当前仅保留在本地
+- 未推送到 GitHub 远端
+
+4）本轮前端最终交付口径
+
+- 交付完成
+- 但不包含远端 GitHub Pages 正式发布动作
+
+==================================================
+第十四轮：作品下载功能联验与全文件检查
+时间：2026-04-27
+负责人：前端
+==================================================
+
+1. 本轮目标
+
+本轮不新增其他功能，只做两类事情：
+
+1）联验当前静态版新增的“作品下载文件”能力是否真正闭环
+2）仔细检查当前主线保留文件是否仍然符合纯 GitHub 静态作品集方案
+
+2. 本轮新增内容
+
+本轮实际补充与修正：
+
+1）补强下载文件的类型表达
+- 修改文件：
+  - `src/types/content.ts`
+  - `src/content/placeholders.ts`
+- 新增内容：
+  - `PublicAssetRef` 增加可选 `mimeType`
+  - 占位 PDF 与通用下载附件在静态资产对象里同步写入 `mimeType`
+- 目的：
+  - 让当前类型更明确地表达：
+    - PDF
+    - Word
+    - 其他附件
+
+2）同步公开说明文档到下载功能口径
+- 修改文件：
+  - `README.md`
+  - `docs/内容更新说明.md`
+  - `index.html`
+- 本轮修正点：
+  - README 已明确写入“作品下载文件”
+  - 内容维护说明已补充：
+    - `downloadMimeType`
+    - 当前作品下载附件也是占位文件
+  - 内容维护说明把旧的 `images` 描述修正为当前真实字段 `imageCaptions`
+  - 页面 meta description 已补充“作品下载”
+
+3. 下载功能联验结果
+
+本轮重点联验文件：
+- `src/pages/WorkDetailPage.tsx`
+- `src/components/ProjectFocusOverlay.tsx`
+- `src/types/content.ts`
+- `src/content/projects.ts`
+- `src/content/placeholders.ts`
+- `src/utils/projectContent.ts`
+- `docs/内容更新说明.md`
+
+1）首页展开层下载入口
+
+- 验证结果：通过
+- 验证方式：
+  - 本地 preview + in-app browser
+  - 直接打开：
+    - `http://127.0.0.1:4173/#/?project=hydra-ops-console`
+- 实际结果：
+  - 展开层存在 1 个下载入口
+  - 下载按钮文本为：
+    - `下载作品 PDF / PDF`
+  - 同时仍保留：
+    - `进入详情页`
+    - `查看在线项目`
+
+2）作品详情页下载入口
+
+- 验证结果：通过
+- 验证方式：
+  - 本地 preview + in-app browser
+  - 已验证：
+    - `#/works/hydra-ops-console`
+    - `#/works/memo-content-platform`
+- 实际结果：
+  - 详情页侧栏存在“作品下载”区块
+  - Hydra 案例按钮文本：
+    - `下载作品 PDF / PDF`
+  - Memo 案例按钮文本：
+    - `下载内容方案 / DOCX`
+
+3）`download` 行为验证
+
+- 验证结果：通过
+- 实际检查项：
+  - 首页展开层下载链接存在 `download` 属性
+  - 详情页下载链接存在 `download` 属性
+  - `href` 当前均指向 `data:` 占位附件，可直接触发下载
+
+已验证样例：
+
+1. 首页展开层 Hydra：
+  - `download="hydra-ops-case-study.pdf"`
+2. 详情页 Hydra：
+  - `download="hydra-ops-case-study.pdf"`
+3. 详情页 Memo：
+  - `download="memo-content-structure.docx"`
+
+4）不同作品下载字段读取验证
+
+- 验证结果：通过
+- 验证方式：
+  - 对 `src/content/projects.ts` 做逐作品扫描
+
+当前 6 个作品均已带齐：
+- `downloadFileName`
+- `downloadLabel`
+- `downloadText`
+- `downloadMimeType`
+
+逐项扫描结果：
+- hydra：齐全
+- atelier：齐全
+- memo：齐全
+- signal：齐全
+- field：齐全
+- folio：齐全
+
+4. build 验证结果
+
+1）`npm run build`
+- 结果：通过
+
+2）构建结论
+- 当前下载功能改动没有打散静态构建
+- `dist/index.html` 与静态资源产物均正常输出
+
+5. 当前主线文件合理性检查
+
+本轮按静态主线重点检查：
+- `src/`
+- `public/`
+- `.github/`
+- `docs/`
+- 根目录：
+  - `README.md`
+  - `package.json`
+  - `package-lock.json`
+  - `vite.config.ts`
+  - `tsconfig*.json`
+  - `index.html`
+  - `.gitignore`
+
+1）`src/` 主线检查结果
+
+- 当前公开站实际保留文件结构清楚：
+  - 页面
+  - 组件
+  - 静态内容
+  - 数据读取层
+  - 样式
+  - 工具函数
+- 额外检查结果：
+  - 未发现仍在使用的：
+    - `mockApi`
+    - `realApi`
+    - `publicAdapters`
+    - `ContentSyncBridge`
+    - `RequireAdminAuth`
+    - 后台相关 React 文件引用
+
+前端判断：
+- `src/` 当前已符合纯静态作品集主线
+
+2）`public/` 与 `.github/` 检查结果
+
+- `public/404.html` 仍在使用，且符合 GitHub Pages 回跳策略
+- `.github/workflows/deploy-pages.yml` 仍符合当前静态发布链路
+
+3）根目录文件检查结果
+
+- `package.json`
+  - 仅保留静态站需要的 React / Vite / TypeScript 依赖
+- `vite.config.ts`
+  - `base: "./"` 仍适合 GitHub 仓库 Pages
+- `.gitignore`
+  - 已忽略：
+    - `node_modules/`
+    - `dist/`
+    - `legacy/`
+    - `.playwright-cli/`
+    - `*.log`
+    - `*.zip`
+    - `*.tsbuildinfo`
+- `index.html`
+  - 已与当前静态主线口径一致
+
+4）文档主线检查结果
+
+- README 与内容维护说明已同步到：
+  - 纯静态站
+  - GitHub Pages
+  - 作品下载文件
+- 但 `docs/交付/` 下的历史交付记录仍保留大量：
+  - 后台
+  - 数据库
+  - CloudBase
+  - 旧联调阶段
+  的历史内容
+
+前端判断：
+- 这不影响当前代码主线运行
+- 但会影响后来协作者快速理解“当前主线到底是什么”
+
+6. 本轮发现的问题
+
+1）当前“作品下载文件”仍然是占位附件，不是真实交付物
+
+- 说明：
+  - 当前下载入口能力本身已闭环
+  - 但下载出来的内容仍是代码生成的占位文件
+- 影响：
+  - 适合验功能
+  - 不适合直接作为正式对外作品资料
+
+2）`docs/交付/` 历史记录文件的信息噪音较大
+
+- 说明：
+  - 当前 `docs/交付/前端交付.txt`
+  - `docs/交付/UI设计交付.txt`
+  - `docs/交付/后端交付.txt`
+  里仍保留大量静态主线之前的历史阶段内容
+- 影响：
+  - 不影响站点运行
+  - 但容易让新协作者误以为后台 / CloudBase / 数据库仍属于当前主线
+
+7. 建议删除或保留判断
+
+1）当前不建议删除的内容
+
+- `public/404.html`
+  - 原因：GitHub Pages 回跳仍依赖它
+- `.github/workflows/deploy-pages.yml`
+  - 原因：静态发布链路仍依赖它
+- `src/content/placeholders.ts`
+  - 原因：当前图片、PDF、下载附件的占位能力都依赖它
+
+2）建议后续单独整理，而不是本轮直接删除的内容
+
+- `docs/交付/*.txt` 的早期历史阶段描述
+  - 建议：
+    - 后续可归档到 `docs/history/` 或单独分拆
+  - 当前原因：
+    - 这些内容是历史过程记录，不适合本轮随意删
+
+8. 需要你决策的事项
+
+1）是否要把当前“作品下载文件”从占位附件替换成真实 PDF / Word
+
+前端建议：
+- 如果准备正式对外给招聘方看，建议替换
+- 如果当前仍处于结构联验阶段，可以暂时保留占位附件
+
+2）是否要在后续单独做一次 `docs/交付/` 历史归档整理
+
+前端建议：
+- 建议做
+- 目标不是删历史，而是避免当前静态主线被旧路线描述干扰
+
+9. 本轮前端结论
+
+第十四轮前端结论：
+
+1. 首页展开层已验证存在作品下载入口
+2. 详情页已验证存在作品下载入口
+3. 下载按钮已验证存在 `download` 行为
+4. 类型与静态内容结构已确认能承载通用下载文件
+5. `npm run build` 已通过
+6. 当前 `src / public / .github / 根目录主线文件` 均仍符合纯 GitHub 静态作品集方案
+7. 当前最大真实问题不是功能失效，而是下载文件仍为占位附件、历史交付文档噪音较大

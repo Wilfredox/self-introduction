@@ -13,7 +13,7 @@ export function ResumePage() {
       <section className="page-intro">
         <p className="eyebrow">Resume</p>
         <h1>简历</h1>
-        <p className="muted">这一页把在线预览、摘要和下载放进同一条阅读路径里，方便招聘方先判断，再决定是否保存。</p>
+        <p className="muted">提供在线预览与下载，便于快速查阅教育背景、项目经历与实习信息。</p>
       </section>
 
       <div className="resume-layout">

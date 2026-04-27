@@ -18,12 +18,12 @@ export function PdfPreview({ asset, title, minHeight = 520 }: PdfPreviewProps) {
 
   return (
     <div className="pdf-frame" style={{ minHeight }}>
-      <object data={asset.previewUrl || asset.url} type="application/pdf" aria-label={title}>
+      <iframe src={asset.previewUrl || asset.url} title={title} loading="lazy" aria-label={title}>
         <div className="pdf-placeholder">
           <strong>当前浏览器无法直接预览 PDF</strong>
           <p>可以先使用下载入口查看文件。</p>
         </div>
-      </object>
+      </iframe>
     </div>
   );
 }

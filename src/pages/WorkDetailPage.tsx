@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { PdfPreview } from "../components/PdfPreview";
 import { getPortfolioProject } from "../data/portfolioContent";
-import { formatExternalUrl, getPrimaryProjectLink, getProjectTone } from "../utils/projectContent";
+import { formatExternalUrl, getFileExtension, getPrimaryProjectLink, getProjectTone } from "../utils/projectContent";
 
 export function WorkDetailPage() {
   const { slug } = useParams();
@@ -13,16 +13,27 @@ export function WorkDetailPage() {
 
   const primaryLink = getPrimaryProjectLink(project.links);
   const tone = getProjectTone(project.slug);
+  const downloadAsset = project.downloadAsset;
+  const downloadLabel = project.downloadLabel ?? "下载作品文件";
+  const eyebrowLabel = primaryLink
+    ? `作品链接 / ${formatExternalUrl(primaryLink.url)}`
+    : downloadAsset?.downloadUrl
+      ? `项目附件 / ${getFileExtension(downloadAsset.fileName)}`
+      : "作品链接 / 待补充";
 
   return (
     <div className="page-shell">
       <section className="page-intro">
         {primaryLink ? (
           <a className="eyebrow-link" href={primaryLink.url} target="_blank" rel="noreferrer">
-            作品链接 / {formatExternalUrl(primaryLink.url)}
+            {eyebrowLabel}
+          </a>
+        ) : downloadAsset?.downloadUrl ? (
+          <a className="eyebrow-link" href={downloadAsset.downloadUrl} download={downloadAsset.fileName}>
+            {eyebrowLabel}
           </a>
         ) : (
-          <span className="eyebrow-link">作品链接 / 待补充</span>
+          <span className="eyebrow-link">{eyebrowLabel}</span>
         )}
         <h1>{project.title}</h1>
         <p className="muted">{project.excerpt}</p>
@@ -68,10 +79,12 @@ export function WorkDetailPage() {
             </section>
           ) : null}
 
-          <section className="detail-section">
-            <h2>PDF 页面内预览</h2>
-            <PdfPreview asset={project.pdf} title={`${project.title} PDF`} minHeight={460} />
-          </section>
+          {project.pdf?.url ? (
+            <section className="detail-section">
+              <h2>文档预览</h2>
+              <PdfPreview asset={project.pdf} title={`${project.title} PDF`} minHeight={460} />
+            </section>
+          ) : null}
         </article>
 
         <aside className="detail-sidebar">
@@ -87,16 +100,29 @@ export function WorkDetailPage() {
             </section>
           ) : null}
 
-          <section className="detail-panel">
-            <p className="eyebrow">多个外链</p>
-            <div className="stack-links">
-              {project.links.map((link) => (
-                <a key={link.id} className="ghost-button ghost-button--full" href={link.url} target="_blank" rel="noreferrer">
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </section>
+          {project.links.length ? (
+            <section className="detail-panel">
+              <p className="eyebrow">多个外链</p>
+              <div className="stack-links">
+                {project.links.map((link) => (
+                  <a key={link.id} className="ghost-button ghost-button--full" href={link.url} target="_blank" rel="noreferrer">
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          {downloadAsset?.downloadUrl ? (
+            <section className="detail-panel">
+              <p className="eyebrow">作品下载</p>
+              <strong>{downloadLabel}</strong>
+              <p className="muted">可下载作品补充资料，包含报告、方案、课设文档或其他附件。</p>
+              <a className="button button--full" href={downloadAsset.downloadUrl} download={downloadAsset.fileName}>
+                {downloadLabel} / {getFileExtension(downloadAsset.fileName)}
+              </a>
+            </section>
+          ) : null}
 
           {project.notes?.length ? (
             <section className="detail-panel">

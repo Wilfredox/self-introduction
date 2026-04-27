@@ -14,9 +14,7 @@ export function WorksPage() {
       <section className="page-intro">
         <p className="eyebrow">Selected Works</p>
         <h1>作品列表</h1>
-        <p className="muted">
-          这里保持普通网格，不做分类和搜索。先快速看项目主题、角色和时间，再决定要深入哪一页。
-        </p>
+        <p className="muted">按时间整理课程项目、建模实践与开发成果，便于快速浏览与重点比较。</p>
       </section>
 
       <section className="works-grid">

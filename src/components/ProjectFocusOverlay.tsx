@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ProjectDetail } from "../types/content";
-import { formatExternalUrl, getPrimaryProjectLink } from "../utils/projectContent";
+import { formatExternalUrl, getFileExtension, getPrimaryProjectLink } from "../utils/projectContent";
 
 interface ProjectFocusOverlayProps {
   project: ProjectDetail;
@@ -9,6 +9,13 @@ interface ProjectFocusOverlayProps {
 
 export function ProjectFocusOverlay({ project, onClose }: ProjectFocusOverlayProps) {
   const primaryLink = getPrimaryProjectLink(project.links);
+  const downloadAsset = project.downloadAsset;
+  const downloadLabel = project.downloadLabel ?? "下载作品文件";
+  const eyebrowLabel = primaryLink
+    ? `作品链接 / ${formatExternalUrl(primaryLink.url)}`
+    : downloadAsset?.downloadUrl
+      ? `项目附件 / ${getFileExtension(downloadAsset.fileName)}`
+      : "作品链接 / 待补充";
 
   return (
     <div className="focus-overlay" role="dialog" aria-modal="true">
@@ -27,10 +34,14 @@ export function ProjectFocusOverlay({ project, onClose }: ProjectFocusOverlayPro
             <div className="focus-card__headline">
               {primaryLink ? (
                 <a href={primaryLink.url} target="_blank" rel="noreferrer">
-                  作品链接 / {formatExternalUrl(primaryLink.url)}
+                  {eyebrowLabel}
+                </a>
+              ) : downloadAsset?.downloadUrl ? (
+                <a href={downloadAsset.downloadUrl} download={downloadAsset.fileName}>
+                  {eyebrowLabel}
                 </a>
               ) : (
-                <span className="eyebrow-link">作品链接 / 待补充</span>
+                <span className="eyebrow-link">{eyebrowLabel}</span>
               )}
               <h2>{project.title}</h2>
               <p>{project.description}</p>
@@ -55,6 +66,11 @@ export function ProjectFocusOverlay({ project, onClose }: ProjectFocusOverlayPro
               <Link className="button" to={`/works/${project.slug}`}>
                 进入详情页
               </Link>
+              {downloadAsset?.downloadUrl ? (
+                <a className="ghost-button" href={downloadAsset.downloadUrl} download={downloadAsset.fileName}>
+                  {downloadLabel} / {getFileExtension(downloadAsset.fileName)}
+                </a>
+              ) : null}
               {primaryLink ? (
                 <a className="ghost-button" href={primaryLink.url} target="_blank" rel="noreferrer">
                   查看在线项目

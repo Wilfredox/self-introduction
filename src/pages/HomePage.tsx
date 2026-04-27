@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { CollageStage } from "../components/CollageStage";
 import { getPortfolioBootstrap, getPortfolioProject } from "../data/portfolioContent";
 
@@ -18,32 +18,6 @@ export function HomePage() {
 
         <div className="home-hero__tagline">
           <p>{profile.tagline}</p>
-        </div>
-
-        <div className="home-hero__contacts">
-          {profile.contacts.map((contact) => (
-            <a key={contact.id} href={contact.href} target="_blank" rel="noreferrer">
-              <span>{contact.label}</span>
-              <strong>{contact.value}</strong>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="home-summary">
-        <div>
-          <p className="eyebrow">阅读路线</p>
-          <p className="muted">
-            先快速认识我，再浏览代表作品；如果某个项目值得继续看，就直接进入详情页或简历页，不让阅读路径拐弯。
-          </p>
-        </div>
-        <div className="home-summary__actions">
-          <Link className="button" to="/works">
-            查看全部作品
-          </Link>
-          <Link className="ghost-button" to="/resume">
-            进入简历页
-          </Link>
         </div>
       </section>
 
