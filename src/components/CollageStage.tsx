@@ -246,7 +246,7 @@ export function CollageStage({
           {visibleProjects.map((project, index) => {
             const placement = PLACEMENTS[index];
 
-            const tone = getProjectTone(`${project.id}-${project.sortOrder}`);
+            const tone = getProjectTone(project.slug);
 
             return (
               <button

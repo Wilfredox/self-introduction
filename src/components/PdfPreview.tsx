@@ -10,8 +10,8 @@ export function PdfPreview({ asset, title, minHeight = 520 }: PdfPreviewProps) {
   if (!asset?.url) {
     return (
       <div className="pdf-placeholder" style={{ minHeight }}>
-        <strong>PDF 预览容器已预留</strong>
-        <p>后续接入真实上传文件后，这里会直接显示页面内预览。</p>
+        <strong>暂未提供 PDF 预览</strong>
+        <p>可以稍后补充文件，或先通过文字内容了解项目。</p>
       </div>
     );
   }

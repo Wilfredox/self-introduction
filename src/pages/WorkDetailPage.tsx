@@ -1,27 +1,18 @@
 import { Link, useParams } from "react-router-dom";
 import { PdfPreview } from "../components/PdfPreview";
-import { useProjectDetailQuery } from "../hooks/usePortfolioQueries";
+import { getPortfolioProject } from "../data/portfolioContent";
 import { formatExternalUrl, getPrimaryProjectLink, getProjectTone } from "../utils/projectContent";
 
 export function WorkDetailPage() {
   const { slug } = useParams();
-  const projectQuery = useProjectDetailQuery(slug);
+  const project = getPortfolioProject(slug);
 
-  if (projectQuery.isLoading) {
-    return <div className="state-shell">正在读取作品详情...</div>;
-  }
-
-  if (projectQuery.error) {
-    return <div className="state-shell">作品详情加载失败：{projectQuery.error.message}</div>;
-  }
-
-  if (!projectQuery.data) {
+  if (!project) {
     return <div className="state-shell">未找到对应作品，可能还未发布。</div>;
   }
 
-  const project = projectQuery.data;
   const primaryLink = getPrimaryProjectLink(project.links);
-  const tone = getProjectTone(`${project.id}-${project.sortOrder}`);
+  const tone = getProjectTone(project.slug);
 
   return (
     <div className="page-shell">

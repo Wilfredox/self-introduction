@@ -39,7 +39,6 @@ export function ProjectFocusOverlay({ project, onClose }: ProjectFocusOverlayPro
             <div className="pill-row">
               <span className="pill">{project.period}</span>
               {project.role ? <span className="pill">{project.role}</span> : null}
-              <span className={`pill pill--${project.status}`}>{project.status}</span>
             </div>
 
             {project.highlights?.length ? (
@@ -58,7 +57,7 @@ export function ProjectFocusOverlay({ project, onClose }: ProjectFocusOverlayPro
               </Link>
               {primaryLink ? (
                 <a className="ghost-button" href={primaryLink.url} target="_blank" rel="noreferrer">
-                  打开外链
+                  查看在线项目
                 </a>
               ) : null}
             </div>

@@ -2550,3 +2550,200 @@ Tencent CloudBase 国内友好免费路线
 3. 因此本轮前端尚不能宣告“真实环境页面上线执行完成”
 4. 当前剩余阻塞不是页面代码，而是环境实配结果尚未落到可验收状态
 5. 下一步最合理的是：先拿到真实 CloudBase 地址，再补真实页面 smoke check 和最终上线结论
+
+==================================================
+第十三轮：GitHub Pages 正式发布与首发验收
+时间：2026-04-27
+负责人：前端
+==================================================
+
+1. 本轮目标
+
+本轮不再新增功能，也不再回头恢复后台、CloudBase 或数据库。
+前端本轮只做 4 件事：
+
+1）把公开页面最后一层说明式文案微调落进代码
+2）恢复本地依赖并重新构建静态产物
+3）检查 GitHub Pages workflow 和默认分支监听是否可直接使用
+4）准备发布后的首发 smoke check 清单，并先在本地 preview 下跑一轮
+
+2. 本轮新增内容
+
+1）公开文案微调已落进代码
+
+本轮修改文件：
+- `src/pages/HomePage.tsx`
+- `src/pages/WorksPage.tsx`
+- `src/pages/ResumePage.tsx`
+- `src/content/site.ts`
+
+本轮实际调整如下：
+
+- 首页 eyebrow：
+  - 从 `Portfolio Home / Editorial Collage`
+  - 调整为 `Selected Works / Portfolio Snapshot`
+
+- 首页导语：
+  - 从“先建立人物印象，再把作品入口前置……”
+  - 调整为“先快速认识我，再浏览代表作品；如果某个项目值得继续看，就直接进入详情页或简历页，不让阅读路径拐弯。”
+
+- 作品列表页 eyebrow：
+  - 从 `Works`
+  - 调整为 `Selected Works`
+
+- 作品列表页说明：
+  - 调整为“这里保持普通网格，不做分类和搜索。先快速看项目主题、角色和时间，再决定要深入哪一页。”
+
+- 简历页说明：
+  - 调整为“这一页把在线预览、摘要和下载放进同一条阅读路径里，方便招聘方先判断，再决定是否保存。”
+
+- 简历摘要说明：
+  - 调整为“简历页保留在线预览与下载入口，方便招聘方先快速浏览重点，再决定是否保存归档。”
+
+2）内容版本号已同步刷新
+
+- `src/content/site.ts`
+  - `siteContentVersion` 更新为 `2026-04-27T23:20:00+08:00`
+
+3. 构建与发布链路验证
+
+1）`npm install` 结果
+
+- 执行结果：成功
+- 补充说明：
+  - npm 输出了 `2 moderate severity vulnerabilities`
+  - 当前不阻塞纯静态 GitHub Pages 发布
+  - 后续如果要继续长期维护依赖，可以单独安排一次依赖升级，不在本轮处理范围内
+
+2）`npm run build` 结果
+
+- 执行结果：成功
+- 构建结果：
+  - `dist/index.html` 已输出
+  - `dist/404.html` 已输出
+  - 资源引用为相对路径 `./assets/...`
+
+3）GitHub Pages workflow 检查结果
+
+检查文件：
+- `.github/workflows/deploy-pages.yml`
+
+检查结论：
+- 当前 workflow 可直接用于 GitHub Pages 发布
+- 监听分支为 `main`
+- 与当前默认分支口径一致
+- 构建步骤清楚完整：
+  - checkout
+  - setup-node
+  - `npm ci`
+  - `npm run build`
+  - upload Pages artifact
+  - deploy-pages
+
+4）GitHub 仓库 Pages 路径适配结论
+
+- `vite.config.ts` 当前为 `base: "./"`
+- 路由仍为 `HashRouter`
+- `public/404.html` 已保留回跳逻辑
+
+前端结论：
+- 当前静态产物适合发布到 GitHub 仓库 Pages
+- 不需要为本轮发布再做额外的 base path 重构
+
+4. 首发 smoke check（本地 preview 预演）
+
+1）本地 preview 服务
+
+- 说明：
+  - 直接在普通沙箱里运行 `npm run preview -- --host 127.0.0.1 --port 4173` 时，命中了环境级 `spawn EPERM`
+  - 在放宽权限后重新启动，preview 可正常访问
+- 当前结论：
+  - 这是本地执行环境限制，不是页面代码问题
+
+2）本地 preview 访问结果
+
+- `http://127.0.0.1:4173/`
+  - 结果：200
+
+3）in-app browser smoke check 结果
+
+已验证通过：
+
+1. 首页可打开，顶部姓名、简介、联系方式显示正常
+2. 首页拼贴卡片可进入首页内放大态
+3. 作品列表页可打开
+4. 作品详情页可打开
+5. 简历页可打开
+6. `404.html` 路径可回到 `#/`
+
+说明：
+- 首页放大态这项，已通过浏览器点击首页作品卡片，并确认页面进入含“进入详情页”的放大态内容
+- 本轮是本地 preview 预演；GitHub Pages 真正发布后，仍需补一轮真实公开地址验收
+
+5. 发布后建议验收清单
+
+正式发布到 GitHub Pages 后，前端建议至少复核以下 8 项：
+
+1. 首页可正常打开
+2. 顶部姓名、简介、联系方式显示正常
+3. 首页拼贴卡片可打开放大态
+4. 作品列表页可打开
+5. 作品详情页可打开
+6. 简历页可打开
+7. `404` 路径可跳回 `#/`
+8. GitHub Pages 默认公开地址可在他人设备访问
+
+6. 本轮剩余问题
+
+1）当前前端已完成“发布前技术收口”，但“正式挂到 GitHub Pages”仍取决于仓库侧 push 与 Actions 实际执行
+
+说明：
+- workflow 已可用
+- 但只有把当前静态版主线变更推到远端 `main`，GitHub Pages 才会真正开始发布
+
+2）本轮只能完成本地 preview 预演，不能替代真实公开地址验收
+
+说明：
+- 真正首发时，仍要在 GitHub Pages 默认公开地址上再做一次 smoke check
+- 最好再补一次其他设备访问确认
+
+3）当前三方交付记录还需要各自负责人同步
+
+说明：
+- 前端已完成自己的交付记录更新
+- UI / 后端归档记录是否同步，不在前端职责内
+
+7. 需要你决策的事项
+
+1）是否现在就把当前静态版主线推到远端 `main`
+
+说明：
+- 如果推送到远端，GitHub Pages workflow 会开始执行
+- 这是“正式挂到 GitHub Pages”的实际触发动作
+
+2）GitHub Pages 首发后，是否要求补一轮真实公开地址验收记录
+
+建议：
+- 建议补
+- 至少记录：
+  - 公开地址
+  - 首次访问结果
+  - 首页 / 作品 / 简历 / 404 是否正常
+
+3）是否接受“依赖存在 2 个 moderate vulnerabilities，但不阻塞本轮静态首发”
+
+前端建议：
+- 接受
+- 这不影响本轮 GitHub Pages 静态首发
+- 后续如果继续维护，再单独安排依赖清理
+
+8. 本轮前端结论
+
+第十三轮前端结论：
+
+1. 公开页最后一层说明式文案已完成微调
+2. `npm install` 已成功
+3. `npm run build` 已成功
+4. GitHub Pages workflow 已检查，可直接用于 `main` 分支发布
+5. 本地 preview 和 in-app browser 首发 smoke check 已通过
+6. 当前距离“正式公开上线”只差远端 push 与 GitHub Actions 实际发布

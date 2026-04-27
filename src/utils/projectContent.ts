@@ -1,16 +1,9 @@
-import {
-  AccentTone,
-  PublicProjectLink
-} from "../types/content";
+import { AccentTone, PublicProjectLink } from "../types/content";
 
 const TONES: AccentTone[] = ["olive", "rust", "slate", "charcoal", "marine", "sand"];
 
 export function getPrimaryProjectLink(links: PublicProjectLink[] | undefined) {
-  if (!links?.length) {
-    return undefined;
-  }
-
-  return [...links].sort((left, right) => left.order - right.order)[0];
+  return links?.[0];
 }
 
 export function formatExternalUrl(url: string | undefined) {

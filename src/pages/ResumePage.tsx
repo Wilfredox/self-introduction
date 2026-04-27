@@ -1,39 +1,19 @@
-import { useBootstrapQuery, useResumeQuery } from "../hooks/usePortfolioQueries";
 import { PdfPreview } from "../components/PdfPreview";
+import { getPortfolioBootstrap, getResumeContent } from "../data/portfolioContent";
 
 export function ResumePage() {
-  const bootstrapQuery = useBootstrapQuery();
-  const resumeQuery = useResumeQuery();
-
-  if (bootstrapQuery.isLoading || resumeQuery.isLoading) {
-    return <div className="state-shell">正在载入简历页...</div>;
-  }
-
-  if (bootstrapQuery.error) {
-    return <div className="state-shell">简历页基础信息加载失败：{bootstrapQuery.error.message}</div>;
-  }
-
-  if (resumeQuery.error) {
-    return <div className="state-shell">简历文件加载失败：{resumeQuery.error.message}</div>;
-  }
-
-  if (!bootstrapQuery.data) {
-    return <div className="state-shell">简历内容暂时不可用。</div>;
-  }
-
-  const { profile } = bootstrapQuery.data;
-  const resumeAsset = resumeQuery.data;
-  const resumeTitle = resumeAsset?.fileName ? `${profile.name} / Resume PDF` : "简历文件待上传";
-  const resumeSummary = resumeAsset
-    ? "页面内支持直接预览当前简历文件，也保留原始 PDF 下载入口。"
-    : "当前还没有上传可预览的简历文件，后续上传后会直接在此页生效。";
+  const { profile } = getPortfolioBootstrap();
+  const resume = getResumeContent();
+  const resumeAsset = resume.asset ?? null;
+  const resumeTitle = resume.title;
+  const resumeSummary = resume.summary;
 
   return (
     <div className="page-shell">
       <section className="page-intro">
         <p className="eyebrow">Resume</p>
-        <h1>简历页</h1>
-        <p className="muted">页面内先给预览和摘要，再给下载按钮，保证招聘方不用来回跳转。</p>
+        <h1>简历</h1>
+        <p className="muted">这一页把在线预览、摘要和下载放进同一条阅读路径里，方便招聘方先判断，再决定是否保存。</p>
       </section>
 
       <div className="resume-layout">
@@ -56,11 +36,11 @@ export function ResumePage() {
             <p>{resumeSummary}</p>
             {resumeAsset?.downloadUrl ? (
               <a className="button button--full" href={resumeAsset.downloadUrl} download={resumeAsset.fileName}>
-                下载简历 PDF
+                {resume.downloadLabel}
               </a>
             ) : (
               <button className="button button--full" type="button" disabled>
-                等待上传真实简历
+                暂未提供下载文件
               </button>
             )}
           </article>
