@@ -1,0 +1,59 @@
+[     554ms] [WARNING] document.domain mutation is ignored because the surrounding agent cluster is origin-keyed. @ https://console.cloud.tencent.com/deal/info?bigDealId=20260426065141641503991&payerMode=0:50
+[    3983ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://sensors.cloud.tencent.com:8106/sa.gif?project=default&token=schemaLimited-zEb9s3Rz:0
+[    8803ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://sensors.cloud.tencent.com:8106/sa.gif?project=default&token=schemaLimited-zEb9s3Rz:0
+[   20666ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://cloudcache.tencentcs.com/qccomponent/_cloudcache_tencentcs_com_idc.js:0
+[   20771ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://main.qcloudimg.com/scripts/qccomponents/nav-product-tree.json:0
+[   20900ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://sensors.cloud.tencent.com:8106/sa.gif?project=default&token=schemaLimited-zEb9s3Rz:0
+[   21883ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://main.qcloudimg.com/scripts/qccomponents/nav-product-tree.json:0
+[   21883ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://helix.cloud.tencent.com/web-sdk.js:0
+[   21910ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://sensors.cloud.tencent.com:8106/sa.gif?project=default&token=schemaLimited-zEb9s3Rz:0
+[   21961ms] [WARNING] Retrying %d (classic): %s 1 https://cloudcache.tencent-cloud.com/web-sdk.js @ https://console.cloud.tencent.com/deal/info?bigDealId=20260426065141641503991&payerMode=0:1023
+[   22422ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://sensors.cloud.tencent.com:8106/sa.gif?project=default&token=schemaLimited-zEb9s3Rz:0
+[   22852ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cloudcache.tencent-cloud.com/web-sdk.js:0
+[   23348ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://cloudcache.tencentcs.com/web-sdk.js:0
+[   23826ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cloudcache.tencent-cloud.cn/web-sdk.js:0
+[   24213ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cloudcache.tencentcs.cn/web-sdk.js:0
+[   24214ms] [WARNING] Retrying %d (classic): %s 2 https://cloudcache.tencent-cloud.com/web-sdk.js @ https://console.cloud.tencent.com/deal/info?bigDealId=20260426065141641503991&payerMode=0:1006
+[   24468ms] [WARNING] document.domain mutation is ignored because the surrounding agent cluster is origin-keyed. @ https://cloud.tencent.com/act/resource/opc-ads?p=https%3A%2F%2Fconsole.cloud.tencent.com%2Fexpense%2Fdeal%2Finfo%3FbigDealId%3D20260426065141641503991%26payerMode%3D0&dd=100048431065&pd=10001&tm=light&cs=:2
+[   24499ms] [WARNING] document.domain mutation is ignored because the surrounding agent cluster is origin-keyed. @ https://slscache.tencent-cloud.cn/qcact-ssr/1azSIPRi4JLt7YjU9nP5q/_next/static/chunks/pages/resource-a477a56e92a15f6d5357.js:0
+[   25187ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://cloudcache.tencentcs.com/web-sdk.js:0
+[   25189ms] [WARNING] Retrying %d (classic): %s 3 https://cloudcache.tencentcs.com/web-sdk.js @ https://console.cloud.tencent.com/deal/info?bigDealId=20260426065141641503991&payerMode=0:1006
+[   25727ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cloudcache.tencent-cloud.cn/web-sdk.js:0
+[   25727ms] [WARNING] Retrying %d (classic): %s 4 https://cloudcache.tencent-cloud.com/web-sdk.js @ https://console.cloud.tencent.com/deal/info?bigDealId=20260426065141641503991&payerMode=0:1023
+[   26266ms] [LOG] [Channel] "Opener ready" @ https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:0
+[   26316ms] [WARNING] Retrying %d (classic): %s 5 https://cloudcache.tencent-cloud.com/web-sdk.js @ https://console.cloud.tencent.com/deal/info?bigDealId=20260426065141641503991&payerMode=0:1023
+[   26868ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cloudcache.tencent-cloud.com/web-sdk.js:0
+[   26868ms] [WARNING] Retrying %d (xhr): %s 6 https://cloudcache.tencent-cloud.com/web-sdk.js @ https://console.cloud.tencent.com/deal/info?bigDealId=20260426065141641503991&payerMode=0:1039
+[   27027ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://main.qcloudimg.com/qcloud/main/scripts/release/common/tag.publish.json?random=0.3906406183845633:0
+[   27028ms] [ERROR] TypeError: Failed to fetch
+    at https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:56623
+    at https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:24944
+    at new Promise (<anonymous>)
+    at new e (https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:24917)
+    at https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:56597
+    at window.fetch (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ban.zh.b82594aab1.js?max_age=31536000:1:2266994)
+    at https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3306652
+    at https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3305838
+    at Object.next (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3305943)
+    at https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3304785
+    at https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:24944
+    at new Promise (<anonymous>)
+    at new e (https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:24917)
+    at pg (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3304522)
+    at hg (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3306546)
+    at Object.<anonymous> (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3306210)
+    at https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3305838
+    at Object.next (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3305943)
+    at https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3304785
+    at https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:24944
+    at new Promise (<anonymous>)
+    at new e (https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:1:24917)
+    at pg (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3304522)
+    at Object.load (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:3306081)
+    at Object.init (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/ai-assistant.zh.1e42f61afa.js?max_age=31536000:1:6174173)
+    at https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/menus.zh.c961e00b62.js?max_age=31536000:1:4511390
+    at https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/menus.zh.c961e00b62.js?max_age=31536000:1:4510984
+    at Object.next (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/menus.zh.c961e00b62.js?max_age=31536000:1:4511089)
+    at a (https://cloudcache.tencent-cloud.com/qcloud/tea/sdk/menus.zh.c961e00b62.js?max_age=31536000:1:4509796) @ https://cloudcache.tencent-cloud.com/qcloud/app/qcconsole_web/insight/insight-client.ae58d4552.js:0
+[   27904ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cloudcache.tencent-cloud.com/web-sdk.js?r=0.27584048973615916:0
+[   33132ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://ping.cloud.tencent.com/trafficCollect.php?uin=100048431065&ul=https%3A%2F%2Fconsole.cloud.tencent.com%2Fexpense%2Fdeal&referer=https%3A%2F%2Fconsole.cloud.tencent.com%2Fexpense%2Fdeal%3FpayMode%3D1&fromSource=qcloud.directEnter.login&visitId=9ef819f9c814ce53d099ec8282d2cc8d&landingpage=&language=zh&lastLoginType=&_ga=&pageTitle=%E6%88%91%E7%9A%84%E8%AE%A2%E5%8D%95%20-%20%E8%AE%A2%E5%8D%95%E7%AE%A1%E7%90%86%20-%20%E8%B4%B9%E7%94%A8%E4%B8%AD%E5%BF%83%20-%20%E6%8E%A7%E5%88%B6%E5%8F%B0&type=OfficialNetworkTraffic&expKey=browse&expValue=https%3A%2F%2Fconsole.cloud.tencent.com%2Fexpense%2Fdeal%2Finfo%3FbigDealId%3D20260426065141641503991%26payerMode%3D0&url=https%3A%2F%2Fconsole.cloud.tencent.com%2Fexpense%2Fdeal&t=1777207138285:0

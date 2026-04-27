@@ -1,0 +1,109 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading [level=1]:
+        - link [ref=e6] [cursor=pointer]:
+          - /url: https://cloud.tencent.com
+    - heading "选购其他云产品" [level=2] [ref=e11]:
+      - generic [ref=e12] [cursor=pointer]: 选购其他云产品
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - textbox "搜索产品名称" [ref=e16]
+        - button "搜索产品名称" [ref=e17] [cursor=pointer]
+      - generic [ref=e19]:
+        - link "备案" [ref=e20] [cursor=pointer]:
+          - /url: https://console.cloud.tencent.com/beian
+        - generic [ref=e21]: "|"
+        - link "100048431065" [ref=e24] [cursor=pointer]:
+          - /url: https://console.cloud.tencent.com
+          - generic "100048431065" [ref=e25]
+      - link "控制台" [ref=e27] [cursor=pointer]:
+        - /url: https://console.cloud.tencent.com
+  - contentinfo [ref=e30]:
+    - generic [ref=e32]:
+      - generic [ref=e34]:
+        - link "tencent" [ref=e35] [cursor=pointer]:
+          - /url: https://www.tencent.com/
+        - link "腾讯开放平台" [ref=e36] [cursor=pointer]:
+          - /url: http://open.qq.com/
+        - link "腾讯会议" [ref=e37] [cursor=pointer]:
+          - /url: https://meeting.tencent.com/
+        - link "微信公众平台" [ref=e38] [cursor=pointer]:
+          - /url: http://mp.weixin.qq.com/
+        - link "腾讯优图" [ref=e39] [cursor=pointer]:
+          - /url: http://open.youtu.qq.com/
+        - link "腾讯企点" [ref=e40] [cursor=pointer]:
+          - /url: https://qidian.qq.com/?&utm_source=relatedlinks&utm_medium=tencentcloud&utm_term=footer
+        - link "腾讯微云" [ref=e41] [cursor=pointer]:
+          - /url: http://www.weiyun.com/
+        - link "腾讯文档" [ref=e42] [cursor=pointer]:
+          - /url: https://docs.qq.com/index.html?adtag=tencentcloud
+        - link "腾讯电子签" [ref=e43] [cursor=pointer]:
+          - /url: https://qian.tencent.com/?channel=promotion_free_txCloudLinks2brandOfficialSite
+        - link "友情链接" [ref=e44] [cursor=pointer]:
+          - /url: https://cloud.tencent.com/friendlink
+        - separator
+        - generic [ref=e45]:
+          - text: Copyright © 2013 - 2026 Tencent Cloud. All Rights Reserved. 腾讯云 版权所有
+          - text: Tencent 腾讯旗下云平台，相关服务主体：深圳市腾讯计算机系统有限公司 | 腾讯云计算（北京）有限责任公司
+        - generic [ref=e46]:
+          - link "深圳市腾讯计算机系统有限公司" [ref=e47] [cursor=pointer]:
+            - /url: https://qcloudimg.tencent-cloud.cn/raw/986376a919726e0c35e96b311f54184d.jpg
+          - generic [ref=e48]: ICP备案/许可证号：
+          - link "粤B2-20090059" [ref=e49] [cursor=pointer]:
+            - /url: https://beian.miit.gov.cn/#/Integrated/index
+          - link "粤公网安备44030502008569号" [ref=e50] [cursor=pointer]:
+            - /url: https://beian.mps.gov.cn/#/query/webSearch?code=44030502008569
+            - img [ref=e51]
+            - generic [ref=e52]: 粤公网安备44030502008569号
+          - link "腾讯云计算（北京）有限责任公司" [ref=e53] [cursor=pointer]:
+            - /url: https://qcloudimg.tencent-cloud.cn/raw/a2390663ee4a95ceeead8fdc34d4b207.jpg
+          - generic [ref=e54]: 京ICP证150476号 |
+          - link "京ICP备11018762号" [ref=e55] [cursor=pointer]:
+            - /url: https://beian.miit.gov.cn/#/Integrated/index
+          - generic [ref=e56]: "|"
+          - generic [ref=e57]: "域名注册服务机构许可:"
+          - link "京D3-20230006" [ref=e58] [cursor=pointer]:
+            - /url: https://domain.miit.gov.cn/%E5%9F%9F%E5%90%8D%E6%B3%A8%E5%86%8C%E6%9C%8D%E5%8A%A1%E6%9C%BA%E6%9E%84/%E4%BA%92%E8%81%94%E7%BD%91%E5%9F%9F%E5%90%8D/%E8%85%BE%E8%AE%AF%E4%BA%91%E8%AE%A1%E7%AE%97%E5%8C%97%E4%BA%AC%E6%9C%89%E9%99%90%E8%B4%A3%E4%BB%BB%E5%85%AC%E5%8F%B8
+          - generic [ref=e59]: "|"
+          - generic [ref=e60]: 增值电信业务经营许可证：B1.B2-20130326 | 京B2-20170284
+          - generic [ref=e61]: 代理域名注册服务机构：烟台帝思普网络科技有限公司 | 新网数码 | 广州云讯信息科技有限公司
+      - button "中国站" [ref=e64] [cursor=pointer]: 中国站
+  - generic:
+    - generic:
+      - generic:
+        - generic "联系销售" [ref=e67] [cursor=pointer]:
+          - generic [ref=e68]: 联系销售
+        - generic "售后" [ref=e70] [cursor=pointer]:
+          - img "message-icon" [ref=e71]
+        - generic [ref=e72]:
+          - img "message-icon" [ref=e74] [cursor=pointer]
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: 您对当前页面的整体感受是否满意？
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - img
+                    - generic:
+                      - generic: 非常不满意
+                      - generic: 非常满意
+  - generic [ref=e75]:
+    - img "loading" [ref=e76]
+    - generic [ref=e77]: 获取授权中...

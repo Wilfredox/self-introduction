@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>简历页高保真稿 / 第三轮审稿基线</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="page-header__inner">
+        <div class="page-title">简历页 <small>第三轮 / 预览与下载关系基线</small></div>
+        <nav class="page-nav">
+          <a href="index.html">A 版总览</a>
+          <a href="home-a.html">首页 A</a>
+          <a href="works.html">作品列表</a>
+          <a href="admin.html">后台页</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="resume-page">
+      <div class="resume-shell">
+        <section class="page-intro page-intro--split">
+          <div>
+            <p class="eyebrow">Resume</p>
+            <h1 class="headline-lg">简历页高保真稿</h1>
+            <p class="lead">这页的原则是“先看，再带走”。招聘方不需要先下载文件才能判断信息质量，同时下载入口始终在手边。</p>
+          </div>
+          <aside class="intro-note">
+            <strong>本页冻结能力</strong>
+            <ul>
+              <li>页面内预览</li>
+              <li>下载按钮</li>
+              <li>不再额外加筛选或冗余动作</li>
+            </ul>
+          </aside>
+        </section>
+
+        <div class="resume-layout resume-layout--refined">
+          <div class="resume-summary">
+            <article class="resume-card">
+              <p class="eyebrow">Lin Lan</p>
+              <h2>产品体验设计师</h2>
+              <p class="lead">关注内容组织、复杂信息界面和招聘方视角下的作品表达。</p>
+              <ul>
+                <li>6 年产品与体验设计经验</li>
+                <li>擅长内容型站点、后台系统、个人品牌作品集</li>
+                <li>可进行 UI、UX、信息架构与前端协作</li>
+              </ul>
+            </article>
+
+            <article class="resume-card">
+              <h3>动作区</h3>
+              <div class="resume-actions">
+                <button class="button" type="button">下载简历 PDF</button>
+                <button class="ghost-button" type="button">在新页打开</button>
+              </div>
+            </article>
+
+            <article class="resume-card">
+              <h3>内容占位建议</h3>
+              <ul>
+                <li>摘要控制在 40 - 70 字内</li>
+                <li>技能与经历优先短句分层</li>
+                <li>避免把完整自我介绍堆进简历页首屏</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="resume-preview">
+            <div class="resume-page-preview">
+              <div class="resume-sheet">
+                <div class="resume-sheet__header">
+                  <div class="resume-line is-medium"></div>
+                  <div class="resume-line is-short"></div>
+                </div>
+                <div class="resume-sheet__columns">
+                  <div class="resume-sheet__section">
+                    <div class="resume-line is-wide"></div>
+                    <div class="resume-line is-wide"></div>
+                    <div class="resume-line is-medium"></div>
+                    <div class="resume-line is-wide"></div>
+                  </div>
+                  <div class="resume-sheet__section">
+                    <div class="resume-line is-wide"></div>
+                    <div class="resume-line is-medium"></div>
+                    <div class="resume-line is-short"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="resume-sheet">
+                <div class="resume-sheet__section">
+                  <div class="resume-line is-medium"></div>
+                  <div class="resume-line is-wide"></div>
+                  <div class="resume-line is-wide"></div>
+                  <div class="resume-line is-medium"></div>
+                  <div class="resume-line is-wide"></div>
+                  <div class="resume-line is-short"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="spec-grid spec-grid--three" style="margin-top: 24px;">
+          <article class="spec-card">
+            <h3>动作优先级</h3>
+            <ul class="spec-list">
+              <li>下载按钮始终是主动作，但视觉权重不能压过简历预览本体</li>
+              <li>“在新页打开”保持次级样式，避免和下载动作抢焦点</li>
+              <li>移动端动作区先出现，但与预览间保留清楚的分区边界</li>
+            </ul>
+          </article>
+          <article class="spec-card">
+            <h3>PDF 预览边界</h3>
+            <ul class="spec-list">
+              <li>预览容器需要独立纸面背景、边框和阴影，不做普通图片卡片处理</li>
+              <li>页面之间保留 16px - 20px 间隔，明确文档分页感</li>
+              <li>加载失败时保留容器高度，用空态说明替代空白区域</li>
+            </ul>
+          </article>
+          <article class="spec-card">
+            <h3>内容收束</h3>
+            <ul class="spec-list">
+              <li>摘要控制在 40 - 70 字内，避免首屏变成完整自述</li>
+              <li>经历和技能优先短句分层，不把长段落直接塞进侧栏</li>
+              <li>若简历页真实文案过长，优先让预览承担正文，页面自身只保留提要</li>
+            </ul>
+          </article>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

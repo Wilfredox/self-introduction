@@ -1,0 +1,235 @@
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://tam.cdn-go.cn/aegis-sdk/latest/aegis.min.js?max_age=604800, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://tam.cdn-go.cn/aegis-sdk/latest/aegis.min.js?max_age=604800, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://cloudcache.tencent-cloud.com/open/qcloud/lib/jsrsasign-all-min.js?max_age=31536000, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-chunk-tea-comp.76a7f86c34.js, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-chunk-react.3ae5683c5b.js, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-chunk-moment.f148488831.js, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-37.892c94bc2d.js, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     309ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-dmc-aio.a0abdaf46c.js, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:42
+[     766ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-chunk-react.3ae5683c5b.js:30
+[     767ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-chunk-react.3ae5683c5b.js:30
+[    1276ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:0
+[  149200ms] [WARNING] Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <div>
+Ancestor with aria-hidden: <div> @ https://dms.cloud.tencent.com/dev/sql?dbType=tcbcynos&region=ap-shanghai&instanceId=cynosdbmysql-p7kbweyy:0
+[  168627ms] [LOG] sql::::::::  SHOW CHARACTER SET; SHOW VARIABLES WHERE VARIABLE_NAME = 'character_set_server' @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  168646ms] [LOG] sql::::::::   SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE 1=1  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  168681ms] [LOG] sql::::::::  SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE '%'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170446ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170476ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='portfolio-site-v1-d1duqacaea7e51'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170477ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `portfolio-site-v1-d1duqacaea7e51` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170477ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170478ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170478ms] [LOG] sql::::::::  SHOW EVENTS FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170479ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  170677ms] [LOG] sql::::::::   SELECT TABLE_SCHEMA, count(TABLE_NAME), SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('mysql','information_schema','performance_schema','sys','__cdb_recycle_bin__','portfolio-site-v1-d1duqacaea7e51') AND TABLE_TYPE = 'BASE TABLE' GROUP BY TABLE_SCHEMA  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  172164ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  261307ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='mysql' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='mysql' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='mysql'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  261308ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `mysql` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  261309ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='mysql'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  261309ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='mysql'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  261310ms] [LOG] sql::::::::  SHOW EVENTS FROM `mysql`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  261311ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `mysql`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  262958ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='mysql' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  270298ms] [LOG] sql::::::::   SELECT DISTINCT TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES WHERE 1=1 AND TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME LIKE '%backend%'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  273337ms] [LOG] sql::::::::   SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE 1=1  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  274889ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='portfolio-site-v1-d1duqacaea7e51'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  274890ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `portfolio-site-v1-d1duqacaea7e51` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  274890ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  274891ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  274892ms] [LOG] sql::::::::  SHOW EVENTS FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  274892ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  275096ms] [LOG] sql::::::::   SELECT TABLE_SCHEMA, count(TABLE_NAME), SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('mysql','information_schema','performance_schema','sys','__cdb_recycle_bin__','portfolio-site-v1-d1duqacaea7e51') AND TABLE_TYPE = 'BASE TABLE' GROUP BY TABLE_SCHEMA  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  276567ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  279679ms] [LOG] sql::::::::  SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE '%'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  282335ms] [LOG] sql::::::::  SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE '%'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  303967ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='__cdb_recycle_bin__' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='__cdb_recycle_bin__' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='__cdb_recycle_bin__'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  303968ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `__cdb_recycle_bin__` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  303968ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='__cdb_recycle_bin__'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  303969ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='__cdb_recycle_bin__'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  303970ms] [LOG] sql::::::::  SHOW EVENTS FROM `__cdb_recycle_bin__`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  303970ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `__cdb_recycle_bin__`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304621ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='__cdb_recycle_bin__' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='__cdb_recycle_bin__' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='__cdb_recycle_bin__'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304622ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `__cdb_recycle_bin__` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304622ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='__cdb_recycle_bin__'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304623ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='__cdb_recycle_bin__'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304623ms] [LOG] sql::::::::  SHOW EVENTS FROM `__cdb_recycle_bin__`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304624ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `__cdb_recycle_bin__`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304934ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='sys' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='sys' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='sys'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304934ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `sys` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304935ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='sys'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304936ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='sys'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304936ms] [LOG] sql::::::::  SHOW EVENTS FROM `sys`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  304937ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `sys`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  305499ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='__cdb_recycle_bin__' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  306090ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='__cdb_recycle_bin__' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  306676ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='sys' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  322157ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='portfolio-site-v1-d1duqacaea7e51'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  322158ms] [LOG] sql::::::::   SELECT DISTINCT TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES WHERE 1=1 AND TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME LIKE '%migration%'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  324217ms] [LOG] sql::::::::   SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE 1=1  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  325776ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `portfolio-site-v1-d1duqacaea7e51` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  325777ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  325778ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  325778ms] [LOG] sql::::::::  SHOW EVENTS FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  325779ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  325784ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  325978ms] [LOG] sql::::::::   SELECT TABLE_SCHEMA, count(TABLE_NAME), SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('mysql','information_schema','performance_schema','sys','__cdb_recycle_bin__','portfolio-site-v1-d1duqacaea7e51') AND TABLE_TYPE = 'BASE TABLE' GROUP BY TABLE_SCHEMA  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  340315ms] [LOG] sql::::::::  CREATE TABLE `admin_users` (
+    `id` VARCHAR(191) NOT NULL,
+    `username` VARCHAR(80) NOT NULL,
+    `password_hash` VARCHAR(255) NOT NULL,
+    `last_login_at` DATETIME(3) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `admin_users_username_key`(`username`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `assets` (
+    `id` VARCHAR(191) NOT NULL,
+    `kind` ENUM('IMAGE', 'PROJECT_PDF', 'RESUME') NOT NULL,
+    `file_name` VARCHAR(255) NOT NULL,
+    `original_name` VARCHAR(255) NOT NULL,
+    `mime_type` VARCHAR(120) NOT NULL,
+    `size` INTEGER NOT NULL,
+    `storage_provider` VARCHAR(40) NOT NULL DEFAULT 'local',
+    `object_key` VARCHAR(500) NOT NULL,
+    `url` VARCHAR(500) NOT NULL,
+    `preview_url` VARCHAR(500) NULL,
+    `checksum` VARCHAR(64) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    INDEX `assets_kind_idx`(`kind`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `site_profiles` (
+    `id` INTEGER NOT NULL DEFAULT 1,
+    `name` VARCHAR(120) NOT NULL,
+    `tagline` VARCHAR(240) NOT NULL,
+    `resume_asset_id` VARCHAR(191) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `site_profiles_resume_asset_id_key`(`resume_asset_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `site_contact_items` (
+    `id` VARCHAR(191) NOT NULL,
+    `site_profile_id` INTEGER NOT NULL,
+    `label` VARCHAR(80) NOT NULL,
+    `value` VARCHAR(160) NOT NULL,
+    `href` VARCHAR(500) NOT NULL,
+    `order` INTEGER NOT NULL DEFAULT 100,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    INDEX `site_contact_items_site_profile_id_order_idx`(`site_profile_id`, `order`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `projects` (
+    `id` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(160) NOT NULL,
+    `title` VARCHAR(160) NOT NULL,
+    `excerpt` VARCHAR(500) NOT NULL,
+    `description` TEXT NOT NULL,
+    `period` VARCHAR(80) NOT NULL,
+    `role` VARCHAR(160) NULL,
+    `highlights` JSON NOT NULL,
+    `notes` JSON NOT NULL,
+    `cover_asset_id` VARCHAR(191) NULL,
+    `pdf_asset_id` VARCHAR(191) NULL,
+    `sort_order` INTEGER NOT NULL DEFAULT 100,
+    `status` ENUM('DRAFT', 'PUBLISHED') NOT NULL DEFAULT 'DRAFT',
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `projects_slug_key`(`slug`),
+    INDEX `projects_status_sort_order_idx`(`status`, `sort_order`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `project_images` (
+    `id` VARCHAR(191) NOT NULL,
+    `project_id` VARCHAR(191) NOT NULL,
+    `asset_id` VARCHAR(191) NOT NULL,
+    `caption` VARCHAR(240) NULL,
+    `order` INTEGER NOT NULL DEFAULT 100,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    INDEX `project_images_project_id_order_idx`(`project_id`, `order`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `project_links` (
+    `id` VARCHAR(191) NOT NULL,
+    `project_id` VARCHAR(191) NOT NULL,
+    `label` VARCHAR(80) NOT NULL,
+    `url` VARCHAR(500) NOT NULL,
+    `order` INTEGER NOT NULL DEFAULT 100,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    INDEX `project_links_project_id_order_idx`(`project_id`, `order`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `admin_sessions` (
+    `id` VARCHAR(191) NOT NULL,
+    `admin_user_id` VARCHAR(191) NOT NULL,
+    `session_token_hash` VARCHAR(64) NOT NULL,
+    `expires_at` DATETIME(3) NOT NULL,
+    `last_used_at` DATETIME(3) NULL,
+    `ip` VARCHAR(120) NULL,
+    `user_agent` VARCHAR(255) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `admin_sessions_session_token_hash_key`(`session_token_hash`),
+    INDEX `admin_sessions_admin_user_id_idx`(`admin_user_id`),
+    INDEX `admin_sessions_expires_at_idx`(`expires_at`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE `site_profiles`
+    ADD CONSTRAINT `site_profiles_resume_asset_id_fkey`
+    FOREIGN KEY (`resume_asset_id`) REFERENCES `assets`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE `site_contact_items`
+    ADD CONSTRAINT `site_contact_items_site_profile_id_fkey`
+    FOREIGN KEY (`site_profile_id`) REFERENCES `site_profiles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `projects`
+    ADD CONSTRAINT `projects_cover_asset_id_fkey`
+    FOREIGN KEY (`cover_asset_id`) REFERENCES `assets`(`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    ADD CONSTRAINT `projects_pdf_asset_id_fkey`
+    FOREIGN KEY (`pdf_asset_id`) REFERENCES `assets`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE `project_images`
+    ADD CONSTRAINT `project_images_project_id_fkey`
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `project_images_asset_id_fkey`
+    FOREIGN KEY (`asset_id`) REFERENCES `assets`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE `project_links`
+    ADD CONSTRAINT `project_links_project_id_fkey`
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `admin_sessions`
+    ADD CONSTRAINT `admin_sessions_admin_user_id_fkey`
+    FOREIGN KEY (`admin_user_id`) REFERENCES `admin_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE; @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  345025ms] [LOG] is success true save sql tabs @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  360496ms] [LOG] sql::::::::   SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE 1=1  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  362136ms] [LOG] sql::::::::  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ; SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' AND TABLE_TYPE='BASE TABLE' ;SELECT table_name, SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='portfolio-site-v1-d1duqacaea7e51'  GROUP by `table_name` @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  362137ms] [LOG] sql::::::::  SHOW FULL TABLES FROM `portfolio-site-v1-d1duqacaea7e51` WHERE (Table_type = 'VIEW' OR Table_type='SYSTEM VIEW')   @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  362138ms] [LOG] sql::::::::  SHOW PROCEDURE STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  362139ms] [LOG] sql::::::::  SHOW FUNCTION STATUS WHERE db='portfolio-site-v1-d1duqacaea7e51'  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  362140ms] [LOG] sql::::::::  SHOW EVENTS FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  362141ms] [LOG] sql::::::::  SHOW TRIGGERS  FROM `portfolio-site-v1-d1duqacaea7e51`  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  362336ms] [LOG] sql::::::::   SELECT TABLE_SCHEMA, count(TABLE_NAME), SUM(DATA_LENGTH + INDEX_LENGTH) AS size FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('mysql','information_schema','performance_schema','sys','__cdb_recycle_bin__','portfolio-site-v1-d1duqacaea7e51') AND TABLE_TYPE = 'BASE TABLE' GROUP BY TABLE_SCHEMA  @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0
+[  363770ms] [LOG] sql::::::::  SELECT TABLE_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION SEPARATOR ',') AS COLUMN_NAMES FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='portfolio-site-v1-d1duqacaea7e51' GROUP BY TABLE_NAME ORDER BY TABLE_NAME @ https://cloudcache.tencent-cloud.com/qcloud/dmc-aio/dmc-aio-14.bcfb7f887a.js:0

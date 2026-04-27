@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>首页 A 版高保真稿 / 第三轮审稿基线</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="page-header__inner">
+        <div class="page-title">首页 A 版 <small>第三轮 / 审稿基线</small></div>
+        <nav class="page-nav">
+          <a href="index.html">A 版总览</a>
+          <a href="works.html">作品列表</a>
+          <a href="project.html">作品详情</a>
+          <a href="resume.html">简历页</a>
+          <a href="admin.html">后台页</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="home-page">
+      <div class="home-shell home-a">
+        <section class="home-head home-head--a home-head--refined">
+          <div class="home-head__stack">
+            <p class="eyebrow">Portfolio Journal / A Edition</p>
+            <h1 class="headline-xl">林岚</h1>
+            <p class="muted">Product Experience Designer</p>
+          </div>
+
+          <div class="home-head__stack">
+            <p class="lead">
+              产品体验设计师，擅长把复杂信息整理成清楚、有记忆点、适合招聘方快速浏览的作品表达。
+            </p>
+            <div class="priority-strip">
+              <div class="priority-item">
+                <strong>先知道你是谁</strong>
+                <span>姓名、介绍、联系方式首屏清楚可见</span>
+              </div>
+              <div class="priority-item">
+                <strong>再挑一个项目</strong>
+                <span>拼贴区负责记忆点，但不抢核心入口</span>
+              </div>
+              <div class="priority-item">
+                <strong>最后顺手进详情</strong>
+                <span>首页放大态第一行固定为作品链接</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="home-head__contact home-head__contact--card">
+            <a href="mailto:hello@linlan.design">
+              <span>邮箱</span>
+              <strong>hello@linlan.design</strong>
+            </a>
+            <a href="tel:+8613800000000">
+              <span>电话</span>
+              <strong>+86 138 0000 0000</strong>
+            </a>
+            <a href="https://maps.google.com/?q=Shanghai" target="_blank" rel="noreferrer">
+              <span>城市</span>
+              <strong>上海 / 可远程协作</strong>
+            </a>
+          </div>
+        </section>
+
+        <section class="home-rail">
+          <article class="home-rail__card">
+            <p class="eyebrow">默认态</p>
+            <p class="muted">作品卡只展示图和名称，让浏览路径保持轻巧，不在卡面堆细节。</p>
+          </article>
+          <article class="home-rail__card">
+            <p class="eyebrow">Hover / 聚焦</p>
+            <p class="muted">hover 提升卡片存在感；点击后在首页内展开放大简介层，不打断浏览。</p>
+          </article>
+          <article class="home-rail__card">
+            <p class="eyebrow">工具区</p>
+            <p class="muted">保留放大、缩小、重置视图三个动作，优先服务招聘方快速定位作品。</p>
+          </article>
+        </section>
+
+        <section class="home-canvas collage-shell" data-variant="a">
+          <div class="home-canvas__toolbar">
+            <button type="button" data-zoom="out">−</button>
+            <button type="button" data-zoom="reset">1:1</button>
+            <button type="button" data-zoom="in">＋</button>
+          </div>
+          <div class="home-canvas__hint">滚轮缩放，拖动画布，点击卡片在首页内进入放大简介态。</div>
+          <div class="collage-viewport">
+            <div class="collage-track"></div>
+          </div>
+          <div class="canvas-overlay"></div>
+        </section>
+
+        <section class="spec-grid spec-grid--four">
+          <article class="spec-card">
+            <h3>关键状态</h3>
+            <ul class="spec-list">
+              <li>默认态：卡片只给封面与标题</li>
+              <li>Hover：卡片抬升、阴影增强</li>
+              <li>放大态：首页内浮层，不跳离首页</li>
+              <li>第一行固定为作品链接</li>
+            </ul>
+          </article>
+          <article class="spec-card">
+            <h3>尺寸与间距</h3>
+            <ul class="spec-list">
+              <li>首页主标题：56px - 72px</li>
+              <li>导语：18px / 1.7</li>
+              <li>卡片内边距：10px - 12px</li>
+              <li>模块间主间距：24px / 40px / 56px</li>
+            </ul>
+          </article>
+          <article class="spec-card">
+            <h3>内容占位规范</h3>
+            <ul class="spec-list">
+              <li>作品标题建议不超过 16 个中文字符</li>
+              <li>首页一句话介绍建议 36 - 60 字</li>
+              <li>联系方式建议 2 - 3 条</li>
+              <li>首页放大态摘要建议 50 - 90 字</li>
+            </ul>
+          </article>
+          <article class="spec-card">
+            <h3>移动端降级策略</h3>
+            <ul class="spec-list">
+              <li>默认缩放稍微收紧，保证首屏可见更多卡片</li>
+              <li>保留工具按钮，减少纯手势依赖</li>
+              <li>放大态改成整块浮层，优先可读性</li>
+              <li>必要时可补一条“进入作品列表”捷径</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="spec-grid spec-grid--three" style="margin-top: 24px;">
+          <article class="spec-card">
+            <h3>长文本收束</h3>
+            <ul class="spec-list">
+              <li>卡片标题最多 2 行，避免因为标题换行撑坏拼贴节奏</li>
+              <li>联系方式值优先单行；必须换行时第二行与标签左对齐</li>
+              <li>放大态摘要超过 90 字时，只保留前段并引导进入详情页</li>
+            </ul>
+          </article>
+          <article class="spec-card">
+            <h3>移动端间距与层级</h3>
+            <ul class="spec-list">
+              <li>题头改纵向堆叠，块间距控制在 16px - 20px</li>
+              <li>工具按钮保留在画布可见边缘，不隐藏在手势说明之后</li>
+              <li>放大浮层四周保留 16px 安全边距，动作按钮允许换行</li>
+            </ul>
+          </article>
+          <article class="spec-card">
+            <h3>放大态阅读顺序</h3>
+            <ul class="spec-list">
+              <li>第一行始终是作品链接，不能被标题或标签挤到下一层</li>
+              <li>第二层再给标题和摘要，强调“先进入、再细看”</li>
+              <li>若外链过多，只保留主链接在第一屏，其余动作下沉</li>
+            </ul>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>

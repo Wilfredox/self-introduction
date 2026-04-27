@@ -1,0 +1,117 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e13]:
+      - generic [ref=e19]:
+        - link "腾讯云" [ref=e20] [cursor=pointer]:
+          - /url: https://cloud.tencent.com
+          - img [ref=e21]
+        - link "控制台" [ref=e24] [cursor=pointer]:
+          - /url: /
+          - img [ref=e25]
+          - generic [ref=e28]: 控制台
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e33]:
+            - img [ref=e35]
+            - searchbox "支持通过实例ID、IP、名称等搜索资源" [ref=e38]
+          - paragraph [ref=e39]: 快捷键 /
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - link "集团账号" [ref=e43] [cursor=pointer]:
+              - /url: /organization
+            - link "备案" [ref=e44] [cursor=pointer]:
+              - /url: /beian
+            - paragraph [ref=e46] [cursor=pointer]: 工具
+            - paragraph [ref=e48] [cursor=pointer]: 客服支持
+            - generic [ref=e49] [cursor=pointer]: 试用
+            - link "费用" [ref=e51] [cursor=pointer]:
+              - /url: /expense/overview
+          - img [ref=e54] [cursor=pointer]
+          - generic [ref=e58] [cursor=pointer]:
+            - img [ref=e59]
+            - paragraph [ref=e62]: "2"
+          - img [ref=e64] [cursor=pointer]
+          - generic [ref=e69] [cursor=pointer]:
+            - generic [ref=e70]:
+              - img [ref=e72]
+              - img [ref=e75]
+              - img [ref=e78]
+              - img [ref=e81]
+              - img [ref=e84]
+              - img [ref=e87]
+            - img
+            - img
+        - img [ref=e91] [cursor=pointer]:
+          - generic [ref=e94]: "1"
+    - generic [ref=e10]:
+      - insertion [ref=e95]:
+        - iframe [ref=e97]:
+          - generic [active] [ref=f1e1]:
+            - generic [ref=f1e5] [cursor=pointer]:
+              - generic [ref=f1e7]:
+                - img [ref=f1e8]
+                - generic [ref=f1e9]: 云上OpenClaw
+              - generic [ref=f1e11]:
+                - generic [ref=f1e12]: 轻量应用服务器 搭载 混元大模型，快速部署OpenClaw！
+                - generic [ref=f1e14]: 查看详情
+            - alert [ref=f1e16]
+      - main [ref=e101]:
+        - generic [ref=e102]:
+          - generic [ref=e105]:
+            - heading "云开发 CloudBase" [level=2] [ref=e107]
+            - generic [ref=e109]:
+              - button "使用云开发2.0新版" [ref=e110] [cursor=pointer]
+              - checkbox [ref=e112] [cursor=pointer]
+              - button "加入云开发交流群" [ref=e114] [cursor=pointer]
+              - link "快速入门" [ref=e115] [cursor=pointer]:
+                - /url: https://cloud.tencent.com/document/product/876/47995
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - img "infoblue" [ref=e120]
+              - generic [ref=e121]:
+                - heading "【公告】关于云开发计费套餐升级通知：" [level=4] [ref=e122]
+                - paragraph [ref=e123]:
+                  - text: 为简化预付费后付费资源包等多种使用概念，云开发将于2022年8月上线新计费套餐，使用“基础套餐+按量付费”模式，需先购买带有一定配额的基础套餐，超出配额部分按使用量付费，
+                  - link "价格文档" [ref=e124] [cursor=pointer]:
+                    - /url: https://cloud.tencent.com/document/product/876/75213
+                - list [ref=e125]:
+                  - listitem [ref=e126]: 正在享受免费版和按量付费的用户，有超过1个月的操作缓冲期去升级切换新计费套餐。
+                  - listitem [ref=e127]: 其他预付费用户在原套餐到期前，您的套餐权益将不变，可正常使用直到原套餐到期。
+            - paragraph
+            - generic [ref=e130]:
+              - img "status-loading" [ref=e132]
+              - heading "加载中" [level=4] [ref=e134]
+  - generic [ref=e137]:
+    - generic [ref=e138]:
+      - img [ref=e142] [cursor=pointer]
+      - img [ref=e148] [cursor=pointer]
+      - img [ref=e154] [cursor=pointer]
+    - img [ref=e160] [cursor=pointer]
+  - generic [ref=e162]: 腾讯云 - 控制台
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                    - generic:
+                      - generic:
+                        - img
+                    - generic:
+                      - generic:
+                        - img
+                    - generic:
+                      - generic:
+                        - img
+                    - generic:
+                      - generic:
+                        - img
+                - generic:
+                  - generic: 非常不满意
+                  - generic: 非常满意

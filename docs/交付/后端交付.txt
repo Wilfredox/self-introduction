@@ -1,0 +1,2667 @@
+后端交付记录
+
+维护约定
+- 从现在开始，后端相关的方案设计、接口约定、结构调整、功能修改、重要说明，统一记录在本文件中。
+- 记录以“主要描述”为主，方便其他协作者快速知道我做了什么、为什么这么做、当前进度到哪里。
+- 若后续进入开发阶段，我会继续在这里补充：新增文件、修改内容、接口变化、数据库变化、部署说明、验证结果。
+
+更新时间
+- 2026-04-26
+
+当前阶段
+- 第二轮正式开工中
+- 已完成后端项目初始化、schema 第一版、接口骨架第一版
+- 已完成 2.5 轮后端口径对齐
+- 已完成第三轮前置修正中的后端侧准备
+- 已进入第三轮后端真实联调
+
+本次已完成内容
+1. 明确后端范围
+- 负责个人作品网站的后端和后台能力。
+- 网站公开访问，仅有一个管理员。
+- 不做多管理员、不做注册、不做分类和搜索。
+
+2. 确定整体后端方案
+- 推荐基线：PostgreSQL + 对象存储（图片、PDF、简历）+ 单管理员 Session/Cookie 登录 + REST API。
+- 目标是尽量简单、稳定、方便后续持续新增作品。
+
+3. 数据模型设计
+- admin_users：单管理员账号表。
+- admin_sessions：管理员登录会话表。
+- site_profiles：首页基础信息表，仅保留一条记录。
+- site_contact_items：联系方式列表表。
+- assets：统一文件资源表，管理图片、项目 PDF、简历等上传文件。
+- projects：作品主表。
+- project_images：作品多图表，支持截图说明和排序。
+- project_links：作品外链表，支持多个链接和排序。
+
+4. 作品字段设计
+- 每个作品支持以下内容：
+  - 封面
+  - 标题
+  - 简介
+  - 项目时间
+  - 多图
+  - 截图说明
+  - PDF 预览文件
+  - 多个外链
+  - 手动排序
+
+5. 首页信息设计
+- 支持管理员修改：
+  - 姓名
+  - 一句话介绍
+  - 联系方式
+
+6. 简历能力设计
+- 支持简历上传、预览、下载。
+- 当前简历建议通过 site_profiles 关联 assets 表中的一份文件。
+
+7. API 规划
+- 公开接口：
+  - GET /api/public/bootstrap
+  - GET /api/public/projects
+  - GET /api/public/projects/:slug
+  - GET /api/public/resume
+- 管理员认证接口：
+  - POST /api/admin/auth/login
+  - POST /api/admin/auth/logout
+  - GET /api/admin/auth/me
+- 后台管理接口：
+  - GET /api/admin/site
+  - PATCH /api/admin/site
+  - PUT /api/admin/resume
+  - GET /api/admin/projects
+  - POST /api/admin/projects
+  - GET /api/admin/projects/:id
+  - PATCH /api/admin/projects/:id
+  - DELETE /api/admin/projects/:id
+  - PUT /api/admin/projects/sort
+  - POST /api/admin/assets/image
+  - POST /api/admin/assets/pdf
+
+8. 文件上传方案
+- 开发环境可先落本地 uploads 目录。
+- 正式环境建议使用对象存储。
+- 数据库只保存文件元数据，不直接保存文件二进制。
+- 图片、项目 PDF、简历统一进入 assets 表管理。
+- 上传时校验文件类型、大小、MIME、扩展名，文件名使用随机值避免冲突。
+
+9. 登录与安全方案
+- 不做注册，只保留单管理员账号。
+- 登录建议采用服务端 Session + HttpOnly Cookie。
+- 密码采用安全哈希存储（Argon2id 或 bcrypt）。
+- 后台写接口统一校验登录态。
+- 增加限流、来源限制、CSRF 防护、基础安全中间件。
+
+10. 手动排序方案
+- projects.sort_order 使用整数值。
+- 前台和后台列表均按 sort_order 升序读取。
+- 新建作品默认取最大值后递增。
+- 后台拖拽后走批量排序接口，由后端统一重写排序值。
+
+11. 部署建议
+- 前台静态部署，后台 API 独立部署。
+- 数据库使用 PostgreSQL。
+- 文件使用对象存储。
+- 若主要面向中国大陆访问，优先考虑阿里云或腾讯云体系。
+- 若主要考虑全球访问和成本，可考虑 Cloudflare 相关方案。
+
+12. 前端配合要求
+- 前端不要把首页信息、作品信息、简历信息写死在代码里。
+- 统一从公开 API 获取最新数据。
+- 上传类表单建议先上传文件，拿到 assetId 后再提交业务数据。
+- 图片、PDF、简历统一使用后端返回的 URL，不由前端自行拼接路径。
+
+第二轮新增内容（按《产品统筹-第二轮开工指令.txt》推进）
+1. 已新建正式后端项目目录
+- 新增目录：backend/
+- 技术栈落地为：
+  - Node.js
+  - Express
+  - TypeScript
+  - Prisma
+  - PostgreSQL
+- 已补充：
+  - package.json
+  - tsconfig.json
+  - .env.example
+  - README.md
+  - docs/api-examples.md
+
+2. 已完成数据库 schema 第一版
+- 文件：backend/prisma/schema.prisma
+- 已建模表：
+  - admin_users
+  - admin_sessions
+  - site_profiles
+  - site_contact_items
+  - assets
+  - projects
+  - project_images
+  - project_links
+- 已补充枚举：
+  - AssetKind：IMAGE / PROJECT_PDF / RESUME
+  - ProjectStatus：DRAFT / PUBLISHED
+
+3. 已完成认证骨架第一版
+- 单管理员登录：
+  - POST /api/admin/auth/login
+- 登录态校验：
+  - GET /api/admin/auth/me
+- 退出登录：
+  - POST /api/admin/auth/logout
+- 认证方式：
+  - 服务端 session
+  - HttpOnly Cookie
+- 安全措施第一版：
+  - 登录限流
+  - 登录态校验中间件
+  - 后台写接口来源校验
+  - helmet
+  - cors
+  - 统一错误处理
+
+4. 已完成公开接口第一版
+- GET /api/public/bootstrap
+- GET /api/public/projects
+- GET /api/public/projects/:slug
+- GET /api/public/resume
+- GET /api/health
+
+5. 已完成后台接口第一版
+- GET /api/admin/site
+- PATCH /api/admin/site
+- PUT /api/admin/resume
+- GET /api/admin/projects
+- POST /api/admin/projects
+- GET /api/admin/projects/:id
+- PATCH /api/admin/projects/:id
+- DELETE /api/admin/projects/:id
+- PUT /api/admin/projects/sort
+- POST /api/admin/assets/images
+- POST /api/admin/assets/pdfs
+
+6. 已完成上传策略第一版
+- 开发环境走本地目录：
+  - backend/uploads/images
+  - backend/uploads/pdfs
+  - backend/uploads/resumes
+- 已做本地存储抽象，后续可切换正式对象存储
+- 已加上传限制：
+  - 图片仅允许 jpg / png / webp
+  - PDF 仅允许 application/pdf
+  - 文件名改为随机 UUID
+  - 按类型限制文件大小
+- 上传后的文件信息统一写入 assets 表
+
+7. 已完成数据返回结构示例
+- 文件：backend/docs/api-examples.md
+- 目的：
+  - 给前端明确字段名
+  - 给前端明确公开接口和后台接口响应结构
+  - 减少联调阶段口径偏差
+
+8. 已完成基础验证
+- 已执行 npm install
+- 已执行 prisma generate
+- 已执行 npm run build，编译通过
+- 已通过最小环境变量启动服务并验证：
+  - GET /api/health 返回 success=true
+
+9. 本轮特殊处理说明
+- Prisma 最新补丁版在当前 Windows 环境下生成客户端时出现依赖异常。
+- 已将 prisma 与 @prisma/client 精确固定为 6.19.2，生成与编译已恢复正常。
+
+本轮新增文件（主要）
+- backend/package.json
+- backend/tsconfig.json
+- backend/.env.example
+- backend/README.md
+- backend/docs/api-examples.md
+- backend/prisma/schema.prisma
+- backend/prisma/seed.ts
+- backend/src/app.ts
+- backend/src/index.ts
+- backend/src/config/*
+- backend/src/middleware/*
+- backend/src/routes/*
+- backend/src/services/*
+- backend/src/utils/*
+- backend/src/validators/*
+
+当前风险
+1. 数据库尚未真正迁移到本地或线上实例
+- 目前已完成 schema 和 Prisma Client 生成，但尚未在真实 PostgreSQL 上执行 migrate 和完整接口联调。
+
+2. 上传后的旧文件清理还没做
+- 当前删除作品或替换简历时，会先保证业务链路可用。
+- 旧 assets 记录和旧物理文件清理策略，后续需要补一个回收方案。
+
+3. 首页 A 版拼贴舞台的位置数据尚未进入后端模型
+- 当前模型已支持作品公开展示，但还没有“后台控制首页拼贴卡片位置”的字段。
+- 如果设计和前端后续确定需要固定卡片排布，后端需要补充坐标或布局字段。
+
+4. 简历下载目前走同一文件 URL
+- 第一版已满足预览与下载链接返回。
+- 若后续需要强制下载头、鉴权下载或防盗链，需要再加独立下载路由或对象存储策略。
+
+5. 公开接口与后台接口尚未和真实前端联调
+- 当前已提供字段结构和接口骨架。
+- 真实联调后，可能还需要根据前端表单结构微调字段命名和响应嵌套。
+
+需要前端配合的事项
+1. 统一按 docs/api-examples.md 的字段结构接数据
+- 公开内容不要继续写死在页面中。
+- 后续应通过 /api/public/* 拉取正式内容。
+
+2. 上传流程按“两步走”
+- 第一步：前端先上传图片或 PDF
+- 第二步：拿到 assetId 后再提交作品表单或简历更新
+
+3. 后台登录按 Cookie Session 对接
+- 前端请求后台接口时需要携带 credentials
+- 不要按 JWT 方案写前端状态管理
+
+4. 首页放大态如果需要第一行展示作品链接
+- 建议首页所用项目摘要直接消费 /api/public/bootstrap 返回的 links 字段
+- 不必为首页点击态再单独拼装假数据
+
+5. 项目排序请直接提交 projectIds 顺序数组
+- 接口：PUT /api/admin/projects/sort
+- 后端会统一重写 sortOrder
+
+下一步建议
+- 先补本地 PostgreSQL 与 Prisma migrate 实跑。
+- 再与前端联调：
+  - 公开 bootstrap
+  - 管理员登录
+  - 作品 CRUD
+  - 上传
+  - 排序
+  - 简历预览
+
+2.5轮新增内容（按《产品统筹-第二轮补齐与口径对齐指令.txt》推进）
+1. 已统一公开首页聚合接口命名
+- 已将 GET /api/public/bootstrap 的返回结构从：
+  - site + projects + resume + contentVersion
+- 调整为产品冻结口径：
+  - profile + featuredProjects + resume + contentVersion
+- 目的：
+  - 与产品统筹口径一致
+  - 与前端第二轮后续适配目标一致
+
+2. 已冻结作品详情字段第一版
+- 已在后端 schema 中正式加入：
+  - description：正式必备字段
+  - role：可选扩展字段
+  - highlights[]：可选扩展字段
+  - notes[]：可选扩展字段
+- 对应文件：
+  - backend/prisma/schema.prisma
+
+3. 已完成作品创建/编辑校验口径更新
+- 后台作品新增和编辑已支持：
+  - description
+  - role
+  - highlights
+  - notes
+- 规则：
+  - description 为必填
+  - role 可为空
+  - highlights / notes 默认可为空数组
+- 对应文件：
+  - backend/src/validators/project.ts
+
+4. 已完成公开接口与后台返回结构调整
+- 公开列表和首页摘要统一返回作品摘要字段：
+  - id
+  - slug
+  - title
+  - excerpt
+  - period
+  - status
+  - sortOrder
+  - cover
+  - links
+  - updatedAt
+- 作品详情返回正式结构：
+  - id
+  - slug
+  - title
+  - excerpt
+  - description
+  - period
+  - status
+  - sortOrder
+  - cover
+  - pdf
+  - links
+  - images
+  - role
+  - highlights
+  - notes
+  - createdAt
+  - updatedAt
+- 对应文件：
+  - backend/src/services/site.service.ts
+  - backend/src/services/projects.service.ts
+
+5. 已更新接口示例文档
+- 文件：
+  - backend/docs/api-examples.md
+- 已明确：
+  - bootstrap 正式结构
+  - public projects 列表结构
+  - project detail 正式结构
+  - 后台作品新增/编辑请求结构
+  - role / highlights / notes 的联调处理方式
+
+6. 已明确首页拼贴位置本轮不进后台
+- 本轮没有加入：
+  - 卡片位置
+  - 卡片尺寸
+  - 卡片角度
+  - 拼贴布局后台编辑能力
+- 继续按产品统筹口径冻结：
+  - 首页拼贴位置先由前端静态控制
+  - 后端不在本轮扩散该能力
+
+7. 本轮验证结果
+- 已重新执行 prisma generate
+- 已重新执行 npm run build
+- TypeScript 编译通过
+
+本轮修改内容（2.5轮）
+1. 修改了哪些文件
+- backend/prisma/schema.prisma
+- backend/src/validators/project.ts
+- backend/src/services/site.service.ts
+- backend/src/services/projects.service.ts
+- backend/docs/api-examples.md
+
+2. 主要改动摘要
+- bootstrap 聚合字段命名调整为 profile + featuredProjects
+- Project 模型新增 description / role / highlights / notes
+- 作品详情返回结构正式冻结
+- 接口文档口径与产品统筹统一
+
+当前风险（2.5轮后）
+1. 新增字段尚未实际 migrate 到真实数据库
+- 当前 schema 已更新、Prisma Client 已更新、编译已通过。
+- 但还没有在真实 PostgreSQL 上执行迁移，因此第三轮联调前仍需要实际跑 migration。
+
+2. 前端当前若仍按旧字段 site / projects 读取 bootstrap，会出现对接偏差
+- 后端现在以 profile / featuredProjects 为准。
+- 前端需要在 2.5 轮内完成适配层收口。
+
+3. description 现在已是正式必填字段
+- 后台作品创建表单在第三轮联调前必须准备 description 输入。
+- 若前端暂时仍使用旧 mock 结构，提交后台时会被校验拦下。
+
+4. role / highlights / notes 虽已进入正式 schema，但业务内容可能暂时为空
+- 当前建议：
+  - role 为空时返回 null
+  - highlights / notes 为空时返回 []
+- 前端仍需保持展示容错，不要把它们当成一定有内容的强依赖块。
+
+5. 本轮仍未补数据库迁移文件
+- 当前完成的是 schema 与代码层收口。
+- 若要进入真实联调，下一步必须接数据库并产出迁移。
+
+需要谁配合（2.5轮）
+1. 需要前端配合
+- 首页聚合数据结构改接：
+  - profile
+  - featuredProjects
+  - resume
+  - contentVersion
+- 首页主链接从 featuredProjects[i].links[0] 派生，不再依赖额外 primaryLink
+- 详情页需要容错处理：
+  - role
+  - highlights
+  - notes
+- 后台作品表单需要补 description 字段
+
+2. 需要产品/设计配合
+- 若第三轮前确认详情页必须稳定展示 role / highlights / notes 三个模块，需要同步给出内容占位建议。
+- 若后续想把首页拼贴卡片位置改成后台可编辑，需要单独立项，不在当前冻结范围内追加。
+
+第三轮前置修正与职责隔离新增内容（按《产品统筹-第三轮前置修正与职责隔离指令.txt》推进）
+1. 已明确后端职责边界，不参与前端入口恢复
+- 本轮没有修改：
+  - 根目录 index.html
+  - 设计参考页 html / css / js
+  - src/ 下前端正式入口结构
+- 原因：
+  - 按本轮职责隔离规则，后端只负责 backend/ 与后端交付记录
+  - 前端正式入口恢复、设计稿迁移和根目录归属不由后端执行
+
+2. 已补充 Prisma migration 产物
+- 已新增目录与文件：
+  - backend/prisma/migrations/migration_lock.toml
+  - backend/prisma/migrations/20260426_000001_init/migration.sql
+- migration.sql 由当前 schema 生成，内容覆盖：
+  - 管理员账号与会话表
+  - 站点资料与联系方式表
+  - assets 表
+  - projects 表
+  - project_images 表
+  - project_links 表
+  - Project 的 description / role / highlights / notes 字段
+
+3. 已补充本地 PostgreSQL 实跑说明
+- 新增文件：
+  - backend/docs/local-postgres-setup.md
+- 已说明：
+  - 本地数据库准备
+  - .env 初始化
+  - prisma generate
+  - prisma migrate deploy
+  - prisma migrate status
+  - prisma seed
+  - 最小验证路径
+
+4. 已补充 migration 相关脚本
+- 更新文件：
+  - backend/package.json
+- 新增脚本：
+  - prisma:migrate:deploy
+  - prisma:migrate:status
+
+5. 已更新后端 README
+- 更新文件：
+  - backend/README.md
+- 已补充：
+  - migrations 目录说明
+  - local-postgres-setup 文档入口
+  - 当前职责边界说明
+
+6. 本轮验证结果
+- 已生成初始 migration.sql
+- 已确认 migration_lock.toml 存在
+- 已重新执行 npm run build
+- backend 继续保持 TypeScript 编译通过
+
+本轮修改内容（第三轮前置修正）
+1. 新增文件
+- backend/docs/local-postgres-setup.md
+- backend/prisma/migrations/migration_lock.toml
+- backend/prisma/migrations/20260426_000001_init/migration.sql
+
+2. 修改文件
+- backend/package.json
+- backend/README.md
+- 后端交付.txt
+
+3. 主要改动摘要
+- 为第三轮真实联调补齐 migration 产物
+- 为本地 PostgreSQL 实跑补齐操作说明
+- 明确 backend 与前端入口 / 设计稿之间的职责边界
+
+当前风险（第三轮前置修正后）
+1. 前端正式入口仍需由前端侧恢复
+- 当前后端已按职责边界完成自身准备。
+- 但项目是否能进入第三轮，仍取决于：
+  - 根目录 index.html 是否恢复为 React 正式入口
+  - 设计稿是否迁移到独立目录
+
+2. migration 已生成，但尚未在真实 PostgreSQL 上执行
+- 当前已具备 deploy 所需文件。
+- 仍需要本地或线上 PostgreSQL 实际执行：
+  - npm run prisma:migrate:deploy
+  - npm run prisma:seed
+
+3. 真实联调仍未开始
+- 当前只是把第三轮前的后端准备补齐。
+- 管理员登录、bootstrap、作品 CRUD、上传、排序、简历预览还未和真实前端走通。
+
+需要谁配合（第三轮前置修正）
+1. 需要前端配合
+- 恢复根目录正式入口
+- 将设计总览页迁移到独立目录
+- 验证正式构建产物入口不再是静态设计页
+
+2. 需要设计配合
+- 后续设计稿只在独立设计目录内维护
+- 不再占用根目录入口文件
+
+3. 需要联调阶段配合
+- 当前前端入口修正完成后，可以直接按以下顺序进入真实联调：
+  - 登录
+  - bootstrap
+  - 作品 CRUD
+  - 上传
+  - 排序
+  - 简历预览
+
+第三轮真实联调与视觉落地新增内容（按《产品统筹-第三轮真实联调与视觉落地指令.txt》推进）
+1. 已按新协作规则只操作后端负责范围
+- 本轮只修改：
+  - backend/**
+  - docs/交付/后端交付.txt
+- 本轮只查看，不修改：
+  - docs/统筹/**
+  - index.html
+  - src/**
+  - public/**
+  - design/**
+
+2. 已建立本地第三轮联调环境
+- 已新增本地环境文件：
+  - backend/.env
+- 当前本地后端运行配置包括：
+  - APP_BASE_URL=http://127.0.0.1:4000
+  - ADMIN_APP_ORIGIN=http://127.0.0.1:5173,http://localhost:5173
+- 当前本地数据库不再依赖独立安装 PostgreSQL，而是通过 Prisma Dev 拉起本地开发库。
+
+3. 已拉起本地开发数据库并跑通 Prisma 基础流程
+- 实际执行成功：
+  - npm run prisma:generate
+  - npm run prisma:migrate:deploy
+  - npm run prisma:seed
+- 额外补充：
+  - backend/package.json 新增 prisma:dev 脚本
+- 当前 migration 已真实应用到本地数据库，不再只是“文件已生成”状态。
+
+4. 已修复 Prisma Dev 运行态连接问题
+- 联调初期，公开接口 /api/public/bootstrap 返回 500。
+- 实际定位结果：
+  - Prisma Client 在本地 Prisma Dev 数据库上触发 prepared statement 冲突
+  - 报错核心为：
+    prepared statement already exists
+- 已修正方案：
+  - schema.prisma 增加 directUrl
+  - DATABASE_URL 改为运行态使用并带 pgbouncer=true
+  - DIRECT_URL 改为 migration / schema engine 直连使用
+- 本轮相关修改文件：
+  - backend/prisma/schema.prisma
+  - backend/.env.example
+  - backend/.env
+  - backend/README.md
+  - backend/docs/local-postgres-setup.md
+
+5. 已完成公开接口真实烟测
+- 已真实启动后端服务并验证：
+  - GET /api/health
+  - GET /api/public/bootstrap
+  - GET /api/public/projects
+- 当前结果：
+  - health 正常
+  - bootstrap 正常返回 profile / featuredProjects / resume / contentVersion
+  - public projects 正常返回数组
+
+6. 已完成管理员与后台关键链路真实烟测
+- 已真实验证：
+  - POST /api/admin/auth/login
+  - GET /api/admin/auth/me
+  - PATCH /api/admin/site
+  - POST /api/admin/projects
+  - GET /api/admin/projects
+  - PUT /api/admin/projects/sort
+  - DELETE /api/admin/projects/:id
+  - POST /api/admin/auth/logout
+- 验证结果：
+  - 管理员登录成功
+  - 登录态读取成功
+  - 站点资料更新成功
+  - 作品新增 / 查询 / 排序 / 删除成功
+  - 退出登录成功
+
+7. 已完成上传与简历链路真实烟测
+- 已真实验证：
+  - POST /api/admin/assets/images
+  - POST /api/admin/assets/pdfs
+  - PUT /api/admin/resume
+  - GET /api/public/resume
+- 验证结果：
+  - 图片上传成功
+  - PDF 上传成功
+  - 简历替换成功
+  - 公共简历预览地址可访问
+  - 上传后返回的 url / previewUrl 当前可直接被浏览器访问
+
+8. 已补做未登录保护验证
+- 已验证：
+  - 未登录访问 GET /api/admin/auth/me 返回 401
+- 说明后台接口的登录保护边界正常生效
+
+9. 已整理本地演示数据状态
+- 为避免前端接真实数据时直接看到测试名字，已将站点资料恢复为：
+  - name = Your Name
+  - tagline = Your one-line introduction
+  - contacts = []
+- 当前本地数据库状态：
+  - 管理员账号已存在
+  - site profile 已存在
+  - 当前没有保留测试作品
+  - 当前保留了一份可预览的占位简历 PDF，方便第三轮继续联调
+
+10. 本轮验证结果
+- npm run build 通过
+- backend 服务可启动
+- 本地数据库 migrate / seed 已执行
+- 公开接口可真实访问
+- 后台关键链路已完成基础烟测
+
+本轮修改内容（第三轮真实联调）
+1. 新增文件
+- backend/.env
+
+2. 修改文件
+- backend/package.json
+- backend/prisma/schema.prisma
+- backend/.env.example
+- backend/README.md
+- backend/docs/local-postgres-setup.md
+- docs/交付/后端交付.txt
+
+3. 主要改动摘要
+- 建立 backend 本地真实联调环境
+- 实际跑通 migration 和 seed
+- 修复 Prisma Dev 下的 prepared statement 冲突
+- 真实验证公开接口、登录、站点资料、作品 CRUD、排序、上传、简历预览
+
+当前风险（第三轮当前状态）
+1. 当前本地数据库是 Prisma Dev 开发库，不是长期正式 PostgreSQL 实例
+- 这足够支撑第三轮本地联调和演示。
+- 但后续部署前仍需要切换到正式 PostgreSQL 环境，并重新确认连接策略。
+
+2. 本地数据库目前保留了一份占位简历 PDF
+- 这有利于前端联调 resume 预览和下载。
+- 但正式内容上线前必须替换为真实简历文件。
+
+3. 上传接口对 MIME 类型校验较严格
+- PowerShell 的 Invoke-WebRequest -Form 默认把测试文件发成 application/octet-stream，会被后端拒绝。
+- 使用 curl.exe 显式声明 type 后，上传链路正常。
+- 浏览器前端正常使用 FormData 时一般不会受到这个问题影响，但前端联调时仍应关注请求头和文件类型。
+
+4. 当前还没有保留真实作品示例数据
+- 作品 CRUD 已经可用并做过创建/删除烟测。
+- 但如果前端希望直接看到非空作品列表，需要再由联调阶段创建一条或多条正式示例内容。
+
+需要谁配合（第三轮当前状态）
+1. 需要前端配合
+- 现在可以开始直接对接真实后端：
+  - GET /api/public/bootstrap
+  - GET /api/public/projects
+  - GET /api/public/projects/:slug
+  - GET /api/public/resume
+  - POST /api/admin/auth/login
+  - GET /api/admin/auth/me
+  - POST /api/admin/auth/logout
+  - GET /api/admin/site
+  - PATCH /api/admin/site
+  - GET /api/admin/projects
+  - POST /api/admin/projects
+  - GET /api/admin/projects/:id
+  - PATCH /api/admin/projects/:id
+  - DELETE /api/admin/projects/:id
+  - PUT /api/admin/projects/sort
+  - POST /api/admin/assets/images
+  - POST /api/admin/assets/pdfs
+  - PUT /api/admin/resume
+- 前端请求后台接口时继续使用 Cookie Session，并携带 credentials
+- 前端上传时请走浏览器 FormData，不要自己改写为错误的 MIME 类型
+
+2. 需要联调阶段共同确认
+- 前端是否需要我先保留一条示例作品，方便视觉落地和公开页联调
+- 简历页是否直接消费当前占位 PDF，还是等前端接入后再换成真实文件
+
+第三轮问题修复新增内容（按《docs/统筹/产品统筹-第三轮问题修复指令.txt》推进）
+1. 已确认本轮 3 个问题均为前端负责项
+- 本轮问题分别位于：
+  - src/data/realApi.ts
+  - src/pages/AdminLoginPage.tsx
+  - src/pages/AdminProfilePage.tsx
+- 按《工作区-文件归属与协作规则.txt》，后端本轮不修改上述文件，只做部署 / 环境口径配合。
+
+2. 已按前端实际修复方向补齐后端部署约定
+- 当前前端 API base 已改为：
+  - 优先读取 VITE_API_BASE_URL
+  - 缺失时回退到相对路径 /api
+- 因此后端侧已明确推荐部署方式为：
+  - 同域名部署
+  - 或反向代理把 /api 转发到后端服务
+- 同时已明确：
+  - 不能把 http://localhost:4000/api 继续当成正式前端的默认回退地址
+  - 该地址只应作为本地联调代理目标或显式开发环境变量值
+
+3. 已补充后端文档说明
+- 更新文件：
+  - backend/README.md
+  - backend/docs/local-postgres-setup.md
+- 已新增说明内容：
+  - 正式部署推荐 `https://example.com + /api` 的同域 / 反向代理方式
+  - 本地联调若继续使用相对路径 `/api`，前端开发服务器应代理到 `http://127.0.0.1:4000/api`
+  - 若本地无法使用代理，再显式设置 `VITE_API_BASE_URL=http://127.0.0.1:4000/api`
+
+4. 本轮未改动内容
+- 未改动后端业务接口结构
+- 未改动第三轮已冻结字段
+- 未改动 Prisma schema、migration、seed、上传、登录、排序等业务链路代码
+
+5. 本轮验证结果
+- 已检查前端当前修复方向与后端文档口径一致：
+  - `src/data/realApi.ts` 已回退到相对路径 `/api`
+  - `src/pages/AdminLoginPage.tsx` 的默认密码已为空
+  - `src/pages/AdminProfilePage.tsx` 已改为对联系方式副本排序，并按稳定 `id` 更新
+- 已重新执行 backend 的 `npm run build`
+- 后端编译继续通过
+
+本轮修改内容（第三轮问题修复）
+1. 修改了哪些文件
+- backend/README.md
+- backend/docs/local-postgres-setup.md
+- docs/交付/后端交付.txt
+
+2. 主要改动摘要
+- 按前端已选定的 `/api` 相对路径方案，补齐后端的部署与本地联调约定
+- 明确 `http://127.0.0.1:4000/api` 只用于开发环境，不再作为正式前端默认回退地址
+- 保持第三轮冻结接口不变
+
+当前风险（第三轮问题修复后）
+1. 正式部署仍需要前端 / 运维侧提供 `/api` 反向代理
+- 后端这轮只补了口径说明。
+- 如果部署时没有把 `/api` 转发到后端服务，前端即使修掉 localhost 回退，公开页和后台接口仍会请求失败。
+
+2. 本地联调若不走代理，前端仍需显式配置环境变量
+- 当前推荐方案是开发服务器代理 `/api`。
+- 若前端本地环境没有代理配置，就必须显式设置 `VITE_API_BASE_URL`，否则跨端口调试会失败。
+
+需要谁配合（第三轮问题修复）
+1. 需要前端配合
+- 保持当前 `/api` 相对路径方案，不回退到硬编码 localhost
+- 本地开发时补好 `/api -> http://127.0.0.1:4000/api` 代理，或明确写入本地 `VITE_API_BASE_URL`
+
+2. 需要部署 / 联调阶段配合
+- 正式环境需要把站点与后端放在同域或通过反向代理统一暴露 `/api`
+- 如果后续部署拓扑不是同域方案，需要在进入上线前重新确认跨域和 Cookie 策略
+
+第四轮新增内容（按《docs/统筹/产品统筹-当前项目状态总表与第四轮验收上线准备指令.txt》推进）
+1. 已补第四轮后端上线准备文档
+- 新增文件：
+  - backend/docs/production-deploy-checklist.md
+- 已明确：
+  - 本地环境和正式环境的差异
+  - 正式环境所需环境变量
+  - PostgreSQL 准备步骤
+  - 上传文件正式存储建议
+  - `/api` 与 `/uploads` 的反向代理约定
+  - Cookie 会话上线注意点
+  - 上线前手工检查建议
+
+2. 已补一处发布前数据约束修正
+- 当前产品要求每个正式作品都应有封面。
+- 本轮已在后端补充校验：
+  - `PUBLISHED` 状态下如果没有 `coverAssetId`，创建或更新都会被拒绝
+- 目的：
+  - 避免后台误把无封面作品发布到公开页
+  - 让第四轮“真实内容替换准备”更接近最终上线行为
+
+3. 已补本地资源 URL 稳定性收口
+- 当前本地存储资源的公开 URL 不再直接依赖数据库里上传当时写死的绝对地址。
+- 已改为在读取时按当前 `APP_BASE_URL` 动态生成本地资源访问地址。
+- 影响范围：
+  - 简历预览
+  - 作品封面
+  - 作品多图
+  - 作品 PDF
+  - 上传接口返回的图片 / PDF 资源地址
+- 目的：
+  - 避免开发域名、预发布域名、正式域名切换后，数据库里旧绝对 URL 直接失效
+
+4. 已补开发环境示例口径
+- 更新文件：
+  - backend/.env.example
+  - backend/README.md
+- 已对齐：
+  - 本地 `APP_BASE_URL` 示例改为 `http://127.0.0.1:4000`
+  - 本地 `ADMIN_APP_ORIGIN` 默认同时允许 `127.0.0.1` 与 `localhost`
+  - README 已补第四轮上线准备文档入口
+
+5. 本轮接口与数据状态检查结论
+- 发布作品是否允许缺封面：
+  - 现在不允许
+  - 后端会返回：
+    - `400 PUBLISHED_PROJECT_REQUIRES_COVER`
+- 简历预览 URL 是否稳定：
+  - 当前本地资源 URL 按运行时 `APP_BASE_URL` 生成
+  - 对同一份已上传本地文件，域名切换时不再依赖数据库旧绝对地址
+- 上传后的资源 URL 是否适合正式环境：
+  - 如果正式环境继续使用本地上传，必须同时暴露 `/uploads`
+  - 如果后续切到对象存储，前端仍只消费后端返回的 URL 字段即可
+- 公开接口是否能承接真实作品数据：
+  - 字段结构已经足够
+  - 当前阻塞不在接口，而在正式作品内容尚未填入数据库
+
+6. 本轮验收结果
+- 已执行 `npm run build`
+  - 结果：通过
+- 已执行 `npm run prisma:migrate:status`
+  - 结果：`Database schema is up to date!`
+- 已启动 backend 并做第四轮关键烟测：
+  - `GET /api/public/bootstrap`
+  - `GET /api/public/resume`
+  - `POST /api/admin/auth/login`
+  - `POST /api/admin/projects`（无封面发布校验）
+- 实际结果：
+  - 公开 bootstrap 可读取，占位站点资料仍正常返回
+  - 简历预览地址可返回，当前为 `/uploads/resumes/...`
+  - 管理员登录正常
+  - 无封面直接发布作品会被 400 正确拦下
+
+本轮修改内容（第四轮验收与上线准备）
+1. 新增文件
+- backend/docs/production-deploy-checklist.md
+- backend/src/services/storage/public-asset.ts
+
+2. 修改文件
+- backend/src/services/projects.service.ts
+- backend/src/services/site.service.ts
+- backend/src/services/assets.service.ts
+- backend/.env.example
+- backend/README.md
+- docs/交付/后端交付.txt
+
+3. 主要改动摘要
+- 新增正式部署准备清单文档
+- 补 `PUBLISHED` 作品必须有封面的后端校验
+- 将本地上传资源的公开 URL 改为按当前环境动态生成
+- 重新核对本地联调与正式部署口径
+
+当前剩余问题（第四轮后端视角）
+1. 正式内容仍未替换
+- 当前数据库中站点资料仍是占位内容
+- 当前没有保留正式作品
+- 当前简历仍是占位 PDF
+- 所以后端现在更像“已可上线的空壳”，还不是最终可展示作品站数据状态
+
+2. 正式部署基础设施仍未真正落地
+- 域名未定
+- 正式 PostgreSQL 未定
+- 正式对象存储未定
+- `/api` 和 `/uploads` 的反向代理规则还未实际配置
+
+3. 当前上传存储仍是本地磁盘方案
+- 这适合本地联调和轻量演示。
+- 但正式上线前，建议至少明确：
+  - 是否继续用服务器本地磁盘
+  - 是否改为对象存储
+  - 如何做备份和持久化
+
+4. 简历下载仍与预览共用同一资源地址
+- 当前已经满足“可预览、可下载”的基础能力。
+- 但如果上线后需要真正的强制下载头或更细的访问控制，还需要单独路由或存储策略。
+
+5. 删除作品 / 替换简历后的旧资源回收策略仍未补
+- 当前优先保证主链路稳定可用。
+- 正式运营前，如果担心存储膨胀，后续需要补一套旧资源清理策略。
+
+需要谁配合（第四轮）
+1. 需要你准备真实内容
+- 真实姓名
+- 一句话介绍
+- 联系方式
+- 正式简历 PDF
+- 至少 1 到 3 个正式作品内容
+
+2. 需要前端配合
+- 继续按真实后端接口做第四轮完整浏览器验收
+- 验证正式页面在存在真实作品数据后：
+  - 首页拼贴
+  - 作品列表
+  - 作品详情
+  - 简历页
+  都能正确展示
+- 如果前端准备在正式环境继续使用相对路径 `/api`，部署时还需同步确认 `/uploads` 的访问路径
+
+3. 需要部署 / 运维阶段配合
+- 确定正式域名
+- 确定服务器或平台
+- 准备正式 PostgreSQL
+- 确定上传文件正式存储方案
+- 配置反向代理：
+  - `/api`
+  - `/uploads`（如果仍用本地磁盘上传）
+
+4. 需要我继续准备的事项
+- 一旦正式域名、数据库和存储方案确定，我可以继续把后端环境变量模板收成“正式版”
+- 一旦你给到真实内容，我可以协助做最后一轮数据填充与上线前后端核对
+
+第四轮最终技术上线与验收新增内容（按《docs/统筹/产品统筹-第四轮技术上线与最终验收指令.txt》推进）
+1. 已补技术上线执行 runbook
+- 新增文件：
+  - backend/docs/technical-launch-runbook.md
+- 本轮把“部署前准备什么”和“实际上线按什么顺序做”分开写清楚：
+  - `production-deploy-checklist.md` 负责准备项
+  - `technical-launch-runbook.md` 负责执行顺序与最小 smoke check
+
+2. 已再次明确本地环境与正式环境的关键差异
+- 当前工作区中的 `backend/.env` 仍是本地联调专用配置
+- 它依赖 Prisma Dev 生成的本机数据库端口
+- 这份 `.env` 不能直接带去服务器，也不适合当正式部署模板复用
+- 当前真正的技术上线前置动作是：
+  - 换成正式 PostgreSQL
+  - 换成正式域名
+  - 准备 `/api` 与 `/uploads` 反向代理
+
+3. 本轮后端最终验收结果
+- 已重新执行：
+  - `npm run build`
+- 结果：
+  - TypeScript 编译继续通过
+
+- 已在当前长期运行的本地实例 `http://localhost:4000` 上完成公开链路验收：
+  - `GET /api/public/bootstrap`
+  - `GET /api/public/projects`
+  - `GET /api/public/resume`
+- 结果：
+  - 三条公开接口可访问
+  - 占位站点资料不会导致系统报错
+  - 简历预览 / 下载地址可返回
+  - 当前公开列表中保留 1 条临时验收作品数据，说明公开作品读取链路正常
+
+- 已在当前长期运行的本地实例 `http://localhost:4000` 上完成后台关键链路补验：
+  - 管理员登录
+  - 读取后台作品列表
+  - 修改站点资料
+  - 前台读取到最新站点资料
+  - 使用已知有效资产做作品新增
+  - 作品编辑
+  - 作品删除
+  - 退出登录
+- 实际结果：
+  - 登录成功
+  - 后台作品列表可读取
+  - 站点资料修改后，公开 `bootstrap` 能立即反映
+  - 使用已存在的封面 / PDF 资产时，作品 CRUD 成功
+  - 删除成功后，公开作品数恢复
+  - 站点资料已恢复回：
+    - `Your Name`
+    - `Your one-line introduction`
+    - `contacts = []`
+
+4. 本轮额外观察到的本地环境现象
+- 重复对 `127.0.0.1:4000` 发起管理员登录时，登录限流会触发：
+  - `Too many requests, please try again later.`
+- 这不是坏现象，说明登录限流保护在生效
+
+- 以当前本地 `.env` 启动新的隔离后端实例时，公开接口会出现 500
+- 结合本轮检查结果，原因可归纳为：
+  - 当前本地 `.env` 绑定的是 Prisma Dev 临时数据库端口
+  - 长期运行中的本地实例可用，不代表这份 `.env` 适合复刻到新实例或正式环境
+- 这进一步证明：
+  - 技术上线前必须换成正式 PostgreSQL 配置
+  - 不能把当前工作区的本地 `.env` 当成部署配置直接使用
+
+5. 关于上传链路的本轮结论
+- 第三轮已经完成过：
+  - 图片上传
+  - 项目 PDF 上传
+  - 简历上传
+  - 上传后公开可访问
+- 本轮再次确认：
+  - 当前公开简历接口可返回可访问的简历地址
+  - 后台改资料后，前台公开接口能反映更新
+- 由于本地长期运行实例与 Prisma Dev 临时环境叠加，本轮没有再把“新上传图片 / PDF -> 立即绑定到新作品”单独记成一条新的成功回归结果
+- 但第三轮真实烟测已覆盖过该主链路，本轮没有发现接口字段层面的回退
+
+6. 本轮正式环境部署要点
+- 后端服务正式部署时至少要满足：
+  - `NODE_ENV=production`
+  - 正式 `APP_BASE_URL`
+  - 正式 `ADMIN_APP_ORIGIN`
+  - 正式 `DATABASE_URL`
+  - 正式 `DIRECT_URL`
+  - `TRUST_PROXY=true`（如果在代理后）
+- 正式环境不要继续依赖：
+  - Prisma Dev 本地数据库
+  - 当前工作区 `.env`
+  - 当前开发机上的 `uploads/`
+
+- 技术上线推荐路径：
+  1. 准备正式 PostgreSQL
+  2. 配好正式环境变量
+  3. 执行：
+     - `npm install`
+     - `npm run prisma:generate`
+     - `npm run prisma:migrate:deploy`
+     - `npm run prisma:seed`
+     - `npm run build`
+     - `npm run start`
+  4. 配好反向代理：
+     - `/api`
+     - `/uploads`（如果技术上线阶段继续用本地磁盘上传）
+  5. 用浏览器再走一轮访客链路和后台链路
+
+7. 当前是否达到“技术上线可执行”状态
+- 结论：
+  - 后端代码与接口设计层面，已经达到“技术上线可执行”
+  - 但当前真正还没做完的是“正式环境替换”
+
+- 换句话说：
+  - 代码、接口、CRUD、上传、公开读取、简历链路已经足够支撑技术上线
+  - 当前最后的明确阻塞项不是功能缺失，而是：
+    - 正式 PostgreSQL 未接
+    - 正式环境变量未落
+    - 正式反向代理未配
+    - 正式上传存储方案未定
+
+当前剩余问题（第四轮最终技术上线视角）
+1. 当前本地 `.env` 不能直接部署
+- 它绑定的是 Prisma Dev 临时数据库端口
+- 若照搬到服务器或新实例，会导致数据库不可用
+
+2. 正式基础设施还未就位
+- 正式域名未定
+- 正式 PostgreSQL 未定
+- 正式对象存储 / 本地磁盘策略未定
+- `/api` 与 `/uploads` 规则未真正落地
+
+3. 当前数据库内容仍是“技术上线占位态”
+- 站点资料已恢复为占位值
+- 公开作品列表里仍保留 1 条临时验收作品
+- 简历仍是占位 PDF
+- 这不阻塞技术上线，但仍不适合直接对招聘方公开投递
+
+4. 旧资源清理策略仍未补
+- 删除作品 / 替换简历后的旧 assets 和旧文件不会自动回收
+- 技术上线不因此阻塞
+- 但如果后续频繁演示或长期使用，建议单独补清理策略
+
+需要谁配合（第四轮最终技术上线）
+1. 需要你后续补什么
+- 正式域名
+- 正式服务器 / 平台
+- 正式 PostgreSQL
+- 是否继续本地磁盘上传，还是切对象存储
+- 最终管理员正式密码
+
+2. 需要前端配合
+- 用当前真实后端再完成一轮浏览器侧最终验收
+- 重点确认：
+  - 首页
+  - 作品列表页
+  - 作品详情页
+  - 简历页
+  - 后台登录和管理页
+- 如果技术上线阶段继续用相对路径 `/api`，部署时同步确认 `/uploads` 也能被前端页面访问
+
+3. 需要我继续处理的事项
+- 一旦正式环境参数确定，我可以把 `.env.example` 和部署说明收成“正式上线版”
+- 一旦你准备开始真正部署，我可以继续协助做：
+  - 正式环境变量核对
+  - PostgreSQL 迁移执行顺序核对
+  - 上线后 smoke check 清单核对
+
+==================================================
+【第五轮：免费部署路线调整（Render Free + Supabase Free）】
+时间：2026-04-26
+==================================================
+
+本轮目标
+- 不再按“自购服务器 + 本地磁盘上传”作为当前默认路线推进。
+- 后端统一切到：
+  - `Render Free Web Service` 承载前端静态产物 + 后端 API
+  - `Supabase Free` 承载 PostgreSQL + Storage
+
+一、本轮我做了什么
+1. 已把后端上传链路改造成“按存储提供方切换”
+- 新增 `STORAGE_PROVIDER` 环境变量
+- 生产默认口径切到 `supabase`
+- 本地开发仍允许显式切回 `local`
+
+2. 已把上传中间件从磁盘落地改成内存上传
+- 不再让 `multer` 直接把文件写进 `backend/uploads/`
+- 统一改为：
+  - 先接收文件到内存
+  - 再由后端存储服务写入 Supabase Storage 或本地目录
+
+3. 已补 Supabase Storage 服务
+- 新增服务端上传逻辑
+- 使用 Service Role Key 上传
+- 上传后直接生成公开可访问 URL
+- 后端返回字段口径保持不变：
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+
+4. 已补本地开发兜底存储
+- `local` 模式下仍可写本地 `uploads/`
+- 但现在它只作为开发兜底，不再作为免费正式路线
+
+5. 已让同一个 Node 服务支持托管前端构建产物
+- `/api/*` 继续走后端接口
+- 如果存在仓库根目录 `dist/index.html`
+  - 非 `/api` 请求会回退到前端 SPA
+- 这满足第五轮要求的“Render 单一 Web Service 同源访问”
+
+6. 已把部署与环境模板改成第五轮免费路线口径
+- `.env.example` 已加入：
+  - `STORAGE_PROVIDER`
+  - `SUPABASE_URL`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+  - `SUPABASE_STORAGE_BUCKET`
+  - `FRONTEND_DIST_DIR`
+- `README`、部署清单、Runbook 已全部改成 `Render + Supabase` 默认路线
+
+二、本轮修改了哪些文件
+1. 后端代码
+- `backend/src/config/env.ts`
+- `backend/src/middleware/upload.ts`
+- `backend/src/app.ts`
+- `backend/src/services/assets.service.ts`
+- `backend/src/services/storage/local-storage.ts`
+- `backend/src/services/storage/file-meta.ts`
+- `backend/src/services/storage/store-asset.ts`
+- `backend/src/services/storage/supabase-storage.ts`
+
+2. 依赖与环境模板
+- `backend/package.json`
+- `backend/package-lock.json`
+- `backend/.env.example`
+
+3. 文档
+- `backend/README.md`
+- `backend/docs/api-examples.md`
+- `backend/docs/production-deploy-checklist.md`
+- `backend/docs/technical-launch-runbook.md`
+
+三、这轮必须修改的代码点
+1. 存储提供方切换
+- 这是本轮最核心的代码改动
+- 不改这里，就仍然会默认把正式上传写到本地磁盘
+
+2. 上传中间件改为内存模式
+- 如果继续用 `multer.diskStorage`
+- Render 免费服务仍会把上传先写到本地盘
+- 这与第五轮冻结路线冲突
+
+3. 新增 Supabase Storage 服务
+- 这是让图片 / PDF / 简历脱离本地 `uploads/` 的关键
+
+4. Express 增加前端静态托管能力
+- 不改这里，就还是“前端单独部署”的旧假设
+- 第五轮要求的是同一个 Render Web Service 同源承载
+
+5. 环境变量和模板改造
+- 不补 Supabase / Render 所需变量
+- 后续平台实配时会继续沿用旧路线
+
+四、哪些只是部署动作，不是代码缺失
+1. 创建真实 Supabase Project
+2. 创建真实 Supabase Storage Bucket
+3. 拿到真实：
+  - `DATABASE_URL`
+  - `DIRECT_URL`
+  - `SUPABASE_URL`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+4. 创建真实 Render Free Web Service
+5. 在 Render 填环境变量
+6. 在本地先对 Supabase 跑：
+  - `npm run prisma:migrate:deploy`
+  - `npm run prisma:seed`
+
+五、本轮新增的部署说明
+1. Render 免费路线的关键口径
+- 服务 Root Directory 不能只指向 `backend/`
+- 必须保持在仓库根目录
+- 因为：
+  - 前端构建命令在仓库根目录
+  - 后端运行时要读取 `../dist`
+
+2. 推荐 Render Build Command
+- `npm install && npm run build && cd backend && npm install && npm run prisma:generate && npm run build`
+
+3. 推荐 Render Start Command
+- `cd backend && npm run start`
+
+4. 推荐 Health Check Path
+- `/api/health`
+
+5. 推荐 Supabase 连接方式
+- `DATABASE_URL`：
+  - Supabase Session Pooler
+- `DIRECT_URL`：
+  - Supabase Direct Connection
+
+6. 推荐 Supabase Storage 口径
+- 单独创建公开读 bucket
+- Bucket 名与 `SUPABASE_STORAGE_BUCKET` 保持一致
+- 因为当前封面、截图、项目 PDF、简历本来就是公开展示资产
+
+六、本轮真实阻塞
+1. 还没有真实 Supabase Project
+- 所以本轮无法完成“真实 Supabase 上传 -> 真实公网 URL”烟测
+
+2. 还没有真实 Render Free Web Service
+- 所以本轮无法完成“真实同源 Cookie 登录 + SPA 刷新 + 页面访问”线上验收
+
+3. 还没有真实 Supabase / Render 环境变量
+- 当前只能把代码和文档切到正确路线
+- 还不能替你完成平台最终配置
+
+4. Render Free 自身有平台限制
+- 免费实例会休眠
+- 免费服务不适合把首轮数据库初始化留到平台内临时处理
+- 本轮 Runbook 已改成：
+  - 先在本地对 Supabase 跑 migrate / seed
+  - 再部署 Render
+
+七、本轮验收结果
+1. 依赖已更新
+- 已执行：`npm install --no-fund --no-audit`
+- `@supabase/supabase-js` 已写入 `package.json` 和 `package-lock.json`
+
+2. TypeScript 构建通过
+- 已执行：`npm run build`
+- 结果：通过
+
+3. 本轮未做的验证
+- 还没有真实 Supabase 项目
+- 还没有真实 Render 服务
+- 因此没有办法在本轮完成：
+  - 真实上传
+  - 真实公开文件访问
+  - Render 免费域名下的真实浏览器验收
+
+八、当前后端结论
+- 第五轮免费路线所需的后端代码主干已经到位。
+- 当前项目已经不再把“本地 `uploads/` + 自购服务器”当成默认正式路线。
+- 现在剩下的核心工作已经从“代码缺功能”变成“平台实配和真实环境接入”。
+
+九、需要谁配合
+1. 需要你提供 / 决定
+- 创建真实 Supabase Project
+- 创建真实 Render Free Web Service
+- 最终管理员正式密码
+- 最终是否立刻用平台默认域名上线
+
+2. 需要前端继续配合
+- 保持生产构建产物输出到仓库根目录 `dist/`
+- 上线后配合做同源浏览器 smoke check：
+  - 首页
+  - 作品详情
+  - 简历页
+  - 后台登录
+  - 后台管理
+
+3. 需要我下一步继续做的事
+- 一旦你给出真实 Supabase / Render 参数
+- 我可以继续协助：
+  - 核对环境变量
+  - 核对 migration / seed 执行顺序
+  - 陪跑上线 smoke check
+
+==================================================
+【第六轮：国内友好免费部署路线切换（Tencent CloudBase）】
+时间：2026-04-26
+==================================================
+
+本轮目标
+- 不再把 `Render + Supabase` 当当前默认路线。
+- 统一切到 `Tencent CloudBase 国内友好免费路线` 做后端迁移评估和收口。
+- 重点回答：
+  - 哪些后端部分可以保留
+  - 哪些部分需要迁移
+  - 这还是部署问题，还是已经变成平台迁移问题
+
+一、本轮我做了什么
+1. 已重新评估当前后端在第六轮路线下的保留项和迁移项
+- 结合当前代码结构，按 4 个维度收口：
+  - 后端承载
+  - 文件存储
+  - 数据库
+  - 管理员登录
+
+2. 已更新后端文档口径
+- `backend/README.md`
+- `backend/docs/production-deploy-checklist.md`
+- `backend/docs/technical-launch-runbook.md`
+
+3. 已把第五轮“Render + Supabase 默认路线”降级为历史路线
+- 明确当前默认路线已改为 `CloudBase`
+- 当前代码里的 Supabase 逻辑改为“待迁移旧实现”口径
+
+二、本轮迁移结论
+1. 这已经不是单纯部署问题
+- 结论：第六轮对后端来说，已经是“平台迁移问题”。
+
+原因：
+- 后端承载平台变了
+- 文件存储平台变了
+- 数据库默认路线变了
+- 同源 Cookie 登录落地方式也需要重新确认
+
+2. 可以保留的部分
+- Express 路由结构
+- 业务 service 层
+- 当前接口字段结构
+- Cookie Session 单管理员登录思路
+- `assets` 统一资产模型
+- 当前“上传后返回 `url / previewUrl / downloadUrl`”口径
+- 上传中间件的 `memoryStorage` 方案
+- 若 PostgreSQL 可保住，则当前 Prisma schema 也尽量保留
+
+3. 需要迁移的部分
+- `Render Web Service` 承载思路
+- `Supabase Storage` 适配实现
+- 第五轮 Supabase 环境变量模板
+- 可能还包括 Prisma datasource 的最终数据库落点
+
+三、后端各部分的详细判断
+1. 后端承载
+- 建议路线：
+  - `CloudBase HTTP Cloud Function`
+- 判断：
+  - 当前 Express 能力优先考虑“包裹式迁移”
+  - 目标是保住现有 API，而不是重写接口
+
+- 可保留：
+  - `src/routes/**`
+  - `src/services/**`
+  - 大部分中间件
+
+- 需要迁移：
+  - 当前 `src/app.ts` 里第五轮“Node 直接托管前端 dist”的正式默认思路
+  - 第六轮更适合：
+    - 前端静态托管
+    - 后端函数承载
+
+2. 文件存储
+- 建议路线：
+  - `CloudBase Cloud Storage`
+
+- 可保留：
+  - `assets` 表
+  - 资源 URL 字段
+  - 上传中间件的内存模式
+  - 资产公共输出模型
+
+- 必须迁移：
+  - `backend/src/services/storage/supabase-storage.ts`
+  - `backend/src/config/env.ts` 里 `supabase` 相关默认值和校验
+  - `.env.example` 里的 Supabase 变量模板
+
+- 第七轮新增的真实实现说明：
+  - 当前 CloudBase 存储代码已经落地
+  - 访问地址通过 CloudBase SDK 的 `getTempFileURL` 获取
+  - 这足以进入“可部署验证阶段”
+  - 但 URL 的长期稳定性还需要真实环境继续确认
+
+3. 数据库
+- 当前最重要的结论：
+  - 第六轮不要先把后端推倒重来
+  - 优先尝试保住 `Prisma + PostgreSQL`
+
+- 推荐顺序：
+  1. 先验证 CloudBase PostgreSQL 能否被 Prisma 正常承接
+  2. 如果不行，再退到 CloudBase MySQL
+  3. 不建议 V1 直接改成 CloudBase 文档数据库
+
+- 原因：
+  - CloudBase 官方已经提供 PostgreSQL 数据库能力
+  - 当前 schema 是关系型设计
+  - `admin_sessions / projects / project_images / project_links / assets` 都是典型关系表
+  - 如果改文档数据库，不只是换数据库，而是读写逻辑一起重写
+
+- 关于 MySQL 的额外判断：
+  - CloudBase MySQL 官方文档明确写了按量计费和自动暂停
+  - 所以它更适合作为“低门槛备用路线”，不适合作为当前免费默认第一选择
+
+4. 管理员登录
+- 当前方案建议保留：
+  - 单管理员
+  - 服务端 session 表
+  - HttpOnly Cookie
+
+- 但这里有真实平台前提：
+  - 如果前端静态域名和后端函数域名不是同站点
+  - 当前 `SameSite=Lax` Cookie 登录会出现真实问题
+
+- 所以第六轮建议：
+  - 先不改登录机制
+  - 继续争取前后端同域 / 同站点收口
+  - 当前最理想的 CloudBase 形态是：
+    - `/` -> Static Hosting
+    - `/api` -> HTTP Cloud Function
+
+四、本轮修改了哪些文件
+1. 文档
+- `backend/README.md`
+- `backend/docs/production-deploy-checklist.md`
+- `backend/docs/technical-launch-runbook.md`
+
+2. 交付记录
+- `docs/交付/后端交付.txt`
+
+3. 本轮没有动的内容
+- 没有重写业务代码
+- 没有移除 Supabase 代码
+- 没有直接改 Prisma schema
+
+原因：
+- 第六轮当前任务是先完成路线评估和收口
+- 不是在数据库路线未确认前盲目大改代码
+
+五、本轮真实阻塞
+1. CloudBase PostgreSQL 与 Prisma 的真实兼容性还没验证
+- 当前最重要的技术不确定项
+- 还没有跑过：
+  - `prisma migrate deploy`
+  - `prisma seed`
+  - 实际运行连接
+
+2. CloudBase 数据库能力的真实费用边界还没确认
+- 当前目标是“国内友好 + 尽量免费”
+- 但 CloudBase PostgreSQL / MySQL 在真实环境里到底能否满足这个成本目标，还需要实际开通确认
+
+3. CloudBase 同域收口方案还没实操确认
+- 当前登录依赖 Cookie Session
+- 如果前端和后端不在同站点，登录会成为真实问题
+
+4. CloudBase 默认域名不等于正式公开域名
+- 当前能先做技术演示
+- 但如果要正式长期对外公开，中国大陆环境仍很可能需要：
+  - 自定义域名
+  - ICP 备案
+
+六、当前最合理的新路线
+1. 建议冻结路线
+- 前端：CloudBase Static Hosting
+- 后端：CloudBase HTTP Cloud Function
+- 文件：CloudBase Cloud Storage
+- 数据库：
+  - 先保 PostgreSQL
+  - 不行再退 MySQL
+
+2. 当前不建议的路线
+- 不建议直接把后端改成文档数据库重写
+- 不建议继续往 Render + Supabase 补工作量
+- 不建议在数据库路线没确认前就大改 Prisma schema
+
+七、后端平台迁移的真实工作量判断
+1. 低工作量部分
+- 文件存储替换
+  - 因为当前已抽出存储服务层
+- 前端资源 URL 口径保持不变
+  - 前端适配压力较小
+
+2. 中等工作量部分
+- Express 迁到 CloudBase HTTP 承载方式
+- 环境变量和部署模板重写
+
+3. 最高风险部分
+- 数据库最终路线确认
+- 同域 Cookie 登录落地
+
+结论：
+- 第六轮后端不是“全部重做”
+- 但也绝对不是“只改几个部署参数”
+- 是一次中等到偏高复杂度的平台迁移
+
+八、建议的下一步顺序
+1. 第一优先级
+- 先验证 CloudBase PostgreSQL 是否能承接 Prisma
+
+2. 第二优先级
+- 再把 Supabase 存储实现替换成 CloudBase 存储
+
+3. 第三优先级
+- 再做 CloudBase HTTP 入口适配
+
+4. 第四优先级
+- 最后确认前后端同域访问和 Cookie 行为
+
+九、需要谁配合
+1. 需要你提供 / 决定
+- 是否现在就创建 CloudBase 环境
+- 是否接受后续若要正式公开，增加自定义域名与备案
+- 是否允许先以“技术演示可访问”作为第一个落地目标
+
+2. 需要前端继续配合
+- 保持页面层和 API 适配层稳定
+- 只要后端继续给稳定资源 URL，前端尽量不重做
+
+3. 需要我下一步继续做的事
+- 如果你确认继续第六轮路线，我下一步建议直接进入：
+  - CloudBase PostgreSQL / Prisma 兼容性验证准备
+  - CloudBase 存储替换设计
+  - HTTP 云函数入口改造设计
+
+==================================================
+【第七轮：CloudBase 可部署性验证与后端迁移实施】
+时间：2026-04-26
+==================================================
+
+本轮目标
+- 不再停留在第六轮的纸面评估。
+- 让 CloudBase 路线真正进入代码可实施状态。
+- 本轮只围绕 4 件事推进：
+  - 运行时配置
+  - 存储实现
+  - HTTP 入口
+  - 文档口径清理
+
+一、本轮我做了什么
+1. 已把运行时配置扩到真正支持 CloudBase
+- `backend/src/config/env.ts`
+- 新增 / 落地：
+  - `DEPLOY_TARGET=standalone|cloudbase`
+  - `STORAGE_PROVIDER=local|supabase|cloudbase`
+  - `SERVE_FRONTEND_FROM_BACKEND`
+  - `CLOUDBASE_ENV_ID`
+  - `CLOUDBASE_SECRET_ID`
+  - `CLOUDBASE_SECRET_KEY`
+  - `CLOUDBASE_SESSION_TOKEN`
+  - `CLOUDBASE_HTTP_PORT`
+
+2. 已补 CloudBase 存储实现
+- 新增：
+  - `backend/src/services/storage/cloudbase-storage.ts`
+- 已把：
+  - `backend/src/services/storage/store-asset.ts`
+  改成真正可 dispatch 到 `cloudbase`
+
+3. 已补 CloudBase HTTP 入口
+- 新增：
+  - `backend/src/cloudbase-http.ts`
+  - `backend/src/server.ts`
+  - `backend/scf_bootstrap`
+- 同时保留：
+  - `backend/src/index.ts`
+  作为本地开发入口
+
+4. 已把文档默认口径切到第七轮
+- `backend/README.md`
+- `backend/.env.example`
+- `backend/docs/api-examples.md`
+- `backend/docs/production-deploy-checklist.md`
+- `backend/docs/technical-launch-runbook.md`
+
+二、本轮修改了哪些代码
+1. 运行时与入口
+- `backend/src/config/env.ts`
+- `backend/src/app.ts`
+- `backend/src/index.ts`
+- `backend/src/server.ts`
+- `backend/src/cloudbase-http.ts`
+- `backend/scf_bootstrap`
+- `backend/.gitattributes`
+
+2. 存储链路
+- `backend/src/services/storage/store-asset.ts`
+- `backend/src/services/storage/cloudbase-storage.ts`
+
+3. 依赖与模板
+- `backend/package.json`
+- `backend/package-lock.json`
+- `backend/.env.example`
+
+4. 文档与交付
+- `backend/README.md`
+- `backend/docs/api-examples.md`
+- `backend/docs/production-deploy-checklist.md`
+- `backend/docs/technical-launch-runbook.md`
+- `docs/交付/后端交付.txt`
+
+三、本轮实施结论
+1. `cloudbase` 已经从文档路线进入代码路线
+- 现在不是“未来要支持”
+- 而是代码里已经有：
+  - 运行时配置
+  - 存储分支
+  - HTTP 入口
+
+2. CloudBase 路线已经进入“可部署验证阶段”
+- 结论可以成立
+- 因为第七轮要求的 4 个验收前提都已满足：
+  1. 运行时配置支持 `cloudbase`
+  2. 存储 dispatch 支持 `cloudbase`
+  3. 仓库里存在 CloudBase HTTP 入口实现
+  4. 文档默认口径已切到 CloudBase
+
+3. 但当前还不能说“CloudBase 已经完成真实上线验证”
+- 因为真实环境阻塞还没被消掉
+- 当前状态更准确地说是：
+  - 已进入代码可部署验证阶段
+  - 尚未完成真实环境闭环
+
+四、哪些已经真正切到 CloudBase
+1. 生产默认运行时目标
+- 生产默认 `DEPLOY_TARGET=cloudbase`
+
+2. 生产默认存储目标
+- 生产默认 `STORAGE_PROVIDER=cloudbase`
+
+3. 上传链路
+- 已存在真实 `cloudbase` 存储分支
+
+4. HTTP 承载路径
+- 已存在 CloudBase 专用入口
+- 不再只靠 `app.listen(...)` 这一个本地入口
+- 已对 `scf_bootstrap` 固定 LF，降低 Windows -> Linux 部署脚本换行问题
+
+5. 前端资源字段口径
+- 继续保留：
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+
+五、哪些仍是待迁移旧实现
+1. `backend/src/services/storage/supabase-storage.ts`
+2. `@supabase/supabase-js`
+3. `STORAGE_PROVIDER=supabase` 兼容分支
+
+当前保留原因：
+- 为了过渡期兼容和历史路线兜底
+- 不是因为它仍是默认正式路线
+
+六、本轮真实阻塞
+1. CloudBase 数据库仍未完成真实验证
+- 当前还没有在真实 CloudBase 环境完成：
+  - `prisma migrate deploy`
+  - `prisma seed`
+  - 运行态连接验证
+
+2. CloudBase 当前到底能否满足“尽量免费”的数据库目标，仍需实操确认
+- PostgreSQL 兼容性还没跑
+- MySQL 文档已明确是按量计费并支持自动暂停
+
+3. CloudBase 存储 URL 的长期稳定性还没完成真实环境确认
+- 当前实现通过 CloudBase SDK 的 `getTempFileURL` 获取访问地址
+- 这已经足够进入第七轮可部署验证
+- 但下一轮仍需要确认：
+  - URL 有效期
+  - 是否需要后续切成更稳定的公开访问策略
+
+4. 同域 Cookie 登录仍依赖 CloudBase 最终路由形态
+- 如果不能把：
+  - `/` -> Static Hosting
+  - `/api` -> HTTP Cloud Function
+  收到同站点
+- 当前登录策略就仍有真实风险
+
+5. 默认域名不等于长期正式公开入口
+- 官方口径下默认域名更偏开发测试
+- 浏览器访问会出现访问提醒页
+- 如果要长期正式公开，仍很可能需要：
+  - 自定义域名
+  - ICP 备案
+
+七、CloudBase 当前到底是什么路线
+1. 当前可以明确说：
+- 它已经是“真正可执行的国内友好技术演示路线”
+
+2. 但不能误说：
+- 它已经是“零前置条件、零成本、长期正式公开路线”
+
+当前更准确的判断是：
+- 第七轮后，CloudBase 路线已经进入：
+  - 可部署验证阶段
+- 但是否能成为长期正式公开路线，还要继续经过：
+  - 数据库验证
+  - 同域登录验证
+  - 默认域名 / 备案边界确认
+
+八、本轮验收结果
+1. CloudBase SDK 已接入
+- 已执行：`npm install --no-fund --no-audit`
+- `@cloudbase/node-sdk` 已进入：
+  - `backend/package.json`
+  - `backend/package-lock.json`
+
+2. TypeScript 构建通过
+- 已执行：`npm run build`
+- 结果：通过
+
+3. 第七轮已满足的代码验收点
+- `cloudbase` 运行时配置存在
+- `cloudbase` 存储分支存在
+- CloudBase HTTP 入口存在
+- 文档默认路线已切换
+
+4. 本轮尚未做的真实平台验收
+- 没有真实 CloudBase 环境
+- 没有真实 CloudBase PostgreSQL
+- 没有真实 HTTP 访问服务路由
+- 因此还未完成：
+  - 真实上传
+  - 真实函数启动
+  - 真实 Cookie 登录
+
+九、建议的下一步顺序
+1. 第一优先级
+- 真实 CloudBase PostgreSQL / Prisma 兼容性验证
+
+2. 第二优先级
+- 真实 CloudBase HTTP 入口启动验证
+
+3. 第三优先级
+- 真实 CloudBase Storage 上传验证
+
+4. 第四优先级
+- 前后端同域访问与 Cookie 登录验证
+
+==================================================
+【第八轮：CloudBase 资产 URL 修复与上线封板】
+时间：2026-04-26
+==================================================
+
+本轮目标
+- 不扩需求，只修一个挡上线的真实风险：
+  - 不再把 CloudBase 临时访问 URL 当成数据库里的长期正式 URL
+- 保持前端字段口径不变：
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+
+一、本轮我做了什么
+1. 已修正 CloudBase 资产持久化策略
+- 修改：
+  - `backend/src/services/storage/cloudbase-storage.ts`
+- 当前策略改为：
+  - 上传后数据库持久化 `objectKey=fileID`
+  - `url` 列不再保存临时公网地址，而是保存稳定的 `fileID` 兜底值
+- 目的：
+  - 停止把 `getTempFileURL(...)` 返回的临时访问地址写死成数据库真值
+
+2. 已把资产读取链路改成“读时生成当前可访问 URL”
+- 主要修改：
+  - `backend/src/services/storage/public-asset.ts`
+  - `backend/src/services/site.service.ts`
+  - `backend/src/services/projects.service.ts`
+  - `backend/src/services/assets.service.ts`
+- 当前行为：
+  - 只要 `storageProvider=cloudbase`
+  - 公开接口、后台读取、上传回显都会基于 `objectKey/fileID` 重新生成当前访问地址
+- 覆盖范围：
+  - 首页聚合接口
+  - 作品列表接口
+  - 作品详情接口
+  - 简历接口
+  - 上传成功返回结构
+
+3. 已保住前端字段口径
+- 第八轮没有改前端依赖的资源字段名
+- 修复后继续返回：
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+- 因此这轮后端修复没有把问题扩散成前端接口重构
+
+4. 已明确旧数据处理结论
+- 结论：
+  - 如果历史 CloudBase 资产记录仍保留正确的 `objectKey=fileID`
+  - 第八轮读取时会用新逻辑覆盖旧的历史临时 URL
+  - 因此本轮默认不需要额外数据迁移
+- 这也是本轮默认路线能快速封板的关键原因
+
+5. 已同步更新文档口径
+- 已更新：
+  - `backend/README.md`
+  - `backend/docs/production-deploy-checklist.md`
+  - `backend/docs/technical-launch-runbook.md`
+- 已明确写清：
+  - 当前 CloudBase 资源访问链路采用“持久化 fileID，读时生成访问 URL”策略
+
+二、本轮修改了哪些文件
+1. 后端代码
+- `backend/src/services/storage/cloudbase-storage.ts`
+- `backend/src/services/storage/public-asset.ts`
+- `backend/src/services/assets.service.ts`
+- `backend/src/services/site.service.ts`
+- `backend/src/services/projects.service.ts`
+
+2. 文档
+- `backend/README.md`
+- `backend/docs/production-deploy-checklist.md`
+- `backend/docs/technical-launch-runbook.md`
+
+3. 交付记录
+- `docs/交付/后端交付.txt`
+
+三、本轮验证结果
+1. 后端 build 通过
+- 已执行：`backend/npm run build`
+- 结果：通过
+
+2. 前端 build 通过
+- 已执行：根目录 `npm run build`
+- 结果：通过
+
+3. 已完成第八轮核心逻辑验证
+- 通过本地脚本模拟“数据库里仍是旧临时 URL，但 `objectKey=fileID` 正确”的 CloudBase 资产
+- 验证结果：
+  - `mapUploadedAsset(...)` 返回的上传回显会优先使用新生成的当前 URL
+  - `resolveAssetUrlMap(...)` 会覆盖图片 / PDF 的历史旧 URL
+  - `mapAssetRef(...)` 继续正确返回：
+    - `url`
+    - `previewUrl`
+    - `downloadUrl`
+
+4. 已完成前端资源承载点位核对
+- 已检查前端当前资源消费位置，确认页面层仍按原字段口径取值：
+  - 首页 / 作品详情使用 `previewUrl`
+  - 详情页 PDF 使用 `url / previewUrl`
+  - 简历页与后台简历页使用 `downloadUrl`
+  - 后台作品编辑页继续使用上传回显里的 `url / previewUrl`
+- 结论：
+  - 本轮后端修复不会要求前端改字段结构
+
+四、本轮未完成但已确认的事项
+1. 本轮没有完成真实 CloudBase 环境 smoke
+- 当前本地并没有可直接使用的真实 CloudBase 环境
+- 因此还没有完成：
+  - 真实 CloudBase 上传
+  - 真实 CloudBase `getTempFileURL(...)` 返回验证
+  - 真实 CloudBase HTTP / 同域 Cookie 联调
+
+2. 本轮没有完成完整浏览器页级 smoke
+- 原因不是前端字段口径问题，而是当前本地数据库运行态不可用
+- 当前 `backend/.env` 指向的本地 Prisma Dev 数据库未运行，导致无法把首页、详情页、简历页、后台上传链路完整跑成真实浏览器联调
+
+五、本轮真实阻塞
+1. 真实 CloudBase 环境仍未接入
+- 第八轮已经把代码修对
+- 但还没拿真实 CloudBase 环境做最终上传和访问闭环验证
+
+2. 本地联调数据库当前未运行
+- 这阻塞了完整浏览器 smoke
+- 但不影响本轮关于“旧临时 URL 不再当数据库真值”的核心修复结论
+
+3. CloudBase 读时生成 URL 的长期有效性仍需真实环境核对
+- 当前方向已从“把临时 URL 写死”修成了“按 fileID 现算 URL”
+- 但真实有效期、策略边界和将来是否要切永久公开资源域名，仍是上线后续事项
+
+六、当前后端结论
+1. 第八轮目标已完成
+- CloudBase 临时 URL 已不再作为数据库长期正式 URL 持久化
+- 公开读取链路和上传回显都已切到按 `objectKey/fileID` 现算 URL
+- 前端字段口径未被打散
+
+2. 旧数据默认无需迁移
+- 只要历史 CloudBase 资产保留了正确的 `objectKey=fileID`
+- 新读取逻辑就会覆盖历史临时 URL
+
+3. 当前项目已经更接近“可上线封板”状态
+- 这一轮修掉了最明显的历史资源失效风险
+- 下一步就该进入真实 CloudBase 环境实配和最终 smoke
+
+七、需要你决策的事项
+1. 是否现在就进入真实 CloudBase 环境实配
+- 如果是，我下一步建议优先做：
+  - 真实数据库接入
+  - 真实上传
+  - 真实页面 smoke
+
+2. 是否接受第八轮后的资源策略
+- 当前默认策略是：
+  - 持久化 `fileID / objectKey`
+  - 读时生成访问 URL
+- 这是当前最快、最稳的上线封板方案
+- 如果你后续想改成“永久公开资源域名直出”，那应放到封板后单独做
+
+==================================================
+【第九轮：真实 CloudBase 环境实配与技术上线执行】
+时间：2026-04-26
+==================================================
+
+本轮目标
+- 不再继续路线评估，直接基于真实 CloudBase 环境推进：
+  - 真实环境创建
+  - 真实环境信息确认
+  - 数据库路线确认
+  - 技术上线地址准备
+
+一、本轮我做了什么
+1. 已接通真实 CloudBase 登录态并确认环境已创建
+- 通过真实浏览器会话进入 CloudBase 控制台
+- 已确认当前真实环境：
+  - 环境名称：`portfolio-site-v1`
+  - 环境 ID：`portfolio-site-v1-d1duqacaea7e51`
+  - 套餐：`云开发免费体验版`
+  - 有效期至：`2026-10-26`
+
+2. 已确认新版 CloudBase 控制台路径可用
+- 旧版 `console.cloud.tencent.com/tcb/**` 页面在当前网络环境下加载不稳定
+- 但新版控制台已可正常进入：
+  - `https://tcb.cloud.tencent.com/dev?envId=portfolio-site-v1-d1duqacaea7e51#/env/package-usage/basic`
+- 第九轮后续手工操作建议统一以新版控制台为准
+
+3. 已确认当前环境包含本项目需要的能力入口
+- 在新版左侧导航中已看到：
+  - `SQL 型数据库`
+  - `文档型数据库`
+  - `云函数 / 托管 / 主机`
+  - `云存储`
+  - `静态网站托管`
+  - `环境管理`
+- 说明：
+  - 真实 CloudBase 免费环境已经具备继续做技术上线验证的入口基础
+
+4. 已确认数据库路线出现真实平台分歧
+- 当前新版 CloudBase 控制台中，关系型数据库入口明确落在：
+  - `#/db/mysql/table/default/`
+- 套餐用量页中展示的关系型能力名称也是：
+  - `MySQL 数据库`
+- 这说明：
+  - 当前真实免费环境下，平台主推的 SQL 能力是 MySQL，而不是我们现有默认的 PostgreSQL
+- 结论：
+  - 第九轮“保住当前 Prisma + PostgreSQL 路线”已经出现真实阻塞
+  - 这个阻塞来自平台能力落点，不是本地代码拼错
+
+5. 已确认当前自动化执行受网络 / 控制台前端稳定性影响
+- 当前执行环境下，CloudBase 某些控制台页会出现：
+  - CSS 预加载失败
+  - 页面长期 `加载中`
+  - 自动化页签偶发丢失
+- 这导致：
+  - 我可以帮助定位入口和给出操作路径
+  - 但继续由我全自动完成整条发布链路，成功率不稳定
+- 因此第九轮后半段更适合改为：
+  - 我提供精确步骤
+  - 你在真实控制台里手工执行
+
+二、本轮修改了哪些文件
+1. 交付记录
+- `docs/交付/后端交付.txt`
+
+2. 本轮暂无代码修改
+- 本轮截至当前，后端代码、Prisma schema、部署脚本未新增修改
+- 原因：
+  - 真实阻塞首先出在 CloudBase 平台实配和数据库路线，而不是本地业务代码
+
+三、本轮已确认的真实环境信息
+1. 环境基本信息
+- 环境名称：`portfolio-site-v1`
+- 环境 ID：`portfolio-site-v1-d1duqacaea7e51`
+- 套餐：`云开发免费体验版`
+- 有效期至：`2026-10-26`
+
+2. 已确认的新版控制台入口
+- 环境用量页：
+  - `https://tcb.cloud.tencent.com/dev?envId=portfolio-site-v1-d1duqacaea7e51#/env/package-usage/basic`
+
+3. 已确认的关键控制台路由口径
+- 静态网站托管：
+  - `#/static-hosting`
+- 云存储：
+  - `#/storage`
+- 云函数 / 托管 / 主机：
+  - `#/scf`
+- 环境管理：
+  - `#/env/http-access`
+- SQL 型数据库：
+  - `#/db/mysql/table/default/`
+
+四、本轮真实阻塞
+1. PostgreSQL 路线未在真实免费环境中直接落地
+- 当前真实环境里看到的关系型入口是 MySQL
+- 还没有拿到可直接用于当前 `Prisma + PostgreSQL` 的连接信息
+- 因此当前不能说：
+  - `prisma migrate deploy` 已在真实 CloudBase 数据库上跑通
+
+2. 控制台自动化稳定性不足
+- 当前网络环境下，CloudBase 某些页对自动化不稳定
+- 因此：
+  - 静态托管发布
+  - 云函数发布
+  - HTTP 路由配置
+  - 默认访问地址确认
+  更适合改为人工操作
+
+3. 当前仍未完成的第九轮验收项
+- 还未确认：
+  - 静态网站托管默认访问域名
+  - `/api` 对应的 HTTP 网关真实路由
+  - 后端 `CloudBase HTTP` 入口是否已在真实环境启动
+  - 真实图片 / PDF / 简历上传
+  - 真实前后台 smoke check
+
+五、当前后端结论
+1. 第九轮前半段已经拿到真实环境
+- 环境已创建
+- 环境 ID 已确认
+- 新版控制台路径已确认可用
+
+2. 当前最大阻塞不是业务代码
+- 最大阻塞是：
+  - 真实 CloudBase 免费环境的数据层默认落点偏 MySQL
+  - 而当前后端主线是 `Prisma + PostgreSQL`
+
+3. 第九轮现在最合理的推进方式
+- 由我给出精确的人工执行步骤
+- 你在 CloudBase 控制台中完成：
+  - 静态托管发布
+  - 云函数 / HTTP 服务发布
+  - 路由配置
+  - 上传 smoke
+
+六、下一步建议的人工执行顺序
+1. 先做静态托管
+- 打开：
+  - `新版控制台 -> 静态网站托管`
+- 目标：
+  - 上传前端根目录 `dist/`
+  - 打开 SPA 回退到 `index.html`
+- 完成后记录：
+  - 默认访问域名
+
+2. 再做后端发布
+- 打开：
+  - `新版控制台 -> 云函数 / 托管 / 主机`
+- 目标：
+  - 部署后端目录编译产物，入口使用：
+    - `dist/cloudbase-http.js`
+    - `scf_bootstrap`
+- 完成后记录：
+  - 函数名
+  - 默认访问地址
+  - `/api/health` 是否可通
+
+3. 再做 HTTP 路由
+- 打开：
+  - `新版控制台 -> 环境管理`
+- 目标：
+  - `/` 指向静态网站托管
+  - `/api` 指向后端 HTTP 路线
+
+4. 最后做上传 smoke
+- 打开后台：
+  - 登录
+  - 上传图片
+  - 上传项目 PDF
+  - 上传简历 PDF
+- 验证：
+  - 前台公开读取
+  - `url / previewUrl / downloadUrl`
+
+七、需要你决策的事项
+1. 数据库路线要不要继续强保 PostgreSQL
+- 当前真实环境显示的 SQL 入口是 MySQL
+- 如果你要继续坚持 PostgreSQL：
+  - 第九轮就不能算完
+  - 需要额外找 CloudBase 是否提供独立 PostgreSQL 能力和连接方式
+- 如果你接受先把“技术上线地址”跑通：
+  - 可以先不接真实数据库迁移
+  - 先把静态托管 + HTTP 入口 + 上传链路做通
+
+2. 第九轮是否接受“技术上线先不闭合真实数据库”
+- 如果接受：
+  - 我优先帮你收口前台可访问地址、后端健康检查和上传链路
+- 如果不接受：
+  - 第九轮后端结论就是：
+    - 被 CloudBase 免费环境下的真实数据库路线阻塞
+
+八、第九轮新增进展（静态托管已成功）
+1. 前端静态托管已部署成功
+- 根据 CloudBase 部署日志，静态托管已成功完成
+- 实际部署命令：
+  - `tcb hosting deploy ./dist / -e portfolio-site-v1-d1duqacaea7e51`
+- 成功上传文件：
+  - `/index.html`
+  - `/assets/index-Bl4EsdPr.js`
+  - `/assets/index-CeZ8leZ_.css`
+
+2. 已拿到真实技术访问地址
+- 当前前端静态地址：
+  - `https://portfolio-site-v1-d1duqacaea7e51-1426158833.tcloudbaseapp.com`
+
+3. 当前结论更新
+- 第九轮“真实可访问地址”已经拿到一半：
+  - 前端静态托管：已成功
+  - 后端 `/api`：尚未部署完成
+- 因此当前项目状态应表述为：
+  - 已拿到真实 CloudBase 前端技术地址
+  - 还未完成后台登录、上传、公开读取的真实闭环
+
+4. 当前下一步优先级
+- 第一优先级：
+  - 在静态托管中确认 SPA 回退到 `index.html`
+- 第二优先级：
+  - 部署后端 CloudBase HTTP 入口
+- 第三优先级：
+  - 配置 `/api` 路由
+- 第四优先级：
+  - 真实上传和后台 smoke check
+
+九、第九轮再确认（基于真实控制台截图）
+1. CloudBase 免费环境当前 SQL 路线已确认是 MySQL
+- 依据：
+  - 真实新版控制台截图已显示：
+    - 左侧能力名：`SQL 型数据库`
+    - 实例来源：`云开发自带实例`
+    - 当前页为表管理 / 数据库表
+- 这不是 PostgreSQL 控制台
+- 因此第九轮当前不能再假设：
+  - 真实免费环境里还能直接保住现有 `Prisma + PostgreSQL`
+
+2. 当前后端阻塞进一步收口
+- `backend/prisma/schema.prisma` 当前数据源仍是：
+  - `provider = "postgresql"`
+- 其中 `highlights String[]`、`notes String[]` 也属于当前 PostgreSQL 友好写法
+- 所以就算拿到了 MySQL 连接串，也不能在不改 schema 的前提下直接部署当前后端
+
+3. 当前建议
+- 不要在 CloudBase SQL 控制台里手工建业务表
+- 先把这个结论固定为：
+  - 前端技术地址已上线
+  - 后端完整上线被真实数据库路线阻塞
+
+十、第九轮补充确认（数据库设置页）
+1. 已确认的真实数据库信息
+- 数据库版本：`MySQL 8.0`
+- 集群 ID：`cynosdbmysql-p7kbweyy`
+- 内网地址：`172.17.0.17:3306`
+- 默认库名已显示在连接串中：
+  - `portfolio-site-v1-d1duqacaea7e51`
+- 页面当前展示：
+  - `直连服务` 开关存在
+  - `外网地址` 当前关闭
+  - `root` 账号已存在
+
+2. 当前仍不建议继续手工配置业务账号和业务表
+- 原因不是数据库没准备好，而是后端代码的数据源仍是 PostgreSQL
+- 因此在路线未改前：
+  - 继续手工建表没有意义
+  - 现在更不应该直接做数据导入
+
+十一、用户决策与 HTTP 服务现状
+1. 用户已明确选择
+- 保留当前后端设计
+- 也就是：
+  - 暂不把后端改造成 MySQL 路线
+  - 第九轮后端上线阻塞继续按“缺少真实 PostgreSQL 承载”记录
+
+2. 当前 HTTP 访问服务页已确认
+- `HTTP 访问服务` 已开启
+- 已看到默认域名：
+  - `portfolio-site-v1-d1duqacaea7e51-1426158833.ap-shanghai.app.tcloudbase.com`
+- 当前 `路由管理` 为空
+
+3. 当前最合理的控制台动作
+- 先只给默认域名添加：
+  - `/` -> 静态网站托管
+- 暂时不要添加：
+  - `/api`
+- 原因：
+  - 后端真实运行还没有 PostgreSQL 落点
+  - 现在先把 HTTP 服务域名变成可访问前台的统一技术地址即可
+
+十二、当前真实访问结果
+1. 统一技术域名已经可访问前端壳子
+- 已确认：
+  - `https://portfolio-site-v1-d1duqacaea7e51-1426158833.ap-shanghai.app.tcloudbase.com`
+  可以打开前端页面框架
+
+2. 当前页面停留在“正在加载首页内容...”
+- 这说明：
+  - 前端静态资源已经可访问
+  - 前端运行时仍在请求 `/api/public/bootstrap`
+  - 但当前统一域名下还没有真实后端 `/api`
+
+3. 当前阶段结论
+- 前端统一技术地址：已打通
+- 后端真实接口：未打通
+- 因此当前不能表述为“前后端真实联调完成”
+
+十三、用户决定走 B
+1. 当前确认
+- 用户已决定继续推进完整上线
+- 但保留当前后端设计，不改成 MySQL
+
+2. 对后端意味着什么
+- 当前 CloudBase 免费环境里的 MySQL 不再作为后端数据库候选
+- 下一步必须改为：
+  - 外接真实 PostgreSQL
+  - 再部署当前 Express + Prisma 后端
+  - 再在 CloudBase HTTP 服务里补 `/api`
+
+3. 当前状态的一句话
+- 截至 2026-04-26，前端已上线到 CloudBase 统一技术域名，后端尚未连接，真实阻塞是“缺少可用的 PostgreSQL 承载”
+
+十四、路线临时调整：GitHub 优先
+1. 用户新决定
+- 暂停继续折腾 CloudBase 后端实配
+- 改为先走 GitHub 部署 / 托管优先
+
+2. 后端判断
+- GitHub Pages 只适合当前前端静态站
+- 不适合当前 Express + Prisma 后端
+- 因此如果走 GitHub：
+  - 可以先完成前端公开访问
+  - 但后端登录、上传、数据库、`/api` 暂时不会一起上线
+
+3. 当前建议口径
+- “GitHub 优先”应理解为：
+  - 先把代码和前端静态站放到 GitHub / GitHub Pages
+  - 后端继续保留当前设计，后续再接可用 PostgreSQL 和运行时
+
+==================================================
+【第十轮：低成本路线切换到 CloudBase MySQL 适配】
+时间：2026-04-26
+==================================================
+
+本轮目标
+- 按“少花钱”路线推进
+- 不再坚持 PostgreSQL
+- 把后端代码切到 CloudBase MySQL 可承接的 Prisma 结构
+
+一、本轮我做了什么
+1. 已把 Prisma 数据源切到 MySQL
+- 修改：
+  - `backend/prisma/schema.prisma`
+  - `backend/prisma/migrations/migration_lock.toml`
+- 当前数据源已从：
+  - `provider = "postgresql"`
+  改为：
+  - `provider = "mysql"`
+
+2. 已把 PostgreSQL 数组字段改成 MySQL 可承接结构
+- 受影响字段：
+  - `projects.highlights`
+  - `projects.notes`
+- 原来是：
+  - `String[]`
+- 现在改为：
+  - `Json`
+- 目的：
+  - 避开 MySQL 不支持 Prisma 标量数组的问题
+  - 保持前端依然拿到字符串数组，不改接口口径
+
+3. 已补项目读写层的 JSON <-> string[] 映射
+- 修改：
+  - `backend/src/services/projects.service.ts`
+- 当前行为：
+  - 写入数据库前，把 `string[]` 转成 JSON 数组
+  - 读取数据库后，再转回前端继续使用的 `string[]`
+
+4. 已重写初始 migration 为 MySQL 版本
+- 修改：
+  - `backend/prisma/migrations/20260426_000001_init/migration.sql`
+- 当前 migration 不再是 PostgreSQL DDL
+- 已改成适配 MySQL 的建表、索引和外键写法
+
+5. 已更新环境模板和 README 口径
+- 修改：
+  - `backend/.env.example`
+  - `backend/README.md`
+- 当前示例连接串和说明都已切到 MySQL 路线
+
+二、本轮修改了哪些文件
+1. 数据库与迁移
+- `backend/prisma/schema.prisma`
+- `backend/prisma/migrations/migration_lock.toml`
+- `backend/prisma/migrations/20260426_000001_init/migration.sql`
+
+2. 后端业务代码
+- `backend/src/services/projects.service.ts`
+
+3. 文档
+- `backend/.env.example`
+- `backend/README.md`
+- `docs/交付/后端交付.txt`
+
+三、本轮验证结果
+1. Prisma Client 已重新生成成功
+- 已执行：
+  - `backend/npm run prisma:generate`
+- 结果：通过
+
+2. 后端 TypeScript 编译通过
+- 已执行：
+  - `backend/npm run build`
+- 结果：通过
+
+3. 处理过一个本地环境问题
+- Prisma 生成前，本机有旧的后端 / Prisma 进程占着引擎文件
+- 我已先停止占用进程，再重新生成 Client
+- 这不是代码问题
+
+四、当前剩余阻塞
+1. 还没有把真实 CloudBase MySQL 连接串接进后端
+- 当前虽然代码已适配 MySQL
+- 但还缺真实连接信息：
+  - 用户名
+  - 密码
+  - `DATABASE_URL`
+  - `DIRECT_URL`
+
+2. 还没有在真实 MySQL 上执行迁移和 seed
+- 当前尚未验证：
+  - `npm run prisma:migrate:deploy`
+  - `npm run prisma:seed`
+  在 CloudBase MySQL 真库里是否通过
+
+3. `/api` 仍未接入 HTTP 服务
+- 所以前端统一技术域名现在仍只会出壳子
+- 首页还会卡在：
+  - “正在加载首页内容...”
+
+五、下一步最短路径
+1. 在 CloudBase MySQL 页面准备一个可用账号
+- 优先建议：
+  - 新建业务账号
+  - 不直接长期使用 root
+
+2. 拿到 MySQL 连接信息后
+- 回填到后端环境变量：
+  - `DATABASE_URL`
+  - `DIRECT_URL`
+
+3. 然后执行
+- `npm run prisma:migrate:deploy`
+- `npm run prisma:seed`
+
+4. 再部署后端 CloudBase HTTP 入口
+- 补 `/api` 路由
+- 验证：
+  - `/api/health`
+  - `/api/public/bootstrap`
+
+六、当前结论
+- “少花钱”路线已经不再只是口头决定
+- 后端代码主干已切到 CloudBase MySQL 兼容形态
+- 当前离真实联通还差最后一段：
+  - 真实 MySQL 账号与连接串
+  - migration / seed
+  - `/api` 接入
+
+七、本轮新增进展
+1. CloudBase MySQL 真库建表已成功
+- 用户已在 DMS / SQL 控制台执行：
+  - `backend/prisma/migrations/20260426_000001_init/migration.sql`
+- 当前库 `portfolio-site-v1-d1duqacaea7e51` 下已确认存在 8 张业务表：
+  - `admin_sessions`
+  - `admin_users`
+  - `assets`
+  - `project_images`
+  - `project_links`
+  - `projects`
+  - `site_contact_items`
+  - `site_profiles`
+
+2. 当前项目状态更新
+- 代码：已适配 MySQL
+- 数据库：真实建表已完成
+- 下一步只剩：
+  - 让本地 / 部署环境连上这套 MySQL
+  - 写入管理员与站点初始化数据
+  - 部署 `/api`
+
+八、本轮继续新增
+1. 已新增“后端首启自动补基础数据”能力
+- 新增：
+  - `backend/src/services/startup-bootstrap.service.ts`
+- 修改：
+  - `backend/src/index.ts`
+  - `backend/src/cloudbase-http.ts`
+  - `backend/src/config/env.ts`
+- 当前行为：
+  - 后端启动时会先确保 `site_profiles(id=1)` 存在
+  - 如果环境变量里提供了：
+    - `ADMIN_SEED_USERNAME`
+    - `ADMIN_SEED_PASSWORD`
+    则会自动 upsert 管理员账号
+
+2. 当前收益
+- 不再依赖本地外网访问数据库去跑 `prisma:seed`
+- 更适合现在这套：
+  - CloudBase 内网 MySQL
+  - CloudBase HTTP 后端
+
+3. 本轮验证
+- 已重新执行：
+  - `backend/npm run build`
+- 结果：通过
+
+九、本轮补充修正
+1. 为 CloudBase 代码包部署补上 Prisma Client 自动生成
+- 修改：
+  - `backend/package.json`
+- 新增脚本：
+  - `postinstall: prisma generate`
+
+2. 这次修正解决的问题
+- CloudBase 走“代码包创建”时，通常会在远端执行 `npm install`
+- 如果没有自动执行 `prisma generate`：
+  - `@prisma/client` 可能安装完成
+  - 但生成后的 Prisma Client 不一定存在
+  - 后端运行时容易直接因为 Prisma Client 缺失而启动失败
+
+3. 当前部署理解更新
+- 后端 CloudBase 代码包现在更适合走：
+  - 上传 `backend` 代码包
+  - 远端执行 `npm install --omit=dev`
+  - 直接使用：
+    - `./scf_bootstrap`
+    作为启动入口
+- 这条链路下，`postinstall` 会自动补齐 Prisma Client
+
+4. 当前结论
+- 代码层已经额外为 CloudBase 控制台手工部署补了一层稳定性
+- 下一步重点不再是改代码，而是：
+  - 在 CloudBase 控制台切到“通过代码包创建”
+  - 填环境变量
+  - 跑起 `/api`
+
+十、CloudBase 控制台部署口径修正
+1. 当前后端不能按“普通函数”创建
+- 原因：
+  - 当前后端不是事件型 `index.main` 处理函数
+  - 而是依赖：
+    - `scf_bootstrap`
+    - `dist/cloudbase-http.js`
+    启动一个监听 `9000` 端口的 Express HTTP 服务
+
+2. 控制台正确入口
+- 应选择：
+  - `通过代码包创建`
+  - `http函数`
+- 不应选择：
+  - `普通函数`
+
+3. 当前控制台推荐提交物
+- 上传：
+  - `backend/cloudbase-backend-deploy.zip`
+- 包内当前包含：
+  - `dist/`
+  - `prisma/`
+  - `package.json`
+  - `package-lock.json`
+  - `scf_bootstrap`
+
+4. 当前判断
+- 这更符合 CloudBase 官方 HTTP 云函数 / `scf_bootstrap` 启动方式
+- 下一步重点是：
+  - 完成函数创建
+  - 回填环境变量
+  - 验证 `/api/health`
+
+十一、第九轮当前新增进展
+1. CloudBase 后端 HTTP 函数已创建成功
+- 函数名：
+  - `self_introduction`
+- 类型：
+  - `http函数`
+- 运行环境：
+  - `Nodejs 18.15`
+- 当前控制台状态：
+  - `正常`
+
+2. 当前判断
+- 这说明：
+  - 代码包上传成功
+  - 远端依赖安装未直接失败
+  - `scf_bootstrap + dist/cloudbase-http.js` 这条启动链至少已通过平台基础校验
+
+3. 下一步剩余闭环
+- 把统一技术域名下的：
+  - `/api`
+  路由到：
+  - `self_introduction`
+- 然后验证：
+  - `/api/health`
+  - `/api/public/bootstrap`
+  - 首页不再卡在“正在加载首页内容...”
+
+十二、第九轮启动修正
+1. 补充修正 `scf_bootstrap`
+- 修改：
+  - `backend/scf_bootstrap`
+- 从：
+  - `node dist/cloudbase-http.js`
+- 调整为：
+  - `/var/lang/node18/bin/node dist/cloudbase-http.js`
+
+2. 修正原因
+- CloudBase / SCF 官方 Node 运行时下，更稳妥的做法是显式使用运行时绝对 Node 路径
+- 避免某些环境下：
+  - `node` PATH 不符合预期
+  - 启动脚本存在但实际找不到 Node 解释器
+
+3. 当前判断
+- 这属于“函数已创建但实际访问仍打不开”时最值得先排除的一层
+- 另一层仍需继续留意的是：
+  - `scf_bootstrap` 在 zip 包中的可执行权限
+  - 函数执行超时时间是否仍是过低默认值
+
+十三、CloudBase 部署包补强
+1. 已重新生成后端部署包
+- 文件：
+  - `backend/cloudbase-backend-deploy.zip`
+
+2. 本次补强内容
+- `scf_bootstrap` 已使用 CloudBase Node 18 运行时绝对路径：
+  - `/var/lang/node18/bin/node dist/cloudbase-http.js`
+- 重新打包时已显式写入 zip 文件元数据：
+  - `scf_bootstrap` 权限为 `755`
+
+3. 修正原因
+- Windows 常规压缩产物不一定保留 Linux 可执行权限
+- 这会导致：
+  - 函数创建成功
+  - 但真实 HTTP 访问时启动脚本无法执行
+
+4. 当前结论
+- 现在更合理的下一步不是继续猜路由
+- 而是：
+  - 用新的 `cloudbase-backend-deploy.zip` 重新部署函数代码
+  - 再复测：
+    - `/api/health`
+
+十四、第九轮接口启动收口修正
+1. 调整后端启动策略，避免启动阶段阻塞整个 HTTP 响应
+- 修改：
+  - `backend/src/cloudbase-http.ts`
+  - `backend/src/index.ts`
+- 当前逻辑从：
+  - 先 `await ensureStartupBootstrap()`
+  - 成功后才启动 HTTP 服务
+- 调整为：
+  - 先启动 HTTP 服务
+  - 再异步执行 `ensureStartupBootstrap()`
+  - 若初始化失败，写日志，但不阻塞 `/api/health`
+
+2. 登录链路补充管理员自动种子兜底
+- 修改：
+  - `backend/src/services/auth.service.ts`
+- 当前行为：
+  - 管理员登录前会先 `await ensureStartupBootstrap()`
+  - 这样仍能保证：
+    - `ADMIN_SEED_USERNAME`
+    - `ADMIN_SEED_PASSWORD`
+    对应的管理员账号能被补齐
+
+3. 这次修正要解决的现象
+- 现象：
+  - 统一技术域名已能打开前端壳子
+  - 但首页一直停在“正在加载首页内容...”
+- 当前判断：
+  - 更像是函数启动阶段卡数据库初始化，导致接口长时间 pending
+- 修正后的目标：
+  - 至少让：
+    - `/api/health`
+    先稳定返回
+  - 数据库若异常，也应在公开接口处尽快返回错误，而不是整站一直挂起
+
+十五、第九轮联调定位结论更新
+1. 当前前端错误已从“长时间加载中”变成：
+- `首页内容加载失败：接口返回了无法解析的内容。`
+
+2. 这条错误在当前代码里的含义
+- 前端 `realApi.ts` 只有在“接口返回了非 JSON 文本 / HTML”时才会报这个错误
+- 后端 Express 即使 404 / 500 也会统一返回 JSON
+
+3. 当前最合理判断
+- `/api/public/bootstrap` 当前大概率没有真正命中后端 Express
+- 更像是：
+  - 命中了静态托管回退页
+  - 或命中了 CloudBase 默认 HTML 页面
+- 因此函数日志为空也能解释通：
+  - 请求根本没有真正进入 `self_introduction`
+
+4. 下一步排查重点
+- 不再优先怀疑 Prisma 或业务逻辑
+- 优先检查：
+  - `self_introduction` 的函数触发路径 / 访问路径配置
+  - `HTTP 访问服务` 里的 `/api` 路由是否与函数触发路径一致
+
+十六、第九轮 CloudBase 路由排查补充
+1. 当前已确认
+- `HTTP 访问服务` 路由表本身是合理的：
+  - `/` -> 静态托管
+  - `/api` -> `selfintroduction`
+  - `/api` 已开启路径透传
+
+2. 当前更高概率的问题
+- `http函数` 自身还存在一层“触发路径 / 访问路径”配置
+- 如果函数自身触发路径没有与 `/api` 对齐：
+  - 浏览器请求可能不会真正命中函数
+  - 这就能解释：
+    - 前端拿到 HTML 而不是 JSON
+    - 函数日志为空
+
+3. 下一步最关键的控制台检查
+- 进入：
+  - `selfintroduction`
+  - `函数配置`
+- 查找并确认：
+  - `触发路径`
+  - `访问路径`
+  - `HTTP 路径`
+- 目标值优先建议：
+  - `/api`
+
+十七、第九轮运行时崩溃排查修正
+1. 新证据
+- 现在 CloudBase 日志已经出现：
+  - `START RequestId: ...`
+  - 调用状态：`调用失败`
+- 但仍没有业务日志或 JSON 响应
+
+2. 当前高概率根因判断
+- 函数进程已被真正触发
+- 但在 Node 入口导入阶段就崩了
+- 当前最值得优先排除的是：
+  - `argon2` 这类原生依赖在 CloudBase Node 运行时加载失败
+
+3. 已做代码修正
+- 修改：
+  - `backend/src/utils/password.ts`
+  - `backend/package.json`
+  - `backend/src/cloudbase-http.ts`
+- 具体内容：
+  - 密码哈希从 `argon2` 切换为 Node 内建 `crypto.scrypt`
+  - 从依赖中移除 `argon2`
+  - 在 CloudBase 入口增加早期启动日志：
+    - `CloudBase HTTP bootstrap module loaded.`
+
+4. 修正意图
+- 避免 CloudBase 在加载原生模块时直接崩溃
+- 让函数至少能成功进入 JS 入口
+- 便于下一轮通过日志区分：
+  - “入口未跑起来”
+  - 还是“入口已跑起来但数据库/业务失败”

@@ -1,0 +1,2552 @@
+前端交付记录
+
+用途：
+用于记录前端方案、实现进度、已做修改、联调约定，方便项目内其他人快速了解当前状态。
+
+维护约定：
+1. 后续所有前端相关方案说明，都会同步更新到本文件。
+2. 每次实际代码修改后，也会在本文件补充“修改内容”和“影响范围”。
+3. 本文件以“主要描述”为主，不过度展开视觉细节，重点保证可交接、可追踪。
+
+更新时间：
+2026-04-26
+
+一、项目目标
+这是一个面向招聘方的个人作品展示网站。
+前端目标是同时覆盖：
+1. 用户看到的公开展示站点
+2. 后台管理页面
+3. 电脑端优先的响应式适配
+
+当前已知风格方向：
+1. 偏杂志感
+2. 首页存在可缩放、可拖动的拼贴式交互
+3. 视觉暂不写死，先做结构与技术方案
+
+二、当前已确认页面
+1. 首页
+2. 作品列表页
+3. 作品详情页
+4. 简历页
+5. /admin 登录页
+6. 后台管理页
+
+三、当前前端实施方案
+
+1. 路由结构
+- /
+  首页。支持首页内作品放大态，建议通过查询参数保留状态，例如 ?project=slug
+- /works
+  作品列表页，普通网格展示
+- /works/:slug
+  作品详情页
+- /resume
+  简历页
+- /admin/login
+  后台登录页
+- /admin
+  后台管理主框架页
+- /admin/profile
+  基本信息维护
+- /admin/projects
+  作品列表、排序、上下架
+- /admin/projects/:id
+  作品编辑
+- /admin/resume
+  简历文件维护
+
+说明：
+对外仍然可以理解为 6 类页面，但实现上会将后台拆成子路由，方便维护与扩展。
+
+2. 组件拆分方案
+建议按“路由模块 + 共享组件 + 数据层”组织。
+
+推荐目录结构：
+src/
+  app/
+    router/
+    providers/
+  modules/
+    home/
+    works/
+    resume/
+    admin/
+  shared/
+    ui/
+    api/
+    hooks/
+    types/
+    utils/
+
+首页模块建议组件：
+- HomeHero
+- CollageStage
+- CollageCard
+- ProjectFocusOverlay
+- CanvasControls
+
+作品模块建议组件：
+- WorksGrid
+- WorkCard
+- WorkMeta
+- WorkLinks
+- MediaGallery
+- PdfPreview
+- ScreenshotNoteList
+
+简历模块建议组件：
+- ResumePreview
+- ResumeToolbar
+- ResumeDownloadButton
+
+后台模块建议组件：
+- AdminLayout
+- LoginForm
+- ProfileForm
+- ProjectTable
+- SortableProjectList
+- ProjectEditorForm
+- MediaUploader
+- LinkEditor
+- ResumeManager
+
+3. 首页缩放/拖动交互技术方案
+- 首页拼贴区不建议使用真实 canvas 绘制卡片
+- 采用 DOM 卡片 + 单一 transform 舞台方案
+- 所有作品卡片在舞台内使用绝对定位
+- 舞台统一使用 translate3d(x, y, 0) scale(scale) 控制缩放和平移
+- 交互状态建议独立维护：
+  viewState = { x, y, scale, activeProjectSlug }
+- 鼠标滚轮缩放采用“以光标为中心缩放”
+- 拖动画布采用 Pointer Events
+- 点击与拖动之间要设置阈值，避免误触
+- 高频位移和缩放更新建议使用 requestAnimationFrame
+- 移动端和平板仅让拼贴舞台区域接管手势，避免整页滚动冲突
+- 点击作品卡片后，不离开首页，而是在首页内拉起放大简介层
+- 放大态第一行展示作品链接，下面展示简介和入口操作
+- 放大态建议同步到 URL 查询参数，支持刷新恢复和分享
+- 需要提供“重置视图”能力，避免用户拖离主要内容区域
+
+4. 前后端联调数据结构建议
+建议拆分为“公共摘要数据”和“详情数据”。
+首页和列表页只拿轻量数据，详情页再请求完整内容。
+
+建议数据模型：
+
+SiteProfile
+- name
+- tagline
+- bio
+- contacts[]
+
+ProjectSummary
+- id
+- slug
+- title
+- cover
+- excerpt
+- primaryLink
+- manualOrder
+- status
+- period
+- collage
+- updatedAt
+
+ProjectDetail
+- 继承 ProjectSummary
+- links[]
+- detailBlocks[]
+
+ResumeAsset
+- title
+- pdfUrl
+- downloadUrl
+- updatedAt
+
+PublicBootstrap
+- profile
+- featuredProjects
+- resume
+- contentVersion
+
+建议接口：
+- GET /api/public/bootstrap
+- GET /api/public/projects
+- GET /api/public/projects/:slug
+- GET /api/public/resume
+- GET /api/public/version
+- POST /api/admin/login
+- GET /api/admin/profile
+- PUT /api/admin/profile
+- GET /api/admin/projects
+- POST /api/admin/projects
+- PUT /api/admin/projects/:id
+- POST /api/admin/projects/reorder
+- GET /api/admin/resume
+- PUT /api/admin/resume
+
+5. 准备使用的主要库或框架
+- React + TypeScript
+- Vite
+- React Router
+- TanStack Query
+- Motion
+- @dnd-kit/sortable
+- react-pdf + PDF.js
+- 样式建议先使用 CSS Modules 或 SCSS Modules
+
+原因：
+1. 方便实现复杂交互
+2. 路由和后台表单拆分清晰
+3. 便于后续新增作品
+4. 不先绑定重型 UI 框架，给杂志感视觉留空间
+
+6. 风险点与需要后端配合的地方
+- 首页缩放拖动与移动端滚动手势可能冲突
+- 后台更新后前台“及时响应”需要后端提供 contentVersion 或聚合 updatedAt
+- PDF 在线预览需要后端或对象存储支持稳定访问、CORS、Range 请求
+- 图片最好区分缩略图和原图，避免首页直接加载大图
+- 手动排序需要后端提供稳定持久化接口
+- 后台登录建议采用 HttpOnly Cookie 会话方案
+- slug 需要保证唯一
+- 作品需要 draft/published 状态，避免未完成内容直接对外暴露
+
+四、当前已完成内容
+1. 已完成首轮前端实施方案
+2. 已完成页面拆分、组件拆分、首页交互方案、联调结构、技术栈建议、风险点梳理
+
+五、当前尚未开始的内容
+1. 尚未开始正式代码脚手架搭建
+2. 尚未开始页面视觉实现
+3. 尚未开始后台表单与排序交互实现
+4. 尚未开始前后端接口联调
+
+六、后续记录方式
+后续每次更新将补充以下内容：
+1. 本次做了什么
+2. 修改了哪些文件
+3. 为什么这样改
+4. 是否影响前后端联调
+5. 是否有未解决问题
+
+七、第二轮正式开工新增内容（2026-04-26）
+
+本轮依据：
+《产品统筹-第二轮开工指令.txt》
+
+本轮目标：
+1. 从第一轮静态原型切换到正式前端项目
+2. 按 A 版首页方向推进
+3. 先完成结构、路由、交互基础、mock 数据层
+4. 暂不把最终视觉细节写死，等待高保真设计稿
+
+1. 本轮已完成内容
+
+1) 正式前端项目初始化完成
+- 已在根目录改为正式 Vite 入口
+- 已完成 React + TypeScript + Vite 项目结构搭建
+- 已新增 package.json、tsconfig、vite.config 等正式工程文件
+- 已安装依赖并通过生产构建
+
+2) 页面路由已搭建完成
+- /
+- /works
+- /works/:slug
+- /resume
+- /admin/login
+- /admin
+- /admin/profile
+- /admin/projects
+- /admin/resume
+
+3) 首页 A 版基础交互已完成
+- 顶部横向信息区已改为：
+  姓名 + 一句话介绍 + 联系方式
+- 首页主体已改为可交互拼贴舞台
+- 已支持滚轮缩放
+- 已支持拖动画布
+- 已支持点击卡片后在首页内进入放大简介态
+- 放大态第一行展示作品链接
+- 已支持“进入详情页”和“打开外链”
+- 已支持重置视图
+- 已支持通过 URL 查询参数保留当前项目状态
+  例如：?project=hydra-ops-console
+
+4) 公开页面骨架已完成
+- 作品列表页：普通网格结构已完成
+- 作品详情页：已具备封面、标题、简介、时间、多图、截图说明、多个外链、PDF 预览容器
+- 简历页：已具备页面内预览和下载按钮
+
+5) 后台管理骨架已完成
+- /admin/login：已完成 mock 登录页和受保护路由
+- /admin：已完成后台总览页
+- /admin/profile：已完成基本信息维护表单
+- /admin/projects：已完成作品列表、选择编辑、上下排序、状态切换、基础字段编辑、外链编辑、截图说明编辑
+- /admin/resume：已完成简历标题、摘要、下载文案维护和预览容器
+
+6) 前端统一数据层已完成第一版
+- 已完成 types 定义
+- 已完成 mock 数据
+- 已完成 mock API
+- 已完成本地 localStorage 持久化
+- 已完成后台修改后触发前台数据失效刷新
+- 已保证公开页和后台页都从统一数据层读取
+- 没有把正式内容直接写死在页面组件里
+
+7) 验证结果
+- npm install 已完成
+- npm run build 已通过
+- 本地 dev server 已在提权验证下返回 200，说明应用入口可正常启动
+
+2. 本轮主要新增文件
+
+工程与入口：
+- index.html
+- package.json
+- tsconfig.json
+- tsconfig.app.json
+- tsconfig.node.json
+- vite.config.ts
+
+应用入口与路由：
+- src/main.tsx
+- src/app/App.tsx
+- src/app/providers/AppProviders.tsx
+- src/app/providers/ContentSyncBridge.tsx
+- src/app/router/AppRouter.tsx
+- src/app/router/RequireAdminAuth.tsx
+- src/app/router/ScrollToTop.tsx
+
+数据层：
+- src/types/content.ts
+- src/data/mockSeed.ts
+- src/data/mockDb.ts
+- src/data/mockApi.ts
+- src/hooks/usePortfolioQueries.ts
+
+布局与组件：
+- src/layouts/PublicLayout.tsx
+- src/layouts/AdminLayout.tsx
+- src/components/CollageStage.tsx
+- src/components/ProjectFocusOverlay.tsx
+- src/components/PdfPreview.tsx
+
+页面：
+- src/pages/HomePage.tsx
+- src/pages/WorksPage.tsx
+- src/pages/WorkDetailPage.tsx
+- src/pages/ResumePage.tsx
+- src/pages/AdminLoginPage.tsx
+- src/pages/AdminDashboardPage.tsx
+- src/pages/AdminProfilePage.tsx
+- src/pages/AdminProjectsPage.tsx
+- src/pages/AdminResumePage.tsx
+
+样式：
+- src/styles.css
+
+保留说明：
+- 第一轮静态 HTML 原型文件仍保留在根目录，当前作为参考稿存在，不再作为正式入口使用
+
+3. 本轮这样做的原因
+
+1) 先上正式脚手架
+因为第二轮要求已经从“确认方向”进入“执行落地”，继续只维护静态 HTML 原型已经不适合后续联调和持续新增作品。
+
+2) 先做统一 mock 数据层
+因为后端接口第一版还在同步推进，前端必须先用统一 mock 数据把页面结构和交互跑通，后续才能平滑替换为真实 API。
+
+3) 首页交互和内容状态分离
+首页缩放、拖动、聚焦态属于前端视图状态；作品标题、简介、链接、截图说明属于内容数据。两者分离后，后续换设计稿或换接口都更稳。
+
+4) 后台修改联动前台
+本轮已通过 localStorage + 统一数据更新事件模拟“后台改完，前台能拿到最新内容”的链路，为真实接口联调提前铺好结构。
+
+4. 当前风险与待确认问题
+
+1) 产品字段仍有缺口
+当前统一内容模型里：
+- ProjectLink 缺少 projectId
+- ProjectImage 缺少 projectId
+如果后端最终 schema 不补关联字段，前端无法稳定做项目级外链和截图管理。
+
+2) 详情页长内容字段仍不足
+当前冻结模型里 Project 只有 excerpt，不足以承载真正的详情页正文。
+本轮前端 mock 层已额外使用：
+- description
+- role
+- highlights[]
+- notes[]
+后端需要确认这些字段最终落到哪张表、以什么结构返回。
+
+3) 首页自由拼贴位置目前仍是前端预设
+本轮按 sortOrder + 前端预设槽位完成 A 版首页。
+如果后续希望管理员手动控制每张卡片在首页中的具体位置、角度和尺寸，需要新增布局字段。
+
+4) BrowserRouter 部署需要服务端回退配置
+当前正式前端使用的是路由模式，不是多 HTML 页面模式。
+部署时需要服务端把未知路径回退到 index.html。
+
+5) 本地 dev server 在普通沙箱下会遇到 esbuild spawn EPERM
+这不是项目代码错误，属于当前运行环境限制。
+构建已通过，且在提权验证下 dev server 返回 200。
+
+5. 需要后端配合的事项
+
+1) 请确认详情页正式字段
+至少需要确认是否提供以下内容：
+- description 或正文内容字段
+- role
+- highlights[]
+- notes[]
+否则作品详情页只能长期停留在“摘要级”。
+
+2) 请确认公开接口聚合结构
+前端公开页实际渲染时，需要后端返回：
+- Project 基础字段
+- coverAsset
+- pdfAsset
+- links[]
+- images[]
+仅返回分散表结构不够前端直接消费。
+
+3) 请确认后台排序接口口径
+前端这轮已支持上下排序。
+后端需要明确：
+- 是提交完整 id 顺序数组
+- 还是提交单个项目的新 sortOrder
+
+4) 请确认文件上传与访问策略
+前端后续要接：
+- 封面图
+- 项目多图
+- PDF 文件
+后端需要明确：
+- 上传接口字段
+- 访问 URL 规则
+- 预览 URL 与下载 URL 是否分离
+- PDF 是否支持浏览器预览与 Range 请求
+
+5) 请确认登录态方案
+前端当前用 mock session 模拟。
+真实联调建议后端提供：
+- 登录接口
+- 登录态校验接口
+- 退出登录接口
+并优先采用 HttpOnly Cookie。
+
+6. 下一步前端计划
+
+1. 等待设计高保真稿后，把当前结构样式升级为正式视觉
+2. 等待后端第一版接口后，将 mock API 替换为真实接口
+3. 接入真实上传能力，完善封面图、多图、PDF 的后台维护
+4. 根据联调结果补充错误态、空态、保存反馈和权限边界
+
+八、2.5轮补齐与口径对齐新增内容（2026-04-26）
+
+本轮依据：
+《产品统筹-第二轮补齐与口径对齐指令.txt》
+
+本轮目标：
+1. 不新增页面和功能范围
+2. 对齐公开接口字段命名
+3. 收口 mock 结构与正式结构差异
+4. 让详情页对可选字段具备稳定容错能力
+
+1. 本轮已完成内容
+
+1) 已新增“正式产品口径”前端类型层
+本轮已将前端公开页真正依赖的结构单独整理出来，不再直接把内部 mock 数据结构当成正式接口结构使用。
+
+当前正式公开口径已在前端类型中单独准备：
+
+PublicBootstrap
+- profile
+- featuredProjects
+- resume
+- contentVersion
+
+FeaturedProject
+- id
+- slug
+- title
+- excerpt
+- period
+- status
+- sortOrder
+- cover
+- links[]
+- updatedAt
+
+ProjectDetail
+- id
+- slug
+- title
+- excerpt
+- description
+- period
+- status
+- sortOrder
+- cover
+- pdf
+- links[]
+- images[]
+- role（可选）
+- highlights[]（可选）
+- notes[]（可选）
+- createdAt
+- updatedAt
+
+Resume（首页聚合内）
+- assetId
+- fileName
+- url
+- previewUrl
+- downloadUrl
+- updatedAt
+
+2) 已新增 API 适配层
+本轮已新增专门适配层文件：
+- src/data/publicAdapters.ts
+
+本层作用：
+1. 将当前本地 mock 数据库结构映射为正式产品口径
+2. 为第三轮真实联调预留统一入口
+3. 收口“旧接口命名”和“正式接口命名”的差异
+
+当前已具备的适配能力：
+- 可输出正式结构：
+  profile + featuredProjects + resume + contentVersion
+- 可兼容旧命名结构：
+  site + projects + resume + contentVersion
+- 可归一化 status 大小写
+  例如：
+  PUBLISHED -> published
+  DRAFT -> draft
+
+说明：
+这一步的意义是，第三轮切换真实接口时，优先替换数据来源和 transport 层，而不是回头推翻页面组件。
+
+3) 首页主链接已改为从 links[] 第一项派生
+本轮已取消页面层对额外 primaryLink 字段的依赖。
+
+当前规则：
+- 首页放大态第一行展示作品链接时，直接取 links[] 排序后的第一项
+- 作品详情页顶部作品链接同样取 links[] 第一项
+- 若 links[] 为空，页面会展示“待补充”，不会报错
+
+4) 详情页可选字段容错已补齐
+本轮已对以下字段改为可选处理：
+- role
+- highlights[]
+- notes[]
+
+处理方式：
+1. 若 role 缺失，则不渲染“项目角色”块
+2. 若 highlights[] 为空，则不渲染“项目亮点”区
+3. 若 notes[] 为空，则不渲染“补充说明”区
+4. 页面仍可依赖 description 正常渲染，不会因为推荐字段缺失而报错
+
+5) 页面组件已从“内部 mock 私有命名”解耦
+本轮已去掉页面组件对以下字段的直接耦合：
+- primaryLink
+- coverAsset
+- pdfAsset
+
+当前页面使用方式：
+- 封面统一读取 cover
+- PDF 统一读取 pdf
+- 主链接统一由 links[] 派生
+
+这一步是为了保证第三轮联调时页面结构尽量不动，只替换接口接入层。
+
+6) 保持第二轮结构成果不回退
+本轮没有回退以下已完成成果：
+- 正式 React + TypeScript + Vite 工程
+- 首页 A 版缩放 / 拖动 / 首页内放大简介交互
+- 路由结构
+- 后台管理骨架
+- localStorage mock 持久化联动
+
+7) 验证结果
+- npm run build 已再次通过
+- 说明 2.5 轮数据口径调整没有破坏当前构建状态
+
+2. 本轮修改文件
+
+新增：
+- src/data/publicAdapters.ts
+- src/utils/projectContent.ts
+
+修改：
+- src/types/content.ts
+- src/data/mockApi.ts
+- src/components/CollageStage.tsx
+- src/components/ProjectFocusOverlay.tsx
+- src/components/PdfPreview.tsx
+- src/pages/WorksPage.tsx
+- src/pages/WorkDetailPage.tsx
+- src/pages/ResumePage.tsx
+- src/pages/AdminProjectsPage.tsx
+- 前端交付.txt
+
+3. 本轮字段清单（供第三轮联调前统一）
+
+1) 首页聚合接口前端实际准备对接结构
+
+profile
+- name: string
+- tagline: string
+- contacts[]:
+  - id: string
+  - label: string
+  - value: string
+  - href: string
+  - order: number
+
+featuredProjects[]
+- id: string
+- slug: string
+- title: string
+- excerpt: string
+- period: string
+- status: "draft" | "published"
+- sortOrder: number
+- cover:
+  - assetId: string
+  - fileName?: string
+  - url: string
+  - previewUrl: string
+- links[]:
+  - id: string
+  - label: string
+  - url: string
+  - order: number
+- updatedAt: string
+
+resume
+- assetId: string
+- fileName: string
+- url: string
+- previewUrl: string
+- downloadUrl: string
+- updatedAt: string
+
+contentVersion
+- string
+
+2) 作品详情页前端实际准备对接结构
+
+ProjectDetail
+- id: string
+- slug: string
+- title: string
+- excerpt: string
+- description: string（必备）
+- period: string
+- status: "draft" | "published"
+- sortOrder: number
+- cover:
+  - assetId: string
+  - fileName?: string
+  - url: string
+  - previewUrl: string
+- pdf?:
+  - assetId: string
+  - fileName?: string
+  - url: string
+  - previewUrl: string
+- links[]:
+  - id: string
+  - label: string
+  - url: string
+  - order: number
+- images[]:
+  - id: string
+  - assetId: string
+  - caption: string
+  - order: number
+  - fileName?: string
+  - url: string
+  - previewUrl: string
+- role?: string
+- highlights[]?: string[]
+- notes[]?: string[]
+- createdAt: string
+- updatedAt: string
+
+补充说明：
+截图说明已经统一使用 images[].caption，不再额外引入新概念。
+
+4. 旧问题更新
+
+1) 关于 ProjectLink / ProjectImage 关联字段
+上一轮记录中提到产品字段存在 projectId 缺口风险。
+当前前端内部模型已经稳定包含：
+- ProjectLink.projectId
+- ProjectImage.projectId
+因此前端内部组织已经没有这个阻塞。
+后续真正联调时，以后端正式公开返回结构为准，前端公开页不会直接依赖 projectId。
+
+2) 关于首页拼贴位置控制
+本轮已按产品统筹口径冻结：
+- 首页拼贴位置先由前端静态控制
+- 不纳入第一版后台编辑能力
+因此该项不再视为当前轮次阻塞。
+
+5. 当前风险与待配合事项
+
+1) 后端文档口径已更新，但真实接口联调尚未完成
+当前 backend/docs/api-examples.md 已按 2.5 轮口径更新为：
+- profile
+- featuredProjects
+
+前端本轮已经准备好正式适配层，并保留了对旧命名结构的过渡兼容。
+第三轮前仍需要确认：
+- 真实 bootstrap 响应是否与文档完全一致
+- 前端接入真实接口后是否可以去掉旧命名兜底
+
+2) 作品详情 description 已按必备字段处理
+前端现在已经把 description 当成正式必备字段准备。
+如果后端第三轮仍不能稳定返回 description，详情页将只能退回 excerpt，表达力会明显下降。
+
+3) role / highlights / notes 仍需在真实接口中验证空值策略
+前端本轮已完成可选容错。
+当前文档口径虽然已经冻结为可选字段，但第三轮联调时仍需确认：
+- role 缺失时返回 null 还是不返回
+- highlights / notes 缺失时返回 [] 还是不返回
+- 前后端是否按同一空值策略处理
+
+4) 首页 resume 结构与简历页完整内容不是同一个概念
+产品统筹冻结的首页聚合 resume 只覆盖简历资产信息。
+而简历页本身当前仍需要：
+- title
+- summary
+- downloadLabel
+这一点后续若后端接口设计不分层，可能会让首页聚合接口承载不必要字段。
+
+6. 下一步前端准备状态
+
+前端在第三轮前已具备：
+1. 统一页面结构
+2. 首页 A 版核心交互
+3. 正式公开字段口径类型
+4. mock -> 正式结构适配层
+5. 推荐字段缺失时的页面容错能力
+
+第三轮开始时，前端更适合做的动作将是：
+1. 接真实接口
+2. 核对上传返回字段
+3. 接排序保存链路
+4. 根据 UI 高保真稿贴正式视觉细节
+
+九、第三轮前置修正与职责隔离新增内容（2026-04-26）
+
+本轮依据：
+《产品统筹-第三轮前置修正与职责隔离指令.txt》
+
+本轮目标：
+1. 恢复正式前端入口
+2. 将设计稿与正式开发入口隔离
+3. 建立明确文件归属边界
+4. 为第三轮真实联调与视觉落地扫清入口层阻塞
+
+1. 本轮已完成内容
+
+1) 正式入口已恢复
+根目录 `index.html` 已恢复为正式 Vite + React 入口。
+
+当前根目录入口具备：
+- `#root` 挂载节点
+- `src/main.tsx` 模块入口
+
+这意味着：
+1. 根目录入口重新承载正式前端应用
+2. React 路由重新成为网站正式入口
+3. 后续联调、登录、后台保存、上传等能力有了正确承载点
+
+2) 设计参考稿已迁移到独立目录
+已新建独立目录：
+- `design/`
+
+并已将以下静态设计参考文件整体迁入：
+- `design/index.html`
+- `design/home-a.html`
+- `design/home-b.html`
+- `design/home-c.html`
+- `design/works.html`
+- `design/project.html`
+- `design/resume.html`
+- `design/admin-login.html`
+- `design/admin.html`
+- `design/styles.css`
+- `design/main.js`
+
+说明：
+这些文件现在继续作为设计参考稿保留，但不再占用正式前端入口位置。
+
+3) 根目录职责已收敛
+当前根目录只保留：
+- 正式前端入口 `index.html`
+- 工程配置文件
+- `src/`
+- `backend/`
+- 产品统筹文件
+- 三方交付记录文件
+
+根目录已不再保留以下高风险设计参考文件：
+- 静态设计总览页
+- 设计用 `styles.css`
+- 设计用 `main.js`
+
+4) 构建产物入口已恢复为正式应用
+本轮已重新执行构建，并确认：
+- `npm run build` 通过
+- `dist/index.html` 已恢复为正式应用入口
+- `dist/index.html` 当前包含：
+  - React 应用脚本
+  - 正式样式产物
+  - `#root` 挂载节点
+
+这说明当前“构建通过且构建的是对的东西”，不再是“能编译但输出错入口”的状态。
+
+5) 第二轮与 2.5 轮成果未回退
+本轮修正后，以下能力仍保留：
+- 首页 A 版缩放 / 拖动 / 首页内放大简介交互
+- 公开页与后台页 React 路由结构
+- 2.5 轮数据适配层
+- 详情页推荐字段容错逻辑
+- mock 数据层与后台更新联动
+
+2. 本轮修改内容
+
+文件迁移：
+- 将根目录静态设计参考文件迁移至 `design/`
+
+新增 / 恢复：
+- 根目录 `index.html` 恢复为正式 Vite + React 入口
+
+验证：
+- 重新执行 `npm run build`
+- 检查 `dist/index.html` 内容，确认入口已恢复
+
+3. 本轮文件归属口径（前端侧记录）
+
+1) 设计文件归属
+设计参考稿现归属目录：
+- `design/`
+
+前端后续不再负责维护：
+- `design/` 内静态设计展示说明内容
+
+2) 前端文件归属
+前端负责：
+- 根目录正式入口 `index.html`
+- `src/`
+- 工程配置文件
+- 前端交付记录文件
+
+3) 后端文件归属
+后端负责：
+- `backend/`
+- 后端交付记录文件
+
+4. 本轮风险与注意事项
+
+1) `design/` 目录当前是仓库内参考稿，不是正式构建产物的一部分
+当前这样做是刻意的，目的是隔离职责和避免误覆盖。
+如果未来希望把设计参考稿也部署成可访问页面，需要再单独定义交付方式，而不是重新占用正式入口。
+
+2) 第三轮开始前，设计方不应再直接改根目录入口文件
+否则会重新引入“构建通过但入口错误”的问题。
+
+3) 当前 `dist/` 已恢复正确，但真实联调尚未开始
+本轮只解决入口与归属问题，不代表第三轮接口、上传、排序、登录链路已经接通。
+
+5. 当前状态结论
+
+第三轮前置阻塞已完成修正：
+1. 正式入口已恢复
+2. 设计稿已隔离
+3. 构建产物入口已恢复正确
+4. 前端第二轮与 2.5 轮成果未回退
+
+在此前置条件满足后，前端才适合继续进入：
+1. 真实 API 联调
+2. 后台登录联调
+3. 上传与排序联调
+4. 按 A 版高保真稿贴正式视觉
+
+十、第三轮真实联调与视觉落地新增内容（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第三轮真实联调与视觉落地指令.txt》
+
+本轮目标：
+1. 前台公开页切换到真实 API
+2. 后台登录、资料、作品、简历切换到真实 API
+3. 接通 Cookie 会话、上传、排序、删除、保存反馈
+4. 保留 2.5 轮的字段容错，不把页面写死在 mock 私有结构上
+
+1. 本轮已完成内容
+
+1) 已完成真实 API 请求层
+- 已新增 `src/data/realApi.ts`
+- 默认对接地址为 `http://localhost:4000/api`
+- 支持通过 `VITE_API_BASE_URL` 覆盖
+- 所有请求统一使用 `credentials: include`
+- 已统一解析后端 `{ success, data, error }` 响应包
+- 已补齐网络失败、401、普通错误的前端错误消息
+
+2) 公开页已切换到真实接口
+- 首页改为读取 `GET /api/public/bootstrap`
+- 作品列表页改为读取 `GET /api/public/projects`
+- 作品详情页改为读取 `GET /api/public/projects/:slug`
+- 简历页改为读取 `GET /api/public/resume`
+- 保留了 `role / highlights / notes` 的可选容错
+- 如果作品缺少封面，前端会用兜底占位图，避免页面直接崩掉
+
+3) 后台登录态已切换到真实 Cookie 会话
+- `/admin/login` 已从邮箱 mock 登录改为用户名 + 密码
+- 登录接口改为 `POST /api/admin/auth/login`
+- 登录态检查改为 `GET /api/admin/auth/me`
+- 退出登录改为 `POST /api/admin/auth/logout`
+- 受保护路由现在会区分：
+  - 401 未登录：跳回登录页
+  - 其他接口异常：显示错误信息
+
+4) 后台基本信息页已切换到真实接口
+- 读取接口改为 `GET /api/admin/site`
+- 保存接口改为 `PATCH /api/admin/site`
+- 联系方式保存时按真实口径提交：
+  - `label`
+  - `value`
+  - `href`
+  - `order`
+- 保存成功后会刷新：
+  - 后台站点资料
+  - 首页 bootstrap
+
+5) 后台作品管理已接通真实 CRUD 和排序
+- 作品列表读取改为 `GET /api/admin/projects`
+- 新建草稿改为真实 `POST /api/admin/projects`
+- 保存当前作品改为真实 `PATCH /api/admin/projects/:id`
+- 删除改为真实 `DELETE /api/admin/projects/:id`
+- 上移 / 下移排序改为真实 `PUT /api/admin/projects/sort`
+- 排序提交内容已按后端口径改为：
+  - `projectIds: string[]`
+
+6) 后台作品上传链路已接通
+- 封面图上传改为 `POST /api/admin/assets/images`
+- 项目截图上传改为 `POST /api/admin/assets/images`
+- 项目 PDF 上传改为 `POST /api/admin/assets/pdfs`
+- 上传完成后，前端会把返回的 `assetId / url / previewUrl` 写入当前编辑器状态
+- 作品保存时会按真实口径提交：
+  - `coverAssetId`
+  - `pdfAssetId`
+  - `images[].assetId`
+  - `images[].caption`
+  - `images[].order`
+  - `links[].label`
+  - `links[].url`
+  - `links[].order`
+
+7) 后台简历页已切换到真实上传
+- 不再维护 mock 的 `title / summary / downloadLabel`
+- 当前按后端真实能力改为：
+  - 读取后台站点资料中的 `resume`
+  - 上传 / 替换简历文件走 `PUT /api/admin/resume`
+- 上传成功后会刷新：
+  - 后台站点资料
+  - 首页 bootstrap
+  - 公开简历页
+- 简历页文案目前由前端根据真实文件状态生成，不再依赖 mock 专有字段
+
+8) 页面反馈已补齐一版
+- 已补 loading
+- 已补空态
+- 已补接口错误态
+- 已补保存成功提示
+- 已补上传失败提示
+- 已补未授权跳转 / 提示
+
+9) 内容同步桥已从 mock 事件改为真实接口场景
+- 已移除对本地 mock storage 事件的依赖
+- 当前改为：
+  - 页面获得焦点时刷新关键查询
+  - 页面恢复可见时刷新关键查询
+  - 定时刷新首页 / 简历 / 登录态查询
+
+10) 验证结果
+- 已新增 `src/vite-env.d.ts`
+- `npm run build` 已通过
+- 当前构建产物仍是正式应用入口，没有回退到设计参考稿
+
+2. 本轮主要修改文件
+
+新增：
+- `src/data/realApi.ts`
+- `src/vite-env.d.ts`
+
+修改：
+- `src/types/content.ts`
+- `src/data/publicAdapters.ts`
+- `src/data/mockApi.ts`
+- `src/hooks/usePortfolioQueries.ts`
+- `src/app/providers/ContentSyncBridge.tsx`
+- `src/app/router/RequireAdminAuth.tsx`
+- `src/layouts/AdminLayout.tsx`
+- `src/components/PdfPreview.tsx`
+- `src/pages/HomePage.tsx`
+- `src/pages/WorksPage.tsx`
+- `src/pages/WorkDetailPage.tsx`
+- `src/pages/ResumePage.tsx`
+- `src/pages/AdminLoginPage.tsx`
+- `src/pages/AdminDashboardPage.tsx`
+- `src/pages/AdminProfilePage.tsx`
+- `src/pages/AdminProjectsPage.tsx`
+- `src/pages/AdminResumePage.tsx`
+- `src/styles.css`
+- `docs/交付/前端交付.txt`
+
+3. 本轮这样做的原因
+
+1) 先切真实接口，再继续压视觉
+如果还停留在 mock 层，后续再贴高保真视觉会反复返工，因为后台上传、排序、登录态和真实字段差异都会重新打断页面结构。
+
+2) 保持页面组件结构尽量稳定
+本轮优先替换 transport 层和后台表单提交流程，而不是推翻公开页和后台页的结构骨架，这样更利于多人协作。
+
+3) 对已知后端缺口做前端兼容，但不自行发明后端能力
+例如简历页当前真实后端只返回文件资产，不返回 `title / summary / downloadLabel`，前端这轮只做“基于真实文件状态生成展示文案”，没有再造新的接口字段依赖。
+
+4. 当前风险与待配合事项
+
+1) 简历页完整文案字段仍未落后端
+当前后端真实接口只支持简历文件上传与读取。
+前端因此只能基于文件状态生成简历页标题和说明文案。
+如果后续产品仍需要后台维护：
+- 简历标题
+- 简历摘要
+- 下载按钮文案
+则后端需要补正式字段和接口。
+
+2) 作品“新建草稿”目前是前端提供默认内容再提交创建
+因为当前后端没有“空白项目模板创建”接口。
+现状可用，但如果后续希望：
+- 后端统一生成默认 slug
+- 后端统一生成初始示例数据
+- 后端统一控制草稿模板
+则需要新增后端默认创建策略。
+
+3) 真实上传已经接通，但仍依赖后端文件访问稳定
+当前前端已按真实 URL 读图、读 PDF、读简历。
+仍需要后端保证：
+- 上传后文件可立即访问
+- CORS 正常
+- PDF 预览 URL 可用
+- 本地与部署环境路径规则一致
+
+4) 当前排序是“上移 / 下移 + 真实保存”，不是拖拽排序
+这符合本轮联调目标，但如果第三轮视觉稿要求后台直接拖拽排序，前端仍需再补交互层。
+
+5) 公开页对封面缺失做了兜底图容错
+这能避免接口数据不完整时直接报错，但不代表缺封面是推荐状态。
+如果后端允许发布缺封面项目，公开展示效果会明显下降。
+
+5. 需要后端继续配合的事项
+
+1) 如需让简历页文案可编辑，请补简历元信息字段
+建议明确是否新增：
+- resumeTitle
+- resumeSummary
+- resumeDownloadLabel
+
+2) 请确认已发布作品是否允许缺封面
+前端已有兜底，但更推荐后端在发布前做约束，避免公开页出现占位图。
+
+3) 请确认部署环境的前端 API 地址配置方式
+当前前端默认读取：
+- `VITE_API_BASE_URL`
+若不提供，则默认走：
+- `http://localhost:4000/api`
+部署时需要和运维 / 后端一起确认正式环境值。
+
+4) 若后续需要后台拖拽排序，请提前确认是否继续使用同一排序接口
+当前前端已按 `projectIds` 数组提交。
+若这个口径保持不变，后续补拖拽交互会比较平滑。
+
+6. 当前状态结论
+
+第三轮前端主干联调已接通：
+1. 公开页已读真实接口
+2. 后台登录已切 Cookie 会话
+3. 后台站点资料已能真实保存
+4. 作品已能真实新增、编辑、删除、排序
+5. 封面图、多图、项目 PDF、简历 PDF 已能真实上传
+6. 构建已通过
+
+接下来更适合继续推进的方向是：
+1. 按 A 版高保真稿做正式视觉细化
+2. 在真实后端数据上做浏览器联调验收
+3. 视产品需要补后台拖拽排序和更精细的媒体编辑体验
+
+十一、第三轮问题修复新增内容（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第三轮问题修复指令.txt》
+
+本轮目标：
+只修 3 个明确问题，不开新需求：
+1. API 地址默认回退 localhost 的问题
+2. 登录页默认密码写在前端代码里的问题
+3. 基本信息页联系方式编辑时直接修改 React state 的问题
+
+1. 本轮已完成内容
+
+1) 已修复 API base 默认策略
+- 修改文件：
+  - `src/data/realApi.ts`
+- 修改前：
+  - `VITE_API_BASE_URL` 缺失时会回退到 `http://localhost:4000/api`
+- 修改后：
+  - 优先读取 `VITE_API_BASE_URL`
+  - 若未配置，则默认使用相对路径 `/api`
+- 本轮结果：
+  - 正式前端代码里不再内置 localhost 回退
+  - 更适合同域部署或反向代理部署
+
+补充说明：
+如果本地前后端仍然是跨端口联调：
+- 前端 dev 环境需要显式配置 `VITE_API_BASE_URL`
+或
+- 由开发环境提供 `/api` 代理
+
+2) 已去掉登录页默认密码
+- 修改文件：
+  - `src/pages/AdminLoginPage.tsx`
+- 修改前：
+  - 密码输入框默认写死为演示密码
+- 修改后：
+  - 用户名仍保留示例值 `admin`
+  - 密码默认值改为空字符串
+- 本轮结果：
+  - 前端源码里不再通过登录页默认值暴露演示密码
+  - 登录页行为更接近真实上线状态
+
+3) 已修复联系方式编辑状态处理
+- 修改文件：
+  - `src/pages/AdminProfilePage.tsx`
+- 修改前问题：
+  - render 中直接对 `form.contacts` 调用 `sort()`
+  - 再按排序后的 `index` 写回 state
+  - 存在编辑错行、删除错行、顺序异常风险
+- 修改后：
+  - 改为对副本排序：`sortContacts([...])`
+  - render 使用排序副本，不再原地修改 state 数组
+  - 编辑更新改为按稳定 `id` 定位
+  - 删除也改为按 `id` 删除后再重新计算 order
+  - 保存时对副本排序后再生成提交顺序
+- 本轮结果：
+  - 联系方式编辑链路不再依赖排序后的 index
+  - 该页状态处理更稳定
+
+2. 本轮修改文件
+
+修改：
+- `src/data/realApi.ts`
+- `src/pages/AdminLoginPage.tsx`
+- `src/pages/AdminProfilePage.tsx`
+- `docs/交付/前端交付.txt`
+
+3. 验证结果
+
+1) 代码检索验证
+- 已检索前端源码中：
+  - `portfolio-2026`
+  - `localhost:4000/api`
+- 当前在前端正式源码中无命中
+
+2) 构建验证
+- 已执行：
+  - `npm run build`
+- 结果：
+  - 构建通过
+  - `dist/` 产物正常生成
+
+4. 当前风险与需要配合事项
+
+1) API 默认改成 `/api` 后，更适合正式部署
+这次修复是必要的，但也意味着：
+- 如果本地开发仍然是 `5173 -> 4000` 跨端口模式
+- 且没有配置代理
+则前端开发环境需要显式提供 `VITE_API_BASE_URL`
+
+2) 这轮没有扩展其他问题
+例如：
+- 后台其他页面的视觉细化
+- 浏览器联调验收
+- 上传体验优化
+这些都保持不动，留在后续轮次继续处理
+
+3) 需要后端 / 运维配合的仅剩部署约定说明
+由于前端默认值改为 `/api`，后端或部署侧需要明确：
+- 正式环境是否采用同域 / 反向代理
+- 本地跨端口联调时推荐的 `VITE_API_BASE_URL` 示例
+
+5. 本轮状态结论
+
+本轮要求的 3 个问题已全部完成：
+1. `realApi.ts` 不再内置 localhost 回退
+2. `AdminLoginPage.tsx` 默认密码已清空
+3. `AdminProfilePage.tsx` 不再在 render 中直接改 state 原数组
+4. 前端 build 已通过
+
+十二、第四轮验收收口与上线准备（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-当前项目状态总表与第四轮验收上线准备指令.txt》
+
+本轮目标：
+1. 不新增需求，只做完整验收
+2. 完成 A 版视觉收口
+3. 为真实内容替换和上线准备补齐运行口径
+4. 把前端本轮结论、剩余问题和协作项写回交付记录
+
+1. 本轮新增与修正内容
+
+1) 已补开发环境 `/api` 代理
+- 修改文件：
+  - `vite.config.ts`
+  - `vite.config.js`
+- 修改内容：
+  - 新增 `server.host = "127.0.0.1"`
+  - 新增 `server.proxy["/api"] -> "http://127.0.0.1:4000"`
+- 本轮结果：
+  - 本地 dev 环境在未显式配置 `VITE_API_BASE_URL` 时，也可以直接通过 `/api` 代理联调真实后端
+  - 与第三轮问题修复后的相对路径 `/api` 默认策略保持一致
+
+2) 已修复项目保存时占位资源误提交的问题
+- 修改文件：
+  - `src/pages/AdminProjectsPage.tsx`
+- 修改内容：
+  - 新增 `getPersistedAssetId()`
+  - 过滤 `placeholder-*` 和 `data:image/...` 这类仅前端占位资源
+  - 提交项目保存时，`coverAssetId` / `pdfAssetId` 只发送真实资源 id
+- 本轮结果：
+  - 后台创建和保存草稿项目时，不再把默认占位图误发给真实接口
+  - 解决了验收时真实保存失败的一条前端原因
+
+3) 已修复作品删除后的编辑器卡死问题
+- 修改文件：
+  - `src/pages/AdminProjectsPage.tsx`
+- 修改内容：
+  - 当当前 `selectedId` 对应作品已不存在，但列表中仍有其他作品时，自动回落到第一条作品
+- 本轮结果：
+  - 删除当前作品后，页面不再停留在“正在准备当前作品的编辑器...”
+  - 后台删除链路已可连续操作
+
+4) 已优化后台资源绑定反馈文案
+- 修改文件：
+  - `src/pages/AdminProjectsPage.tsx`
+- 修改内容：
+  - 新增 `getAssetDisplayName()`
+  - 当资源已绑定但接口未返回 `fileName` 时，不再错误显示“当前未绑定封面资源”
+- 本轮结果：
+  - 后台封面图 / PDF 的展示反馈更符合真实状态
+
+5) 已收掉详情页空截图说明区块
+- 修改文件：
+  - `src/pages/WorkDetailPage.tsx`
+- 修改内容：
+  - `project.images.length === 0` 时不再渲染“关键截图说明”空区块
+- 本轮结果：
+  - 作品详情页在无截图数据时更干净
+  - 验收时不再出现空段落和空容器
+
+6) 已修复首页放大态在移动端被裁切的问题
+- 修改文件：
+  - `src/styles.css`
+- 修改内容：
+  - 小屏下将首页放大态遮罩改为真正的 fixed 层
+  - 调整弹层顶部位置和视觉区域高度
+  - 补充小屏封面最小高度，保证放大态内容可读
+- 本轮结果：
+  - 移动端首页点击卡片后，放大态不再被拼贴舞台裁切
+  - 首页 A 版在窄屏下仍可正常阅读作品简介和主链接
+
+2. 本轮验收结果
+
+一）公开页验收
+
+1. 首页加载
+- 结果：通过
+- 说明：
+  - 真实 `bootstrap` 数据已能加载并替换题头内容
+  - 首页姓名 / 一句话介绍 / 联系方式会随着后台资料更新实时反映
+
+2. 首页点击卡片进入放大简介态
+- 结果：通过
+- 说明：
+  - 点击首页作品卡片后，URL 会进入 `?project=hydra-ops-qa`
+  - 放大态已在首页内拉起
+
+3. 首页放大态第一行作品链接
+- 结果：通过
+- 说明：
+  - DOM 验证通过
+  - 第一行展示为 `作品链接 / example.com/hydra-qa`
+
+4. 首页缩放与拖拽
+- 结果：部分自动化通过，仍建议上线前人工手测一次桌面端
+- 说明：
+  - 缩放按钮 `放大 / 缩小 / 重置视图` 已在浏览器中实际可用
+  - `CollageStage.tsx` 中滚轮缩放与 Pointer 拖拽逻辑已再次核对
+  - 当前 in-app browser 的 CUA 滚轮 / 拖拽对该画布命中不稳定，自动化过程中更容易触发页面滚动，而不是稳定命中画布事件
+  - 因此该项建议上线前补一次真实桌面鼠标手测
+
+5. 作品列表页空态 / 非空态
+- 结果：通过
+- 说明：
+  - 在验收初期无项目时，已看到真实空态
+  - 新建并发布项目后，列表页已正确显示真实作品卡片
+
+6. 作品详情页多链接 / PDF 预览 / 无截图容错
+- 结果：通过
+- 说明：
+  - 主链接、标题、摘要、角色、补充说明均已正常渲染
+  - PDF 预览容器已正常出现
+  - 当前浏览器环境无法直接内嵌预览 PDF 时，页面会退化到占位说明
+  - 无截图数据时，空截图说明区块已不再展示
+
+7. 简历页预览与下载
+- 结果：通过
+- 说明：
+  - 简历下载按钮可见
+  - 页面内预览容器可见
+  - 当前浏览器环境无法直预览 PDF 时，会显示占位说明而不是报错
+
+二）后台验收
+
+1. 登录
+- 结果：通过
+- 说明：
+  - 已使用真实 Cookie 会话登录
+
+2. 读取站点资料
+- 结果：通过
+- 说明：
+  - `/admin/profile` 已成功读取真实姓名、题头文案和联系方式
+
+3. 修改姓名 / 一句话介绍 / 联系方式
+- 结果：通过
+- 说明：
+  - 后台已成功保存
+  - 前台首页刷新后已看到同步结果
+
+4. 新增作品
+- 结果：通过
+- 说明：
+  - 已通过后台创建真实草稿项目
+
+5. 编辑作品
+- 结果：通过
+- 说明：
+  - 标题、slug、时间、摘要、简介、角色、外链、亮点、说明均已保存到真实接口
+
+6. 删除作品
+- 结果：通过
+- 说明：
+  - 浏览器真实删除链路已完成
+  - 删除后的前端编辑器状态卡死问题已在本轮修复
+
+7. 排序
+- 结果：通过
+- 说明：
+  - 已通过后台上移 / 下移操作完成一次真实排序
+  - 排序结果刷新后仍保持
+
+8. 退出登录
+- 结果：通过
+- 说明：
+  - 点击退出后已回到 `/admin/login`
+  - 管理页保护逻辑仍有效
+
+9. 封面图上传 / 项目 PDF 上传 / 简历上传
+- 结果：真实接口链路通过，后台页面读回通过
+- 说明：
+  - 这三条上传链路已通过真实 API 完成上传验证
+  - 后台页和公开页均已读到上传结果
+  - 当前 in-app browser 运行时不提供稳定的原生文件选择 / `setInputFiles` 能力，因此未完全通过浏览器自动化点击上传按钮完成
+  - 这一点不影响前端上传表单本身的接线，但上线前仍建议补一次人工文件选择手测
+
+3. A 版视觉收口结果
+
+本轮已完成的 A 版收口：
+1. 首页放大态在移动端已从“被舞台裁切”修正为“独立可读弹层”
+2. 详情页无截图时已不再保留空容器
+3. 后台资源绑定反馈文案更接近真实状态
+4. 页面在真实数据下的空态、加载态、占位态没有明显断裂
+
+本轮未继续扩展的内容：
+1. 不新增新页面视觉方向
+2. 不回到静态设计稿重新开方向
+3. 不扩写分类、搜索、可编辑拼贴布局等冻结外需求
+
+4. 本轮修改文件
+
+修改：
+- `vite.config.ts`
+- `vite.config.js`
+- `src/pages/AdminProjectsPage.tsx`
+- `src/pages/WorkDetailPage.tsx`
+- `src/styles.css`
+- `docs/交付/前端交付.txt`
+
+5. 构建与联调验证
+
+1. 本地真实接口联调
+- 已验证：
+  - `http://127.0.0.1:4000/api/health`
+  - `http://127.0.0.1:5173/api/health`
+  - `http://127.0.0.1:5173/api/public/bootstrap`
+- 结果：
+  - 前后端通过 `/api` 代理可以联通
+
+2. 生产构建
+- 已执行：
+  - `npm run build`
+- 结果：
+  - 构建通过
+  - `dist/` 产物正常生成
+
+6. 上线准备与运行说明
+
+1. 本地开发建议
+- 若本地前端运行在 Vite dev：
+  - 当前项目已内置 `/api -> http://127.0.0.1:4000` 代理
+- 若前后端不走默认本地端口：
+  - 需要显式配置 `VITE_API_BASE_URL`
+
+2. 正式部署建议
+- 更推荐同域部署或反向代理部署：
+  - 前端访问 `/api`
+  - 由网关或服务端转发到真实后端
+- 如果前后端分域：
+  - 需由部署侧明确 `VITE_API_BASE_URL`
+  - 需同步确认 Cookie、CORS、上传文件地址和 PDF 访问策略
+
+3. 真实内容替换准备
+- 前端结构已可直接替换成正式内容
+- 当前验收使用的是临时资料和临时作品：
+  - 姓名：`Lin Lan QA`
+  - 作品：`Hydra Ops QA`
+- 上线前需要由内容负责人替换成正式姓名、正式联系方式、正式简历文件、正式项目文案和正式媒体资源
+
+7. 剩余问题与需要配合事项
+
+1. 仍建议补一次人工桌面端手测
+- 重点：
+  - 首页滚轮缩放
+  - 首页空白处拖动画布
+  - 后台三条文件上传链路的原生文件选择
+- 原因：
+  - 当前自动化浏览器对这几类交互支持不够稳定
+
+2. 当前验收内容是临时数据
+- 需要产品 / 内容侧继续配合：
+  - 提供正式姓名与一句话介绍
+  - 提供正式联系方式
+  - 提供正式作品封面、多图、PDF、外链和说明文案
+  - 提供正式简历 PDF
+
+3. 部署侧需要明确最终口径
+- 需要后端 / 运维配合确认：
+  - 正式环境 API 访问路径是否继续统一为 `/api`
+  - 是否同域部署
+  - Cookie 会话是否跨域
+  - 上传资源和 PDF 的最终访问域名
+
+8. 本轮状态结论
+
+第四轮前端已完成的事情：
+1. 把本地开发环境补成可直接 `/api` 联调
+2. 修掉了后台删除后编辑器卡死和占位资源误提交等真实问题
+3. 收口了首页移动端放大态和详情页空区块
+4. 完成了公开页与后台页的真实验收
+5. 输出了上线前仍需人工手测与内容替换的明确清单
+6. `npm run build` 已通过
+
+十三、第四轮技术上线与最终验收（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第四轮技术上线与最终验收指令.txt》
+
+本轮目标：
+1. 不扩需求，只按“技术上线优先”口径做最终验收
+2. 确认公开页和后台主链路已达到可部署、可访问、可继续补内容的状态
+3. 补充最终部署说明、剩余问题和后续配合事项
+
+1. 本轮补充验收结果
+
+一）技术上线冒烟结果
+
+1. 前端 build
+- 已执行：
+  - `npm run build`
+- 结果：
+  - 通过
+
+2. 后端健康检查
+- 已执行：
+  - `http://127.0.0.1:4000/api/health`
+- 结果：
+  - 返回 `{\"success\":true,\"data\":{\"status\":\"ok\"}}`
+
+3. 前端 dev 代理健康检查
+- 已执行：
+  - `http://127.0.0.1:5173/api/health`
+- 结果：
+  - 返回 `{\"success\":true,\"data\":{\"status\":\"ok\"}}`
+
+4. 公开 bootstrap 数据检查
+- 已执行：
+  - `http://127.0.0.1:5173/api/public/bootstrap`
+- 结果：
+  - 已返回真实 profile / featuredProjects / resume / contentVersion
+  - 说明前后端公开链路可用
+
+二）浏览器最终冒烟结果
+
+1. 首页
+- 结果：通过
+- 说明：
+  - 浏览器中已确认首页可打开
+  - 真实姓名、介绍、联系方式和首页作品卡片都能正常渲染
+
+2. 简历页
+- 结果：通过
+- 说明：
+  - 浏览器中已确认简历页可打开
+  - 下载入口存在
+  - PDF 无法直预览时会优雅降级到占位说明，不会报错
+
+3. 后台登录页
+- 结果：通过
+- 说明：
+  - 浏览器中已确认 `/admin/login` 可访问
+  - 用户名 / 密码输入框和登录入口都存在
+
+三）技术上线判定
+
+按统筹文档中的 9 条技术上线标准，本轮前端判断结果如下：
+
+1. 前端 build 通过：通过
+2. 公开页主链路可访问：通过
+3. 后台主链路可访问：通过
+4. 后台改内容后前台能反映：通过
+5. 上传链路可用：通过
+6. 简历预览 / 下载可用：通过
+7. 部署方式清楚：通过
+8. 占位内容不会导致前端崩溃：通过
+9. 当前状态可继续通过后台补真实内容：通过
+
+前端结论：
+当前前端已达到“技术上线可执行”状态，但还不是“正式公开投递版”。
+
+2. 本轮部署说明补充
+
+1. 本地开发口径
+- 当前前端默认通过 Vite dev 代理访问后端：
+  - `/api -> http://127.0.0.1:4000`
+- 适用文件：
+  - `vite.config.ts`
+  - `vite.config.js`
+
+2. 不走代理时的配置方式
+- 若本地或正式环境不提供 `/api` 代理：
+  - 需显式配置 `VITE_API_BASE_URL`
+- 示例思路：
+  - 本地跨端口联调时，可指向实际后端 API 根路径
+  - 正式分域部署时，可指向正式 API 域名下的 `/api`
+
+3. 正式部署时前端的默认假设
+- 更推荐同域或反向代理部署
+- 前端默认假设：
+  - 浏览器请求 `/api/*`
+  - 网关 / Nginx / 服务端再把 `/api` 转发给真实后端
+- 这样可以减少：
+  - 跨域 Cookie 问题
+  - CORS 配置复杂度
+  - 上传资源和 PDF 访问地址不一致的问题
+
+3. 本轮未新增代码修改
+
+本轮主要做的是：
+1. 技术上线口径下的最终冒烟与判定
+2. 部署说明和上线结论整理
+
+本轮未新增前端功能或页面代码修改。
+
+4. 剩余问题与需要配合的事项
+
+1. 当前仍是占位验收内容
+- 需要产品 / 内容侧后续补齐：
+  - 真实姓名
+  - 真实一句话介绍
+  - 真实联系方式
+  - 真实作品封面、多图、PDF、外链和说明
+  - 真实简历 PDF
+
+2. 上线前仍建议补一次人工手测
+- 重点：
+  - 首页滚轮缩放
+  - 首页空白处拖动画布
+  - 后台原生文件选择上传
+- 说明：
+  - 当前自动化浏览器对这几类交互的模拟不够稳定
+  - 但不影响前端代码和真实接口接线已完成
+
+3. 需要后端 / 运维继续确认最终部署口径
+- 正式环境是否继续统一走 `/api`
+- 是否采用同域部署
+- Cookie Session 是否跨域
+- 上传资源和 PDF 最终访问域名
+
+5. 本轮状态结论
+
+这轮按“先技术上线，再后台补真实内容”的目标收口后，前端结论是：
+1. 前端构建可通过
+2. 公开页与后台页主链路可访问
+3. 真实接口链路可用
+4. 当前系统可先技术上线
+5. 后续可以直接通过后台补真实内容
+6. 正式公开上线前，仍需完成真实内容替换和最后一轮人工视觉巡检
+
+十四、第五轮免费部署路线调整（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第五轮免费部署路线调整指令.txt》
+
+本轮新增约束：
+第一版部署必须优先按免费路线推进。
+
+从本轮开始，前端不再把以下路线当作默认前提：
+1. 自购 Linux 服务器
+2. 独立前端静态托管 + 单独后端域名
+3. 服务器本地磁盘上传作为正式免费方案
+
+当前冻结的前端默认路线：
+1. 一个 Render Free Web Service
+   - 同时承载前端构建产物和后端 API
+   - 前端继续按同源 `/api` 访问
+2. 一个 Supabase Free Project
+   - 由后端对接 Postgres 和 Storage
+   - 前端只消费后端返回的公开 URL / 预览 URL / 下载 URL
+
+1. 第五轮前端适配结果
+
+1) 前端生产构建形态适配 Render 同源部署
+- 结果：通过
+- 说明：
+  - 前端构建命令仍为 `npm run build`
+  - 前端构建产物输出目录仍为 `dist/`
+  - 当前源码没有“必须单独部署一个前端域名”的硬编码前提
+
+2) 前端 API 访问方式已符合同源免费路线
+- 结果：通过
+- 说明：
+  - `src/data/realApi.ts` 当前默认使用相对路径 `/api`
+  - 这与“同一个 Render Web Service 同时承载页面和 API”的路线一致
+  - `VITE_API_BASE_URL` 仍保留为备用能力，但不再作为本轮默认上线方式
+
+3) 前端路由结构与同源站点路径口径基本一致
+- 结果：通过，但有部署前提
+- 说明：
+  - 当前前端使用 `BrowserRouter`
+  - 首页、作品详情、简历页、后台登录、后台管理都默认挂在根路径下
+  - 这要求 Render 上的同一个 Node 服务对非 `/api` 路由提供 SPA 回退到 `dist/index.html`
+
+4) 前端不再依赖独立静态托管作为主路线
+- 结果：通过
+- 说明：
+  - 当前前端源码可以直接由后端服务所承载的静态目录提供访问
+  - 前端不要求额外再挂一个独立静态站点域名
+
+2. 前端对 Render 同源部署的要求
+
+1. 构建命令
+- `npm run build`
+
+2. 前端输出目录
+- `dist/`
+
+3. Render 同源部署下的前端要求
+- 同一个 Node 服务必须：
+  - 提供 `/api/*`
+  - 提供 `dist/` 静态文件
+  - 对以下前端路由返回 `dist/index.html`
+    - `/`
+    - `/works`
+    - `/works/:slug`
+    - `/resume`
+    - `/admin/login`
+    - `/admin/*`
+
+4. 正式源码中的部署假设
+- 当前默认假设是：
+  - 网站挂在域名根路径 `/`
+  - API 挂在同源 `/api`
+- 当前没有子目录部署的适配需求
+
+3. 本轮发现的真实阻塞
+
+1. 当前最大的真实阻塞不在前端页面，而在后端上传落点
+- 说明：
+  - 前端已经可以消费任意稳定的文件 URL
+  - 但如果后端仍把上传文件落在 Render 免费实例本地磁盘，文件会不可靠
+  - 因此免费路线下，后端必须改为 Supabase Storage
+
+2. 生产环境必须有 SPA 路由回退
+- 说明：
+  - 当前前端是 `BrowserRouter`
+  - 如果 Render 上只会返回静态文件、不做回退
+  - 那么直接访问或刷新 `/works/hydra-ops-qa`、`/resume`、`/admin/login` 会 404
+
+3. 后台登录依赖同源 Cookie 正常工作
+- 说明：
+  - 前端本身没有跨域登录问题
+  - 但 Render 正式 URL 下，后端仍需正确设置 Cookie Session
+  - 如果 Cookie 设置不对，后台登录态会失效
+
+4. 前端需要后端继续保持现有资源字段语义
+- 说明：
+  - 当前页面依赖后端返回：
+    - `url`
+    - `previewUrl`
+    - `downloadUrl`
+  - 如果切到 Supabase Storage 后字段结构变化，前端适配层需要同步调整
+
+4. 需要修改的代码点判断
+
+1. 当前前端没有必须立即修改的代码点
+- 说明：
+  - 以 Render 同源 `/api` + 后端保持现有返回结构 为前提
+  - 前端这轮不需要为免费路线新增页面代码修改
+
+2. 如果后端改了资源字段结构，前端优先关注这些文件
+- `src/data/realApi.ts`
+- `src/data/publicAdapters.ts`
+- `src/types/content.ts`
+- 说明：
+  - 这几个文件负责接口读取、数据归一化和资源字段类型定义
+
+3. 如果未来不再部署在根路径，而是改为子路径部署
+- 需要关注这些代码点：
+  - `src/app/providers/AppProviders.tsx`
+  - `vite.config.ts`
+  - `vite.config.js`
+- 说明：
+  - 当前 `BrowserRouter` 默认无 `basename`
+  - 当前构建也默认站点挂在 `/`
+  - 但这不是本轮免费路线要求，因此现在不改
+
+5. 免费路线下的前端部署说明
+
+1. 本地开发口径
+- 当前仍保留 Vite dev 代理：
+  - `/api -> http://127.0.0.1:4000`
+- 用途：
+  - 本地前后端联调
+- 说明：
+  - 这是开发阶段配置，不代表正式免费部署仍要分离域名
+
+2. Render 免费 Web Service 口径
+- 正式免费部署的前端默认方式：
+  - 后端服务启动后同时提供 `dist/` 和 `/api`
+  - 浏览器直接访问 Render 提供的单一免费地址
+- 前端不要求再单独部署一个静态托管平台
+
+3. `VITE_API_BASE_URL` 的当前定位
+- 当前定位：
+  - 备用能力
+- 不再作为本轮默认方案：
+  - 免费路线默认仍然是同源 `/api`
+- 只有在以下情况才需要显式配置：
+  - 本地跨端口调试不走 Vite 代理
+  - 未来改成前后端分域部署
+
+6. 免费部署后的最小前端 smoke check
+
+上线到 Render 免费地址后，前端最小冒烟建议至少检查：
+1. 打开首页 `/`，确认姓名、简介、联系方式和作品卡片能加载
+2. 打开 `/works`，确认作品列表可见
+3. 直接访问 `/works/:slug`，确认刷新不 404
+4. 打开 `/resume`，确认下载入口存在
+5. 打开 `/admin/login`，确认后台登录页可访问
+6. 登录后台后修改一条站点资料，确认前台刷新可见
+7. 上传一张图或一个 PDF，确认前台能读取新资源
+
+7. 本轮需要配合的事项
+
+1. 需要后端完成的免费路线主改造
+- 把上传从本地 `uploads/` 迁到 Supabase Storage
+- 在 Render 同一个 Node 服务里同时提供静态前端和 `/api`
+- 保持或兼容当前前端所需的资源字段结构
+
+2. 需要后端 / 运维确认的部署动作
+- Render Web Service 的启动命令
+- Render 所需环境变量
+- Supabase Postgres 连接串
+- Supabase Storage bucket 配置
+- Cookie Session 在 Render 免费域名下的可用性
+
+3. 需要内容侧后续补的事情
+- 当前仍是占位内容
+- 免费技术上线后仍需继续通过后台补：
+  - 真实姓名
+  - 真实介绍
+  - 真实联系方式
+  - 真实作品
+  - 真实简历
+
+8. 本轮状态结论
+
+第五轮免费路线下，前端结论是：
+1. 当前前端代码结构已经适合“Render 同源承载页面 + `/api`”这条免费路线
+2. 前端本轮没有必须新增的页面代码修改
+3. 当前真正的免费部署阻塞集中在后端静态承载方式和上传迁移到 Supabase Storage
+4. 只要后端保持现有 API 和资源字段口径，前端可以直接配合进入 Render + Supabase 免费技术上线
+
+十五、第六轮国内友好免费部署路线切换（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第六轮国内友好免费部署路线切换指令.txt》
+
+本轮路线变更：
+1. Render Free Web Service
+2. Supabase Free
+
+不再作为当前默认路线。
+
+当前新的默认路线为：
+Tencent CloudBase 国内友好免费路线
+
+本轮前端角色：
+保持前端结构稳定，评估哪些部分可以保留，哪些部分需要迁移，并明确前端真正依赖后端配合的边界。
+
+1. 前端可保留的部分
+
+1) React 页面与组件结构可保留
+- 结论：保留
+- 说明：
+  - 当前首页、作品列表、作品详情、简历页、后台登录、后台管理的页面层不依赖 Render / Supabase 专有能力
+  - CloudBase 路线下不需要重做页面结构
+
+2) 前端路由结构可保留
+- 结论：保留
+- 说明：
+  - 当前前端仍是标准 React SPA
+  - 公开页与后台页路由不需要因为平台切换而推翻
+  - 只要 CloudBase 承载侧能提供前端路由回退，`BrowserRouter` 仍然成立
+
+3) 前端同源 `/api` 假设可优先保留
+- 结论：保留
+- 说明：
+  - 当前 `src/data/realApi.ts` 默认使用相对路径 `/api`
+  - 如果 CloudBase 最终也能做到同域页面 + `/api` 接口入口，前端无需改接口调用方式
+
+4) 前端对资源的消费方式可保留
+- 结论：保留
+- 说明：
+  - 当前前端真正依赖的不是 Supabase 或本地磁盘，而是稳定资源字段：
+    - `url`
+    - `previewUrl`
+    - `downloadUrl`
+  - 只要后端切到 CloudBase 后继续提供这几个字段，页面层不需要重做
+
+5) 本地开发代理可保留
+- 结论：保留
+- 说明：
+  - `vite.config.ts` / `vite.config.js` 当前的 `/api -> 127.0.0.1:4000` 代理仍然只服务于本地开发
+  - 不影响正式国内友好部署路线
+
+2. 需要迁移或重新确认的部分
+
+1) 第五轮默认部署说明需要整体作废
+- 结论：迁移
+- 说明：
+  - Render 同源部署和 Supabase Storage / Postgres 不再是当前默认口径
+  - 后续部署说明应统一改为 CloudBase 路线
+
+2) 后端承载方式需要迁移到 CloudBase 体系
+- 结论：迁移
+- 说明：
+  - 前端本身不改承载逻辑
+  - 但当前 Node / Express 如何挂到 CloudBase HTTP 云函数或等价 Node 承载方式，将直接决定 `/api` 是否还能保持不变
+
+3) 文件存储路线需要迁移
+- 结论：迁移
+- 说明：
+  - 当前后端代码已暴露出“local / supabase”两种资源来源痕迹
+  - CloudBase 路线下，需要把图片、项目 PDF、简历文件转到 CloudBase 云存储
+  - 前端不关心存储平台，但关心最终资源 URL 是否稳定、是否国内可访问、是否支持图片与 PDF 预览
+
+4) 数据库路线需要重新确认
+- 结论：迁移评估
+- 说明：
+  - 从前端角度，数据库类型不是直接依赖
+  - 但当前后端明显是 Prisma + PostgreSQL 结构
+  - 如果后端要迁到 CloudBase 数据库，影响会远大于“只改部署配置”
+  - 前端这边需要为此预留的，仍然只是接口口径兼容层，而不是页面重做
+
+3. 前端看到的迁移结论
+
+1) 哪些部分可以继续沿用
+- 当前 React 前端工程
+- 当前页面和组件结构
+- 当前前端路由结构
+- 当前同源 `/api` 的优先假设
+- 当前资源字段消费方式
+
+2) 哪些部分需要后端迁移后再确认
+- `/api` 在 CloudBase 下的真实入口方式
+- 图片、项目 PDF、简历在 CloudBase 云存储下返回的 URL 形式
+- Cookie 登录在 CloudBase 域名下的可用性
+- 数据库切换后是否还能保持当前 API 字段结构不变
+
+3) 从前端观察到的后端迁移难度判断
+- 后端承载：中等偏高
+  - 当前 Express 结构较集中，理论上有机会保留 API 结构
+  - 但部署介质已从普通 Node 服务切到 CloudBase 体系，需要适配承载方式
+- 文件存储：中等
+  - 当前后端已经有存储抽象痕迹，迁 CloudBase 云存储更像替换 storage provider，而不是从零重写前端
+- 数据库：高
+  - 当前后端 schema 明显基于 Prisma + PostgreSQL
+  - 如果不继续保留 Postgres，而改成 CloudBase 数据库，已经不是“纯部署切换”，而是明显的平台迁移问题
+
+4. 前端真正依赖后端配合的点
+
+1. 资源字段必须稳定
+- 前端当前依赖：
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+- 对应页面：
+  - 首页封面图
+  - 作品列表封面图
+  - 作品详情封面图 / 多图 / PDF 预览
+  - 简历页预览与下载
+  - 后台封面图 / 项目 PDF / 简历管理
+
+2. `/api` 路径最好继续保留
+- 如果后端在 CloudBase 下仍能保持 `/api`：
+  - 前端这轮无需改接口层
+- 如果 CloudBase 最终必须改成其他入口：
+  - 前端优先只改 `src/data/realApi.ts`
+  - 不推翻页面层
+
+3. 登录 Cookie 机制要继续可用
+- 当前前端后台登录基于 Cookie Session
+- 如果 CloudBase 下 Cookie 口径变化，前端后台鉴权链路会直接受影响
+
+4. SPA 路由回退仍然需要
+- 当前前端仍是 `BrowserRouter`
+- 直接访问：
+  - `/works/:slug`
+  - `/resume`
+  - `/admin/login`
+  - `/admin/*`
+  这些路径时，CloudBase 承载侧必须能回退到前端入口页
+
+5. 本轮真实阻塞
+
+1. 当前最大阻塞仍然不在前端页面，而在后端平台迁移
+- 说明：
+  - 这轮已经不是“换个免费平台部署一下”那么简单
+  - 而是后端承载、文件存储、数据库方案都要重新确认
+
+2. 数据库路线是本轮最大不确定项
+- 说明：
+  - 从前端读取到的当前后端结构看，Prisma / PostgreSQL 使用较深
+  - 如果坚持全部迁到 CloudBase 数据库能力，后端工作量会明显上升
+  - 这会影响整体上线时间，但不直接要求前端重做页面
+
+3. 资源加载效果需要上线后再做一轮国内环境复核
+- 说明：
+  - 虽然前端不依赖具体存储平台
+  - 但国内环境下真实图片 / PDF / 简历资源的加载速度和稳定性，仍需要部署后再测
+
+6. 建议路线（前端视角）
+
+1. 前端建议的最小改造路线
+- 保持当前 React 前端不推翻
+- 保持页面、路由、组件层不动
+- 优先要求后端继续保持：
+  - `/api`
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+- 这样前端只需要继续做联调，不需要进入重构
+
+2. 如果后端承载迁到 CloudBase 后 API 不变
+- 前端建议：
+  - 本轮不新增页面代码改动
+  - 只更新部署说明和 smoke check
+
+3. 如果后端资源字段变化
+- 前端建议：
+  - 只改适配层
+  - 优先关注：
+    - `src/data/realApi.ts`
+    - `src/data/publicAdapters.ts`
+    - `src/types/content.ts`
+  - 不推翻页面层
+
+4. 如果后端决定连数据库也完全迁到 CloudBase 数据库
+- 前端建议：
+  - 仍优先要求 API 字段保持兼容
+  - 把数据库迁移影响尽量留在后端内部，不把波动传到前端页面
+
+7. 国内友好路线下的最小前端 smoke check
+
+部署到 CloudBase 后，前端最小冒烟建议至少检查：
+1. 打开首页 `/`，确认姓名、介绍、联系方式和作品卡片正常加载
+2. 打开 `/works`，确认作品列表可见
+3. 直接访问 `/works/:slug`，确认刷新不 404
+4. 打开 `/resume`，确认简历下载入口存在，PDF 占位或预览正常
+5. 打开 `/admin/login`，确认后台登录页可访问
+6. 登录后台后修改一条站点资料，确认前台刷新可见
+7. 上传一张图、一个项目 PDF、一个简历 PDF，确认前台和后台都能读取新资源
+
+8. 本轮代码与验证情况
+
+1. 本轮前端代码修改
+- 无
+
+2. 本轮验证
+- 已执行：
+  - `npm run build`
+- 结果：
+  - 构建通过
+
+9. 本轮状态结论
+
+第六轮国内友好免费路线下，前端结论是：
+1. 当前前端大部分结构可以保留
+2. 前端当前不需要因为 CloudBase 路线而重做页面或路由
+3. 真正需要迁移的是后端承载、文件存储和数据库方案
+4. 前端最核心的诉求是：后端继续稳定提供 `/api` 和资源 URL 字段
+5. 如果后端能把平台迁移的变化收敛在 API 层，前端可以低改动继续配合上线
+
+十六、第七轮 CloudBase 可部署性验证与后端迁移实施（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第七轮CloudBase可部署性验证与后端迁移实施指令.txt》
+
+本轮前端角色：
+保持前端稳定，准备承接后端迁移后的最小适配，不主动引入新的平台耦合。
+
+1. 本轮新增内容
+
+1) 已再次确认前端边界文件
+- 已重点复核：
+  - `src/data/realApi.ts`
+  - `src/data/publicAdapters.ts`
+  - `src/types/content.ts`
+- 结论：
+  - 这 3 个文件已经足以承接后端资源字段的微调
+  - 当前页面层不需要因为 CloudBase 路线而改动
+
+2) 已再次确认前端资源依赖点
+- 当前前端真正依赖后端资源字段的地方主要是：
+  - 图片展示
+  - PDF 页面内预览
+  - 简历下载
+- 具体消费方式：
+  - `img` 组件优先读取 `previewUrl`
+  - `PdfPreview` 优先读取 `previewUrl || url`
+  - 简历下载读取 `downloadUrl`
+
+3) 已再次确认前端部署耦合度
+- 当前前端仍然只依赖：
+  - 同源 `/api`
+  - 可直接访问的静态页面入口
+  - SPA 路由回退
+- 结论：
+  - 当前前端尚未引入 Render、Supabase、CloudBase 的平台专有 SDK 或页面级耦合
+
+2. 本轮迁移结论
+
+1) 前端不需要大改路线
+- 结论：成立
+- 说明：
+  - 第七轮仍然不需要推翻页面结构
+  - 不需要重做路由
+  - 不需要提前把页面改成 CloudBase 专有实现
+
+2) 如果后端保持 `/api + url/previewUrl/downloadUrl` 不变
+- 结论：前端预计只需要低改动联调
+- 说明：
+  - 当前适配层已经把接口边界集中在少数文件里
+  - 只要后端平台迁移后的 API 字段继续兼容，页面层无需变动
+
+3) 如果后端微调资源字段
+- 结论：优先只改适配层
+- 说明：
+  - 首先关注：
+    - `src/data/realApi.ts`
+    - `src/data/publicAdapters.ts`
+    - `src/types/content.ts`
+  - 不推翻 `pages/`、`components/`、`layouts/`
+
+3. 本轮观察到的真实阻塞
+
+1) CloudBase 路线目前对前端来说仍未进入联调阶段
+- 说明：
+  - 从当前仓库代码看，后端运行时配置仍然只支持 `local | supabase`
+  - 存储 dispatch 也仍然只有 `local / supabase`
+  - 因此前端这轮还没有新的 CloudBase 接口口径可实际对接
+
+2) 前端当前最大的真实阻塞仍然在后端实施落地
+- 说明：
+  - 如果后端还没有真正落出 `cloudbase` 运行时、存储实现和 HTTP 入口
+  - 前端就只能维持当前稳定状态，无法进入 CloudBase 实配联调
+
+3) 当前前端最需要后端保证的仍然是接口稳定性
+- 说明：
+  - 平台怎么迁移不是前端直接阻塞项
+  - 但如果后端迁移时把：
+    - `/api`
+    - `url`
+    - `previewUrl`
+    - `downloadUrl`
+    全部打散重来
+  - 前端联调成本会显著上升
+
+4. 本轮代码改动
+
+1. 前端页面代码
+- 无新增改动
+
+2. 前端适配层代码
+- 无新增改动
+
+3. 本轮仅更新
+- `docs/交付/前端交付.txt`
+
+原因：
+- 第七轮前端统筹要求是“保持前端稳定”
+- 当前后端 CloudBase 代码实施尚未完成
+- 在后端字段未变化前，前端没有必要先做预判式大改
+
+5. 本轮验证
+
+1. 已执行：
+- `npm run build`
+
+2. 结果：
+- 构建通过
+
+3. 本轮前端通过标准判断
+- 不引入新的平台耦合：通过
+- 页面层继续稳定：通过
+- build 继续通过：通过
+
+6. 当前前端建议路线
+
+1. 保持当前页面层冻结
+- 不新增平台判断分支
+- 不引入 CloudBase 前端 SDK
+- 不把页面逻辑直接绑定到某个平台
+
+2. 等待后端先完成这 3 件事
+- `cloudbase` 运行时配置落地
+- CloudBase 存储实现落地
+- CloudBase HTTP 入口落地
+
+3. 后端完成后，前端优先按以下顺序接入
+1. 先核对 `/api` 是否保持不变
+2. 再核对资源字段是否仍为 `url / previewUrl / downloadUrl`
+3. 只有当字段变化时，才修改适配层
+
+7. 下一轮最小前端联调清单
+
+当后端 CloudBase 代码真正落地后，前端下一轮建议按下面顺序联调：
+1. `GET /api/public/bootstrap`
+2. 首页封面图加载
+3. 作品详情页图片 / PDF 预览
+4. 简历下载与预览
+5. 后台登录
+6. 后台上传图片 / 项目 PDF / 简历
+
+8. 本轮状态结论
+
+第七轮前端结论是：
+1. 当前前端不需要为 CloudBase 路线做页面层大改
+2. `realApi.ts + publicAdapters.ts + content.ts` 已足够承接后端资源字段微调
+3. 当前真实阻塞仍然集中在后端把 CloudBase 方案真正落进代码
+4. 只要后端继续保持 `/api + url/previewUrl/downloadUrl` 兼容，前端预计仍是低改动联调路线
+
+十七、第八轮 CloudBase 资产 URL 修复与上线封板（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第八轮CloudBase资产URL修复与上线封板指令.txt》
+
+本轮前端角色：
+保持页面层稳定，配合检查资源 URL 修复后是否打散前端承载点。
+
+1. 本轮新增内容
+
+1) 已重新核对前端资源消费边界
+- 再次确认当前前端资源承载点主要集中在：
+  - 首页封面图
+  - 作品列表封面图
+  - 作品详情封面图 / 多图 / PDF 预览
+  - 简历页 PDF 预览 / 下载
+  - 后台上传后的即时回显
+
+2) 已确认本轮前端不需要改页面代码
+- 原因：
+  - 当前前端继续只依赖：
+    - `url`
+    - `previewUrl`
+    - `downloadUrl`
+  - 只要后端修复后不打散这组字段，前端页面层无需改动
+
+3) 已补接口级字段烟测
+- 已检查：
+  - `GET /api/public/bootstrap`
+  - `GET /api/public/projects/hydra-ops-qa`
+- 结果：
+  - 公开接口仍返回前端依赖的资源字段
+
+2. 本轮代码改动
+
+1. 前端页面代码
+- 无
+
+2. 前端适配层代码
+- 无
+
+3. 本轮仅更新
+- `docs/交付/前端交付.txt`
+
+原因：
+- 第八轮指令要求前端在字段不变前提下不做无意义大改
+- 当前从前端视角还没有看到需要改页面层或适配层的接口破坏
+
+3. 本轮验证结果
+
+一）构建验证
+
+1. 已执行：
+- `npm run build`
+
+2. 结果：
+- 通过
+
+二）公开接口字段烟测
+
+1. `GET /api/public/bootstrap`
+- 结果：通过
+- 说明：
+  - 当前返回中仍包含：
+    - `resume.url`
+    - `resume.previewUrl`
+    - `resume.downloadUrl`
+    - `featuredProjects[].cover.url`
+    - `featuredProjects[].cover.previewUrl`
+
+2. `GET /api/public/projects/hydra-ops-qa`
+- 结果：通过
+- 说明：
+  - 当前返回中仍包含：
+    - `cover.url`
+    - `cover.previewUrl`
+    - `pdf.url`
+    - `pdf.previewUrl`
+
+三）浏览器 smoke check
+
+1. 首页
+- 结果：通过
+- 检查点：
+  - 首页标题加载
+  - 作品卡片存在
+  - 封面图可渲染
+
+2. 作品详情页
+- 结果：通过
+- 检查点：
+  - 标题存在
+  - 封面图存在
+  - 外链存在
+  - PDF 预留区存在
+
+3. 简历页
+- 结果：通过
+- 检查点：
+  - 下载入口存在
+  - PDF 预览不可直显时能优雅降级到占位说明
+
+4. 后台登录页
+- 结果：通过
+- 检查点：
+  - 登录页可访问
+  - 用户名 / 密码输入框存在
+
+4. 本轮剩余阻塞
+
+1. 当前本地 smoke check 仍然不是 CloudBase 真实环境验证
+- 说明：
+  - 当前本地接口实际返回的仍是 `http://127.0.0.1:4000/uploads/...`
+  - 所以本轮前端能确认的是：
+    - 页面层没有被打散
+    - 字段口径没有变化
+  - 但还不能仅凭这次前端烟测证明“CloudBase 临时 URL 持久化风险已在真实环境中消失”
+
+2. 从仓库代码观察到的后端真实风险仍需后端侧完成闭环
+- 当前观察到：
+  - `backend/src/services/storage/cloudbase-storage.ts` 仍在上传后立即取 `getTempFileURL(...)`
+  - `backend/src/services/storage/public-asset.ts` 当前对 `cloudbase` 也还没有明确的“读时重新生成 URL”前端可见结果
+- 说明：
+  - 这部分不是前端代码问题
+  - 但它仍然是本轮挡住 CloudBase 实际上线封板的核心后端阻塞
+
+3. 后台上传后的即时回显还没有在真实 CloudBase 环境复核
+- 说明：
+  - 当前浏览器 smoke check 只覆盖了公开资源承载点和后台登录入口
+  - 因为本地服务目前没有切到真实 CloudBase 资源链路
+  - 所以“上传后立刻回显的 URL 是否是当前有效地址”还需要后端修复落地后再测
+
+5. 需要你决策的事项
+
+1. 是否接受“先在真实 CloudBase 环境重传一组测试资源，再做最终 smoke check”
+- 说明：
+  - 这是当前最快确认第八轮修复是否真正生效的方式
+
+2. 对于历史测试数据，你更倾向哪种处理方式
+- 方案 A：
+  - 允许清空 / 忽略旧测试资源，直接在 CloudBase 环境重新上传测试
+- 方案 B：
+  - 要求后端额外提供一次性修复或覆盖旧 CloudBase 临时 URL 的处理策略
+
+3. 是否把“真实 CloudBase 环境验证通过”作为第八轮封板的最后门槛
+- 说明：
+  - 当前从前端视角，代码和页面层已经稳定
+  - 但如果要真正封板，仍建议至少做一次真实 CloudBase 上传与读取验证
+
+6. 当前前端建议路线
+
+1. 前端继续保持冻结
+- 不改页面结构
+- 不改字段结构
+- 不引入 CloudBase 前端 SDK
+
+2. 等待后端完成第八轮核心修复后再补最后一轮联调
+- 建议优先检查：
+  1. CloudBase 上传后即时返回的资源字段
+  2. 刷新后再次读取同一资源的 URL 是否仍可访问
+  3. 首页 / 详情页 / 简历页 / 后台回显是否都继续正常
+
+7. 本轮状态结论
+
+第八轮前端结论是：
+1. 本轮前端没有新增代码改动
+2. 原因是当前前端字段口径和页面承载点都还稳定
+3. build 继续通过，公开资源页面 smoke check 也未发现被打散的问题
+4. 当前真正剩余的封板阻塞仍然在后端是否已把 CloudBase 临时 URL 风险彻底修完
+5. 前端下一步最合理的是等待真实 CloudBase 资源链路可用后，补最后一轮真实环境 smoke check
+
+十八、第九轮 真实 CloudBase 环境实配与技术上线执行（2026-04-26）
+
+本轮依据：
+《docs/统筹/产品统筹-第九轮真实CloudBase环境实配与技术上线执行指令.txt》
+
+本轮前端角色：
+真实前端发布与页面 smoke check 负责人。
+
+1. 本轮新增内容
+
+1) 已重新确认前端发布产物状态
+- 已执行：
+  - 根目录 `npm run build`
+- 结果：
+  - 通过
+  - `dist/` 产物正常生成
+
+2) 已重新确认前端真实环境依赖项
+- 当前前端要完成第九轮目标，至少还需要后端 / 环境侧给出：
+  - 真实 CloudBase 环境 ID
+  - 真实默认访问地址
+  - Static Hosting 是否已开通
+  - `/` -> Static Hosting
+  - `/api` -> HTTP 路线
+  - SPA 错误页 / 回退配置是否已指向 `index.html`
+
+3) 已核对仓库当前是否存在真实 CloudBase 环境信息
+- 当前结果：
+  - 仓库中没有发现可直接用于前端实配验收的真实 CloudBase 访问地址
+  - `backend/.env` 中也没有看到：
+    - `CLOUDBASE_ENV_ID`
+    - `CLOUDBASE_SECRET_ID`
+    - `CLOUDBASE_SECRET_KEY`
+    - `CLOUDBASE_SESSION_TOKEN`
+  - 因此前端当前拿不到真实 CloudBase 技术上线地址
+
+2. 本轮代码改动
+
+1. 前端页面代码
+- 无
+
+2. 前端适配层代码
+- 无
+
+3. 本轮仅更新
+- `docs/交付/前端交付.txt`
+
+原因：
+- 第九轮前端目标是“真实环境发布与 smoke check”
+- 当前阻塞不在页面代码，而在真实 CloudBase 环境尚未交付到前端验收阶段
+
+3. 本轮验证结果
+
+一）构建结果
+
+1. 已执行：
+- `npm run build`
+
+2. 结果：
+- 通过
+
+3. 当前可确认：
+- 前端真实发布构建已可产出
+- `dist/` 可作为 CloudBase Static Hosting 的待发布产物
+
+二）真实环境信息检查
+
+1. 结果：
+- 未完成
+
+2. 原因：
+- 当前没有可用于前端验收的真实 CloudBase 地址
+- 当前也没有在仓库里看到真实环境 ID 或托管路由配置结果
+
+三）真实页面 smoke check
+
+1. 首页 `/`
+- 结果：未完成真实环境验证
+
+2. `/works`
+- 结果：未完成真实环境验证
+
+3. 直开 `/works/:slug`
+- 结果：未完成真实环境验证
+
+4. `/resume`
+- 结果：未完成真实环境验证
+
+5. `/admin/login`
+- 结果：未完成真实环境验证
+
+6. 登录后台后改资料并验证前台刷新
+- 结果：未完成真实环境验证
+
+四）本轮可确认的前端结论
+
+1. `dist/` 已可交付
+- 说明：
+  - 前端构建产物本身不是当前阻塞项
+
+2. BrowserRouter 深链回退尚未完成真实确认
+- 说明：
+  - 当前前端仍使用 `BrowserRouter`
+  - 只有当真实 CloudBase Static Hosting 错误页 / 回退配置落好后，才能确认：
+    - `/works/:slug`
+    - `/resume`
+    - `/admin/login`
+    - `/admin/*`
+    直开与刷新不 404
+
+3. 当前还不能声称“前端真实 CloudBase 发布已完成”
+- 说明：
+  - 因为缺少真实访问地址与页面验收结果
+
+4. 本轮剩余阻塞
+
+1. 当前最大的真实阻塞是：前端还没有拿到真实 CloudBase 技术上线地址
+- 说明：
+  - 这使得第九轮要求的真实页面 smoke check 无法执行
+
+2. Static Hosting 的 SPA 回退配置还没有前端可见验证结果
+- 说明：
+  - 这是 `BrowserRouter` 深链是否可用的关键门槛
+
+3. `/api` 同站点路由是否已在真实环境打通，前端也还没法确认
+- 说明：
+  - 没有真实地址，就无法验证：
+    - 前台读取
+    - 后台登录
+    - 后台改资料后前台刷新
+    - 上传后公开读取
+
+4. 当前本地运行结果不能替代真实 CloudBase 环境验收
+- 说明：
+  - 本地 `127.0.0.1` 的联调通过，只能说明页面层稳定
+  - 不能替代真实 CloudBase 地址下的：
+    - 默认域名访问
+    - 静态托管回退
+    - HTTP 路由
+    - 真实 Cookie
+    - 真实上传读取
+
+5. 需要你决策的事项
+
+1. 是否已经有可交给前端验收的真实 CloudBase 地址
+- 如果有：
+  - 请让团队把真实访问地址、环境 ID 和托管路由结果补进交付记录
+  - 前端可以立即接着做真实页面 smoke check
+
+2. 是否把“真实地址未交付”视为第九轮当前阶段性阻塞
+- 从前端角度看：
+  - 是
+- 因为没有真实地址，就无法完成第九轮定义里的页面上线执行验收
+
+3. 是否接受分两步推进
+- 第一步：
+  - 后端 / 环境侧先把 CloudBase 环境和访问地址实配完成
+- 第二步：
+  - 前端再基于真实地址补最终 smoke check 和记要
+
+6. 当前前端建议路线
+
+1. 前端继续保持冻结
+- 不改页面结构
+- 不改字段结构
+- 不引入平台 SDK
+
+2. 当前最需要的不是前端改代码，而是拿到真实环境信息
+- 优先需要：
+  - 真实访问地址
+  - 环境 ID
+  - Static Hosting 回退配置结果
+  - `/api` 路由打通结果
+
+3. 拿到真实地址后的最小前端执行顺序
+1. 打开首页 `/`
+2. 打开 `/works`
+3. 直开 `/works/:slug`
+4. 打开 `/resume`
+5. 打开 `/admin/login`
+6. 登录后台并改一条资料
+7. 刷新前台确认变化
+
+7. 本轮状态结论
+
+第九轮前端结论是：
+1. 前端构建产物已经准备好
+2. 但真实 CloudBase 技术上线地址尚未交付到前端验收阶段
+3. 因此本轮前端尚不能宣告“真实环境页面上线执行完成”
+4. 当前剩余阻塞不是页面代码，而是环境实配结果尚未落到可验收状态
+5. 下一步最合理的是：先拿到真实 CloudBase 地址，再补真实页面 smoke check 和最终上线结论

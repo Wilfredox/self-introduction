@@ -1,0 +1,268 @@
+产品统筹 - 第九轮 真实 CloudBase 环境实配与技术上线执行指令
+更新时间：2026-04-26
+
+一、当前判断
+
+到第八轮为止，当前项目的代码主干已经达到：
+
+1. 前端 build 通过
+2. 后端 build 通过
+3. CloudBase 路线已进入代码可实施状态
+4. CloudBase 资产 URL 临时链接风险已完成封板修复
+
+因此第九轮不再继续写“路线评估”。
+
+第九轮开始，项目进入：
+
+真实 CloudBase 环境实配与技术上线执行阶段
+
+二、第九轮最重要的现实判断
+
+本轮必须先把两个目标分开：
+
+目标 A：技术上线
+- 尽快拿到一个真实可访问地址
+- 让前台页面、后台登录、上传、公开读取在真实环境跑通
+
+目标 B：正式长期公开上线
+- 用于长期给招聘方访问
+- 追求稳定、无提醒页、品牌感和可长期传播
+
+当前第九轮只先追：
+
+目标 A：技术上线
+
+原因不是项目没写完，而是 CloudBase 官方当前边界很明确：
+
+1. CloudBase 提供免费开发环境，但功能和资源有限，超限后会在当前计费周期内暂停服务
+2. 默认域名仅适合开发测试
+3. 自 2025-10-09 起，新建环境的默认域名会长期保留访问提醒中间页
+4. 自定义域名需要 ICP 备案
+
+因此本轮必须统一认知：
+
+第九轮可以推进技术上线，
+但不能把“默认域名的技术上线地址”误当成最终正式招聘投递地址。
+
+三、官方口径依据（本轮统一按此理解）
+
+1. 免费开发环境与超限暂停
+- CloudBase 文档：
+  - https://docs.cloudbase.net/en/quick-start/create-env
+  - https://docs.cloudbase.net/en/faq/fee
+
+2. 默认域名仅适合开发测试，且自 2025-10-09 起保留访问提醒页
+- CloudBase 文档：
+  - https://docs.cloudbase.net/en/service/introduce
+
+3. 自定义域名需要 ICP 备案
+- CloudBase 文档：
+  - https://docs.cloudbase.net/en/hosting/custom-domain
+  - https://docs.cloudbase.net/en/service/custom-domain
+
+4. 静态托管适合 SPA；history 模式需要把错误页配置为入口页
+- CloudBase 文档：
+  - https://docs.cloudbase.net/en/hosting/introduce
+  - https://docs.cloudbase.net/en/cli-v1/hosting
+  - https://docs.cloudbase.net/en/api-reference/manager/node/hosting
+
+5. HTTP 访问服务支持把 `/` 和 `/api` 路由到不同上游资源
+- CloudBase 文档：
+  - https://docs.cloudbase.net/en/service/access-static-hosting
+  - https://docs.cloudbase.net/en/service/access-cloud-function
+  - https://docs.cloudbase.net/en/service/routes
+
+四、第九轮总目标
+
+本轮只做 5 件事：
+
+1. 创建真实 CloudBase Web 环境
+2. 拿到真实环境 ID，并确认当前数据库路线是否能继续保住 Prisma
+3. 把前端 `dist/` 部署到 CloudBase Static Hosting
+4. 把后端 `/api` 部署到 CloudBase HTTP 路线
+5. 跑完最小真实环境 smoke check
+
+五、本轮冻结的部署理解
+
+第九轮默认部署理解如下：
+
+1. 前端
+- CloudBase Static Hosting
+
+2. 后端
+- CloudBase HTTP 路线
+- 当前项目已有 `src/cloudbase-http.ts` 与 `scf_bootstrap`
+- 本轮以现有代码入口为准，不重新改平台
+
+3. 路由目标
+- `/` -> Static Hosting
+- `/api` -> 后端 HTTP 路线
+
+4. 资源
+- 图片 / 项目 PDF / 简历继续走 CloudBase Storage
+
+5. 数据库
+- 第一优先级：继续验证并保住当前 Prisma 路线
+- 如果数据库在真实 CloudBase 环境中无法低成本承接当前 Prisma
+  本轮必须立刻上报，不允许直接私自改成文档数据库或大改业务模型
+
+六、第九轮分工
+
+[A] UI 设计
+
+本轮角色：
+真实环境视觉复核
+
+本轮必须完成：
+1. 不新增设计稿
+2. 只在真实 CloudBase 地址可访问后，做一轮页面复核
+3. 重点复核：
+   - 首页首屏
+   - 首页拼贴封面图
+   - 作品详情页图片与 PDF 预览
+   - 简历页 PDF 预览 / 下载
+   - 后台登录页和后台管理页的可读性
+
+UI 本轮输出要求：
+在 `docs/交付/UI设计交付.txt` 中补：
+- 本轮复核了哪些真实页面
+- 哪些是“技术上线可接受”
+- 哪些只是公开前仍建议微调
+
+UI 本轮通过标准：
+1. 不开新需求
+2. 给出真实页面的“通过 / 建议微调”判断
+
+[B] 前端开发
+
+本轮角色：
+真实前端发布与页面 smoke check 负责人
+
+本轮必须完成：
+
+1. 产出真实发布构建
+- 执行根目录 `npm run build`
+- 确认 `dist/` 产物完整
+
+2. 确认 Static Hosting 对 SPA 生效
+- 当前前端使用 `BrowserRouter`
+- 因此必须确认 Static Hosting 的错误页 / 回退配置指向 `index.html`
+- 目标是保证：
+  - `/works/:slug`
+  - `/resume`
+  - `/admin/login`
+  - `/admin/*`
+  这些路径直开和刷新不 404
+
+3. 不为第九轮重新改页面结构
+- 只允许做真实环境适配型小修
+- 不允许顺手大改视觉层
+
+4. 真实环境最小 smoke check
+- 打开首页 `/`
+- 打开 `/works`
+- 直开 `/works/:slug`
+- 打开 `/resume`
+- 打开 `/admin/login`
+- 登录后台后至少改一处资料并验证前台刷新可见
+
+5. 在 `docs/交付/前端交付.txt` 中补：
+- 实际部署到哪个 CloudBase 环境
+- `dist/` 是否成功部署
+- BrowserRouter 回退是否确认
+- 真实访问地址是什么
+- 页面 smoke check 结果
+
+前端本轮通过标准：
+1. 真实构建产物已部署
+2. SPA 深链刷新不 404
+3. 页面 smoke check 主链路通过
+
+[C] 后端开发
+
+本轮角色：
+真实环境实配主负责人
+
+本轮必须完成：
+
+1. 创建并记录真实 CloudBase 环境信息
+- 至少确认：
+  - 环境 ID
+  - 默认访问域名
+  - 是否已开通 Static Hosting
+  - 是否已开通 HTTP 访问能力
+
+2. 验证数据库路线
+- 基于真实 CloudBase 环境，优先验证当前 Prisma 路线
+- 至少说明：
+  - 是否能拿到当前可用于 Prisma 的连接方式
+  - `prisma migrate deploy` 是否能跑
+  - `prisma seed` 是否能跑
+
+重要规则：
+- 如果这一步失败，不允许自己把数据库切成别的模型后继续闷头改
+- 必须在本轮交付记录里直接写成阻塞并上报
+
+3. 部署后端 HTTP 路线
+- 使用当前仓库已有的 CloudBase 入口：
+  - `src/cloudbase-http.ts`
+  - `scf_bootstrap`
+- 确认真实环境下 `/api/health` 可访问
+
+4. 验证 CloudBase Storage
+- 至少完成一次真实上传验证：
+  - 图片
+  - 项目 PDF
+  - 简历 PDF
+- 验证当前返回结构仍包含：
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+
+5. 配置 HTTP 路由关系
+- 本轮目标是让：
+  - `/` 访问前端
+  - `/api` 访问后端
+- 如果当前 CloudBase 控制台配置方式与预期不一致，
+  必须把实际控制台路径和对应配置写进交付记录
+
+6. 在 `docs/交付/后端交付.txt` 中补：
+- 真实环境 ID
+- 数据库验证结果
+- 后端 HTTP 启动结果
+- 上传验证结果
+- `/api/health` 是否通过
+- 当前是否已达到“技术上线可访问”
+
+后端本轮通过标准：
+1. 真实环境已创建
+2. `/api/health` 可访问
+3. 至少一类真实上传已验证
+4. 数据库路线结论明确，不隐藏阻塞
+
+七、本轮禁止事项
+
+第九轮不要做：
+
+1. 不新增产品功能
+2. 不大改前端页面
+3. 不重开设计方向
+4. 不再切新部署平台
+5. 不在数据库验证失败前私自改业务数据模型
+6. 不把默认域名技术上线误写成“正式长期公开上线”
+
+八、第九轮完成后的理想状态
+
+如果第九轮完成得好，项目应达到：
+
+1. 已拿到一个真实 CloudBase 可访问地址
+2. 前台页面能打开
+3. 后台能登录
+4. 至少一轮真实上传和公开读取通过
+5. 我们能明确判断：
+   - 现在是否已达到“技术上线”
+   - 离“正式长期公开上线”还差什么
+
+九、你可以直接发给三个人的话
+
+“项目进入第九轮：真实 CloudBase 环境实配与技术上线执行阶段。本轮不再继续评估路线，也不再扩需求。目标只有一个：拿到一个真实可访问的 CloudBase 技术上线地址，并跑通前台、后台登录、上传和公开读取。请按《docs/统筹/产品统筹-第九轮真实CloudBase环境实配与技术上线执行指令.txt》推进，并把本轮真实环境信息、验证结果、剩余阻塞和需要我决策的事项写回各自交付记录。”

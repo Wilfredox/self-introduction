@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A 版设计总览 / 第三轮审稿基线</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="header-inner">
+          <div class="wordmark">林岚作品站 <small>A 版 / 第三轮审稿基线</small></div>
+          <nav class="header-nav">
+            <a href="#scope">本轮范围</a>
+            <a href="#pages">页面稿</a>
+            <a href="#specs">设计标注</a>
+            <a href="#archive">归档说明</a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section class="overview-hero overview-hero--selected">
+          <div class="overview-hero__inner">
+            <div>
+              <p class="eyebrow">第三轮 / 真实联调与视觉落地</p>
+              <h1 class="headline-xl">A 版已经定稿，设计现在进入落地审稿和视觉纠偏阶段。</h1>
+              <p class="lead">
+                这一轮不再讨论新方向，也不再扩写新功能。设计的任务变成两类：给 React 页面持续提供唯一视觉基线，以及把联调中最容易跑偏的长文本、移动端和 PDF 预览边界补成明确规则。
+              </p>
+              <div class="metrics-strip">
+                <div class="metric-card">
+                  <strong>A 版唯一</strong>
+                  <span class="muted">公开页继续只认 A 版基线</span>
+                </div>
+                <div class="metric-card">
+                  <strong>React 视觉贴合</strong>
+                  <span class="muted">设计稿不再替代正式入口</span>
+                </div>
+                <div class="metric-card">
+                  <strong>联调期审稿</strong>
+                  <span class="muted">优先收口细节边界和状态一致性</span>
+                </div>
+              </div>
+            </div>
+            <aside class="overview-hero__notes">
+              <h2 class="headline-lg">本轮重点</h2>
+              <ul>
+                <li>继续以 `design/` 中 A 版稿件作为唯一视觉基线，不回到根目录正式入口。</li>
+                <li>重点审稿：首页题头层级、拼贴卡默认态与放大态、详情页主次信息区、简历页预览边界。</li>
+                <li>补清超长文本、移动端间距层级、PDF 预览容器边界等第三轮细节规则。</li>
+              </ul>
+            </aside>
+          </div>
+        </section>
+
+        <section class="section-block" id="scope">
+          <div class="section-inner">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">01 / 第三轮角色</p>
+                <h2 class="headline-lg">第三轮先贴视觉，再把易跑偏的细节钉住。</h2>
+              </div>
+              <p class="lead">
+                页面范围和首页方向继续冻结。设计在这一轮不再补新页面，而是给联调中的真实页面提供持续审稿基线和边界说明。
+              </p>
+            </div>
+
+            <div class="spec-grid spec-grid--three">
+              <article class="spec-card">
+                <h3>公开页审稿重点</h3>
+                <ul class="spec-list">
+                  <li>首页顶部信息层级和作品入口优先级</li>
+                  <li>拼贴卡默认态 / hover / 聚焦态的一致性</li>
+                  <li>详情页主内容区与侧栏的信息轻重关系</li>
+                  <li>简历页“先看，再下载”的动作顺序</li>
+                </ul>
+              </article>
+              <article class="spec-card">
+                <h3>第三轮细节规则</h3>
+                <ul class="spec-list">
+                  <li>超长标题、摘要、说明文案如何收束</li>
+                  <li>移动端降级后的间距和信息层级</li>
+                  <li>PDF 预览容器的边界、留白和空态</li>
+                  <li>保留状态说明，不新增新交互概念</li>
+                </ul>
+              </article>
+              <article class="spec-card">
+                <h3>继续冻结内容</h3>
+                <ul class="spec-list">
+                  <li>首页方向仍然只有 A 版</li>
+                  <li>首页主链接继续取 `links[]` 第一项</li>
+                  <li>拼贴布局位置继续由前端静态控制</li>
+                  <li>不新增分类、搜索和后台可编辑拼贴布局</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-block" id="pages">
+          <div class="section-inner">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">02 / 页面稿</p>
+                <h2 class="headline-lg">本轮可查看的正式页面稿</h2>
+              </div>
+              <p class="lead">
+                这批页面稿是给开发和协作者用的，不是再做方向比稿。每个页面都围绕招聘浏览效率来组织信息。
+              </p>
+            </div>
+
+            <div class="page-grid">
+              <article class="page-card">
+                <div class="page-card__frame">
+                  <div class="mini-banner"></div>
+                  <div class="mini-grid" style="margin-top: 16px; grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="mini-card"></div>
+                    <div class="mini-card"></div>
+                    <div class="mini-card"></div>
+                  </div>
+                </div>
+                <h3>首页 A 版</h3>
+                <p class="muted">包含默认态、hover / 聚焦逻辑、首页内放大简介态，以及工具区与阅读优先级。</p>
+                <a class="button" href="home-a.html">查看首页 A 稿</a>
+              </article>
+
+              <article class="page-card">
+                <div class="page-card__frame">
+                  <div class="mini-banner"></div>
+                  <div class="mini-grid" style="margin-top: 16px;">
+                    <div class="mini-card"></div>
+                    <div class="mini-card"></div>
+                    <div class="mini-card"></div>
+                    <div class="mini-card"></div>
+                  </div>
+                </div>
+                <h3>作品列表页</h3>
+                <p class="muted">普通网格，不做分类和搜索，但把封面、摘要、项目时间组织得更像正式作品目录。</p>
+                <a class="ghost-button" href="works.html">查看列表稿</a>
+              </article>
+
+              <article class="page-card">
+                <div class="page-card__frame">
+                  <div class="mini-banner"></div>
+                  <div class="mini-grid" style="margin-top: 16px; grid-template-columns: 1.25fr 0.75fr;">
+                    <div class="mini-view" style="min-height: 180px;"></div>
+                    <div class="mini-card" style="min-height: 180px;"></div>
+                  </div>
+                </div>
+                <h3>作品详情页</h3>
+                <p class="muted">明确承载封面、标题、简介、截图说明、多图、PDF 预览和多个外链。</p>
+                <a class="ghost-button" href="project.html">查看详情稿</a>
+              </article>
+
+              <article class="page-card">
+                <div class="page-card__frame">
+                  <div class="mini-grid" style="grid-template-columns: 0.76fr 1.24fr;">
+                    <div class="mini-card" style="min-height: 208px;"></div>
+                    <div class="mini-view" style="min-height: 208px;"></div>
+                  </div>
+                </div>
+                <h3>简历页</h3>
+                <p class="muted">在线预览和下载动作并置，避免招聘方必须先离站才能判断是否要保存。</p>
+                <a class="ghost-button" href="resume.html">查看简历稿</a>
+              </article>
+
+              <article class="page-card">
+                <div class="page-card__frame">
+                  <div class="mini-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="mini-card" style="min-height: 208px;"></div>
+                    <div class="mini-card" style="min-height: 208px;"></div>
+                  </div>
+                </div>
+                <h3>后台登录页</h3>
+                <p class="muted">延续前台杂志感，但收束到更安静、可信、低干扰的登录体验。</p>
+                <a class="ghost-button" href="admin-login.html">查看登录稿</a>
+              </article>
+
+              <article class="page-card">
+                <div class="page-card__frame">
+                  <div class="mini-grid" style="grid-template-columns: 90px 1fr;">
+                    <div class="mini-sidebar" style="min-height: 208px;"></div>
+                    <div style="display: grid; gap: 12px;">
+                      <div class="mini-card" style="min-height: 68px;"></div>
+                      <div class="mini-card" style="min-height: 128px;"></div>
+                    </div>
+                  </div>
+                </div>
+                <h3>后台管理页</h3>
+                <p class="muted">以后端维护为先，清楚展示基本信息、作品管理、简历管理三个主模块。</p>
+                <a class="ghost-button" href="admin.html">查看后台稿</a>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-block" id="specs">
+          <div class="section-inner">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">03 / 设计标注</p>
+                <h2 class="headline-lg">第三轮继续执行的视觉口径</h2>
+              </div>
+              <p class="lead">
+                这些规则会同步写进 `docs/交付/UI设计交付.txt`，也是前端第三轮贴视觉细节时的基线，不再靠口头约定。
+              </p>
+            </div>
+
+            <div class="spec-grid spec-grid--three">
+              <article class="spec-card">
+                <h3>字体与层级</h3>
+                <ul class="spec-list">
+                  <li>首页主标题：48px - 72px，字距 0</li>
+                  <li>页面标题：32px - 44px</li>
+                  <li>正文导语：18px / 1.7</li>
+                  <li>注释和标签：13px - 14px</li>
+                </ul>
+              </article>
+              <article class="spec-card">
+                <h3>颜色与材料</h3>
+                <div class="swatch-row">
+                  <div class="swatch">
+                    <span class="swatch__chip" style="background:#f4efe6;"></span>
+                    <small>纸白</small>
+                  </div>
+                  <div class="swatch">
+                    <span class="swatch__chip" style="background:#151515;"></span>
+                    <small>墨黑</small>
+                  </div>
+                  <div class="swatch">
+                    <span class="swatch__chip" style="background:#6c7750;"></span>
+                    <small>橄榄绿</small>
+                  </div>
+                  <div class="swatch">
+                    <span class="swatch__chip" style="background:#b96d49;"></span>
+                    <small>锈橘</small>
+                  </div>
+                </div>
+              </article>
+              <article class="spec-card">
+                <h3>内容占位</h3>
+                <ul class="spec-list">
+                  <li>作品标题建议 8 - 16 个中文字符</li>
+                  <li>摘要建议 36 - 80 个中文字符</li>
+                  <li>联系方式建议控制在 3 条以内</li>
+                  <li>首页第一屏不堆长说明，优先给作品入口</li>
+                </ul>
+              </article>
+            </div>
+
+            <div class="spec-grid spec-grid--three" style="margin-top: 24px;">
+              <article class="spec-card">
+                <h3>长文本收束</h3>
+                <ul class="spec-list">
+                  <li>首页卡片标题最多 2 行，超出用省略收束</li>
+                  <li>首页放大态摘要优先控制在 3 - 4 行可读范围</li>
+                  <li>详情页长段落按小节切开，避免首屏整块压迫</li>
+                </ul>
+              </article>
+              <article class="spec-card">
+                <h3>移动端层级</h3>
+                <ul class="spec-list">
+                  <li>首页题头改纵向堆叠，姓名始终先于介绍和联系方式</li>
+                  <li>详情侧栏信息下沉到正文后，不与主图并列争抢首屏</li>
+                  <li>简历动作区先于预览出现，但视觉权重要低于预览本体</li>
+                </ul>
+              </article>
+              <article class="spec-card">
+                <h3>PDF 预览边界</h3>
+                <ul class="spec-list">
+                  <li>预览区必须有稳定框体和留白，避免像普通图片区</li>
+                  <li>页与页之间保留明确分隔，不能贴成连续长图</li>
+                  <li>加载失败时也保留框体，用空态文案替代空白塌陷</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-block" id="archive">
+          <div class="section-inner">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">04 / 归档说明</p>
+                <h2 class="headline-lg">B / C 方案保留归档，不再继续推进。</h2>
+              </div>
+              <p class="lead">它们仍然可以作为设计过程记录，但不会继续被细化，也不会进入第三轮联调与视觉落地。</p>
+            </div>
+
+            <div class="chip-row">
+              <a class="ghost-button" href="home-b.html">查看归档 B 稿</a>
+              <a class="ghost-button" href="home-c.html">查看归档 C 稿</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

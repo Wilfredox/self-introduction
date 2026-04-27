@@ -1,0 +1,198 @@
+产品统筹 - 第七轮 CloudBase 可部署性验证与后端迁移实施指令
+更新时间：2026-04-26
+
+一、当前判断
+
+第六轮已经给出明确结论：
+
+1. 国内友好免费路线的方向已经切到 `Tencent CloudBase`
+2. UI 和前端层面大部分结构可以保留
+3. 真正的阻塞集中在后端
+
+但目前第六轮的问题也很清楚：
+
+当前 CloudBase 路线仍然主要停留在：
+文档评估层
+
+还没有真正进入：
+可部署代码层
+
+因此第七轮不再继续泛泛评估。
+
+第七轮目标是：
+把 CloudBase 路线从“纸面路线”推进到“代码可实施路线”
+
+二、第七轮总目标
+
+本轮只做 4 件事：
+
+1. 让后端运行时真正支持 `cloudbase`
+2. 让上传链路真正具备 CloudBase 存储实现
+3. 让后端入口真正具备 CloudBase HTTP 承载适配
+4. 把文档里残留的旧路线口径清干净
+
+三、第七轮验收结论前提
+
+只有满足以下条件，才可以说：
+CloudBase 路线开始进入可部署阶段
+
+1. 运行时配置支持 `cloudbase`
+2. 存储分发支持 `cloudbase`
+3. 至少存在一份 CloudBase HTTP 入口实现或适配方案落到代码
+4. 文档示例不再继续误导大家按 `localhost/uploads` 或 `Supabase` 默认路线理解
+
+四、第七轮分工
+
+[A] UI 设计
+
+本轮角色：
+待命，不新增设计任务
+
+本轮必须完成：
+1. 不新增设计稿
+2. 不参与后端平台迁移实现
+3. 仅保留后续 CloudBase 实际测试环境可访问后再做页面复核
+
+UI 本轮输出要求：
+在 `docs/交付/UI设计交付.txt` 中补一句本轮状态说明即可：
+- 第七轮 UI 无新增设计改动，等待 CloudBase 实际可访问环境后再做视觉复核
+
+[B] 前端开发
+
+本轮角色：
+保持前端稳定，准备承接后端迁移后的最小适配
+
+本轮必须完成：
+1. 不推翻页面结构
+2. 不因为 CloudBase 路线主动大改页面层
+3. 只做两件事：
+   - 确认当前前端真正依赖后端的字段边界
+   - 如果后端为了 CloudBase 迁移修改了资源字段结构，仅改适配层
+
+4. 本轮重点确认：
+   - `src/data/realApi.ts`
+   - `src/data/publicAdapters.ts`
+   - `src/types/content.ts`
+这些文件是否足以承接后端资源字段的微调，而不波及页面层
+
+5. 在 `docs/交付/前端交付.txt` 中补一段：
+   - 第七轮前端无大改路线
+   - 当前前端等待后端完成 CloudBase 存储与 API 入口实现
+   - 如果后端保持 `/api + url/previewUrl/downloadUrl` 不变，前端预计只需要低改动联调
+
+前端本轮通过标准：
+1. 不引入新的平台耦合
+2. 页面层继续稳定
+3. build 继续通过
+
+[C] 后端开发
+
+本轮角色：
+CloudBase 路线实施主负责人
+
+本轮必须完成：
+
+1. 修复运行时配置只支持 `local | supabase` 的问题
+目标：
+- `backend/src/config/env.ts` 必须扩到真正支持 `cloudbase`
+- 生产默认值不能继续默认落到 `supabase`
+- `.env.example` 要同步改成 CloudBase 路线优先模板
+
+本轮验收点：
+- 至少支持 `local | supabase | cloudbase`
+- 如果当前已经正式中止 Supabase 默认路线，也可以进一步收紧到 `local | cloudbase`
+
+2. 补 CloudBase 存储实现
+目标：
+- 新增 `cloudbase-storage.ts` 或等价实现
+- `backend/src/services/storage/store-asset.ts` 必须真正能 dispatch 到 CloudBase 存储
+- 继续保持当前前端依赖的资源输出结构：
+  - `url`
+  - `previewUrl`
+  - `downloadUrl`
+
+本轮验收点：
+- 上传链路不再只有 `supabase` 或 `local`
+- `cloudbase` 成为真实可执行分支，而不是文档约定
+
+3. 补 CloudBase HTTP 承载入口
+目标：
+- 当前 `backend/src/index.ts` 仍是独立 `app.listen(...)` 启动方式
+- 本轮至少要新增一份：
+  - CloudBase HTTP 入口文件
+  - 或明确可执行的 CloudBase 适配入口
+
+说明：
+- 本地开发入口可以继续保留
+- 但必须新增一条 CloudBase 可用的后端承载路径
+
+本轮验收点：
+- “CloudBase HTTP Cloud Function” 不再只存在于文档里
+- 代码仓库中出现明确入口文件或适配实现
+
+4. 清理旧路线文档误导
+目标：
+- `backend/docs/api-examples.md`
+- `backend/README.md`
+- `backend/docs/production-deploy-checklist.md`
+- `backend/docs/technical-launch-runbook.md`
+必须与当前默认路线保持一致
+
+重点：
+- 不再继续把 `localhost/uploads`、`Supabase`、`Render` 写成当前默认正式路线
+- 若保留旧路线历史说明，必须明确标注为“历史评估记录”
+
+5. 本轮必须额外补一个关键判断
+目标：
+基于官方平台能力，明确回答这件事：
+
+CloudBase 当前到底是：
+1. 真正可执行的免费技术演示路线
+还是
+2. 名义免费但正式公开仍很快受默认域名、访问提示页、自定义域名、备案或数据库能力限制
+
+要求：
+- 必须基于官方文档口径写清楚
+- 不要只凭经验判断
+
+建议至少覆盖：
+- 默认域名访问提示页问题
+- 自定义域名与 ICP 备案前置条件
+- CloudBase 数据库在当前目标下的实际可用性 / 成本边界
+- 静态托管与 HTTP 云函数是否适合当前项目
+
+6. 在 `docs/交付/后端交付.txt` 中补一段：
+   - 第七轮后端实施结果
+   - 哪些代码已经真正切到 CloudBase
+   - 哪些仍是待迁移旧实现
+   - CloudBase 当前是否已进入“可部署验证阶段”
+
+后端本轮通过标准：
+1. `cloudbase` 从文档路线变成代码路线
+2. 存储 dispatch 支持 `cloudbase`
+3. 仓库中存在 CloudBase HTTP 入口实现
+4. 文档默认口径与当前路线一致
+
+五、本轮禁止事项
+
+第七轮不要做：
+1. 不新增产品功能
+2. 不重做前端页面
+3. 不重开设计稿
+4. 不继续往 Render + Supabase 补默认路线工作量
+5. 不在数据库路线未确认前大规模推翻 Prisma schema
+
+六、本轮完成后的理想状态
+
+第七轮完成得好，项目应该达到：
+
+1. CloudBase 路线不再只是评估文档
+2. 后端开始真正具备 CloudBase 实施基础
+3. 前端仍可低改动承接
+4. 下一轮可以真正进入：
+   - CloudBase 环境实配
+   - 或 CloudBase 可部署性真实验证
+
+七、你可以直接发给三个人的话
+
+“项目进入第七轮：CloudBase 可部署性验证与后端迁移实施阶段。第六轮的路线评估已经够了，这一轮不再泛泛讨论，重点是把 CloudBase 路线真正落进代码，尤其是后端运行时配置、存储实现、HTTP 入口和文档口径。请按《docs/统筹/产品统筹-第七轮CloudBase可部署性验证与后端迁移实施指令.txt》推进，并把本轮新增内容、真实阻塞、代码改动和结论写回各自交付记录。”
