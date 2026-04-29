@@ -325,20 +325,20 @@ export const portfolioProjects: PortfolioProjectEntry[] = [
   createProject({
     id: "arcgis-irrigation",
     slug: "arcgis-wuyin-irrigation",
-    title: "乌引灌区 ArcGIS 一张图",
-    excerpt: "把灌区点、线、面数据整理成一张能读、能讲、能作为成果附件的总览图。",
+    title: "乌引灌区一张图（ArcGIS）",
+    excerpt: "基于乌引灌区资料完成坐标配准、点线面矢量化、拓扑修复和最终成果出图。",
     period: "2025.06",
     tone: "sand",
-    role: "ArcGIS 矢量化 / 拓扑修复 / 制图表达",
+    role: "ArcGIS 配准 / 矢量化 / 拓扑修复 / 制图表达",
     description:
-      "这个项目来自 ArcGIS 期末作业整理。我围绕乌引灌区完成了点线面要素矢量化、拓扑修复和一张图表达，最终输出可以直接展示灌区结构、节点设施和主干线关系的成果附件。",
-    highlights: ["点线面矢量化", "拓扑修复", "一张图成果表达"],
-    links: [{ label: "一张图 PDF", url: arcgisLayoutPdf.url }],
+      "这个项目来自 ArcGIS 期末作业整理。我围绕乌引灌区完成了底图坐标定义与配准、点线面要素矢量化、拓扑检查与修复，并最终输出《乌引灌区一张图》PDF 成果。成图集中展示了灌区渠系、水库、节制闸、渡槽等设施关系，适合直接作为项目成果附件浏览。",
+    highlights: ["坐标定义与配准", "点线面矢量化", "拓扑修复与成果出图"],
+    links: [{ label: "乌引灌区一张图 PDF", url: arcgisLayoutPdf.url }],
     coverAsset: arcgisMapImage,
     pdfAsset: arcgisLayoutPdf,
     downloadAsset: arcgisLayoutPdf,
-    downloadLabel: "下载 ArcGIS 成果图",
-    imageAssets: [{ asset: arcgisMapImage, caption: "用一张总览图把灌区主要设施、干渠和节点关系压到一个成果表达里。" }]
+    downloadLabel: "下载乌引灌区一张图 PDF",
+    imageAssets: [{ asset: arcgisMapImage, caption: "最终成果图把灌区渠系、水库、节制闸、渡槽等设施关系整合到同一张图里，和下载的 PDF 附件保持一致。" }]
   }),
   createProject({
     id: "villa-bim",
@@ -398,3 +398,4 @@ export const portfolioProjects: PortfolioProjectEntry[] = [
     ]
   })
 ];
+
