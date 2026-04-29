@@ -174,6 +174,13 @@ const arcgisLayoutPdf = createStaticAsset(
   "application/pdf"
 );
 
+const arcgisProjectZip = createStaticAsset(
+  "arcgis-project-zip",
+  "wuyin-irrigation-arcgis-project.zip",
+  "projects/arcgis-irrigation/wuyin-irrigation-arcgis-project.zip",
+  "application/zip"
+);
+
 const villaSheet1Asset = createStaticAsset(
   "villa-sheet-1",
   "villa-sheet-1.pdf",
@@ -336,8 +343,8 @@ export const portfolioProjects: PortfolioProjectEntry[] = [
     links: [{ label: "乌引灌区一张图 PDF", url: arcgisLayoutPdf.url }],
     coverAsset: arcgisMapImage,
     pdfAsset: arcgisLayoutPdf,
-    downloadAsset: arcgisLayoutPdf,
-    downloadLabel: "下载乌引灌区一张图 PDF",
+    downloadAsset: arcgisProjectZip,
+    downloadLabel: "下载乌引灌区 ArcGIS 作业压缩包",
     imageAssets: [{ asset: arcgisMapImage, caption: "最终成果图把灌区渠系、水库、节制闸、渡槽等设施关系整合到同一张图里，和下载的 PDF 附件保持一致。" }]
   }),
   createProject({

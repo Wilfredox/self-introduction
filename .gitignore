@@ -5,5 +5,7 @@ legacy/
 *.log
 *.tsbuildinfo
 *.zip
+!public/projects/arcgis-irrigation/wuyin-irrigation-arcgis-project.zip
 .DS_Store
 Thumbs.db
+
