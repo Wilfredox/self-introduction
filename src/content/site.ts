@@ -35,7 +35,7 @@ export const resumeContent: ResumeContent = {
     assetId: "resume-pdf",
     fileName: "wang-haoxiang-resume.pdf",
     url: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume.pdf`,
-    previewUrl: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume-preview.pdf#page=1&view=FitV&zoom=page-fit&toolbar=0&navpanes=0&scrollbar=0`,
+    previewUrl: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume-vertical-preview.pdf#page=1&view=FitV&zoom=page-fit&toolbar=0&navpanes=0&scrollbar=0`,
     downloadUrl: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume.pdf`,
     updatedAt: siteContentVersion
   }
