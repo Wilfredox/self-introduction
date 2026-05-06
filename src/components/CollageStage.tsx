@@ -58,6 +58,7 @@ export function CollageStage({
   });
 
   const [transform, setTransform] = useState<TransformState>({ x: 0, y: 0, scale: 1 });
+  const [isDragging, setIsDragging] = useState(false);
 
   const applyTransform = useCallback((next: TransformState) => {
     pendingRef.current = next;
@@ -152,12 +153,10 @@ export function CollageStage({
       const bounds = viewport.getBoundingClientRect();
       const pointX = event.clientX - bounds.left;
       const pointY = event.clientY - bounds.top;
-      const scaleChanged = zoomAroundPoint(event.deltaY < 0 ? 1.08 : 0.92, pointX, pointY);
+      zoomAroundPoint(event.deltaY < 0 ? 1.08 : 0.92, pointX, pointY);
 
-      if (scaleChanged) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
+      event.preventDefault();
+      event.stopPropagation();
     };
 
     viewport.addEventListener("wheel", handleWheel, { passive: false });
@@ -177,7 +176,7 @@ export function CollageStage({
 
       <div
         ref={viewportRef}
-        className={`collage-viewport${dragRef.current.dragging ? " is-dragging" : ""}`}
+        className={`collage-viewport${isDragging ? " is-dragging" : ""}`}
         onPointerDown={(event) => {
           const target = event.target as HTMLElement;
           if (target.closest("[data-card-button]") || target.closest("[data-overlay-panel]")) {
@@ -192,6 +191,7 @@ export function CollageStage({
             originX: transformRef.current.x,
             originY: transformRef.current.y
           };
+          setIsDragging(true);
           viewportRef.current?.setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event) => {
@@ -210,12 +210,14 @@ export function CollageStage({
         onPointerUp={(event) => {
           if (dragRef.current.pointerId === event.pointerId) {
             dragRef.current.dragging = false;
+            setIsDragging(false);
             viewportRef.current?.releasePointerCapture(event.pointerId);
           }
         }}
         onPointerCancel={(event) => {
           if (dragRef.current.pointerId === event.pointerId) {
             dragRef.current.dragging = false;
+            setIsDragging(false);
             viewportRef.current?.releasePointerCapture(event.pointerId);
           }
         }}

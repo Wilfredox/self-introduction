@@ -297,6 +297,8 @@ button {
   min-height: 72vh;
   overflow: hidden;
   overscroll-behavior: contain;
+  touch-action: none;
+  cursor: grab;
   border: 1px solid var(--line);
   border-radius: 28px;
   background:
