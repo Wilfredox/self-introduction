@@ -7,17 +7,18 @@ const WORLD_WIDTH = 1560;
 const WORLD_HEIGHT = 1260;
 const MIN_SCALE = 0.72;
 const MAX_SCALE = 1.9;
+const DESKTOP_INITIAL_Y = 14;
 const PLACEMENTS = [
-  { x: 220, y: 220, width: 220, rotate: -7 },
-  { x: 500, y: 180, width: 210, rotate: 5 },
-  { x: 800, y: 230, width: 220, rotate: -4 },
-  { x: 1095, y: 185, width: 205, rotate: 7 },
-  { x: 1365, y: 255, width: 205, rotate: -5 },
-  { x: 320, y: 760, width: 210, rotate: 4 },
-  { x: 650, y: 680, width: 220, rotate: -6 },
-  { x: 960, y: 860, width: 225, rotate: 5 },
-  { x: 1215, y: 815, width: 210, rotate: -5 },
-  { x: 1260, y: 1060, width: 210, rotate: 4 }
+  { x: 190, y: 235, width: 190, rotate: -6 },
+  { x: 495, y: 225, width: 190, rotate: 4 },
+  { x: 800, y: 235, width: 190, rotate: -3 },
+  { x: 1105, y: 225, width: 190, rotate: 5 },
+  { x: 1410, y: 235, width: 190, rotate: -4 },
+  { x: 230, y: 680, width: 190, rotate: 4 },
+  { x: 535, y: 670, width: 190, rotate: -5 },
+  { x: 840, y: 680, width: 190, rotate: 4 },
+  { x: 1145, y: 670, width: 190, rotate: -4 },
+  { x: 1450, y: 680, width: 190, rotate: 4 }
 ];
 
 function clamp(value: number, min: number, max: number) {
@@ -83,7 +84,7 @@ export function CollageStage({
     const fitScale = Math.min((bounds.width - 48) / WORLD_WIDTH, (bounds.height - 48) / WORLD_HEIGHT);
     const scale = clamp(bounds.width < 768 ? fitScale * 0.96 : fitScale, MIN_SCALE, 1);
     const x = (bounds.width - WORLD_WIDTH * scale) / 2;
-    const y = (bounds.height - WORLD_HEIGHT * scale) / 2;
+    const y = bounds.width < 768 ? (bounds.height - WORLD_HEIGHT * scale) / 2 : DESKTOP_INITIAL_Y;
     applyTransform({ x, y, scale });
   }, [applyTransform]);
 
