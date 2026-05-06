@@ -1,5 +1,5 @@
 import { AccentTone, ProjectDetail, PublicAssetRef } from "../types/content";
-import { createStaticAsset, createStoryboardAsset } from "./placeholders";
+import { createExternalAsset, createStaticAsset, createStoryboardAsset } from "./placeholders";
 
 export interface PortfolioProjectEntry extends ProjectDetail {
   featuredOnHome: boolean;
@@ -237,7 +237,55 @@ const damFamilyAsset = createStaticAsset(
   "application/octet-stream"
 );
 
+const linlanDesktopPetCover = createStaticAsset(
+  "linlan-desktop-pet-cover",
+  "cover.png",
+  "projects/linlan-desktop-pet/cover.png",
+  "image/png"
+);
+
+const linlanDesktopPetReminderImage = createStaticAsset(
+  "linlan-desktop-pet-reminder",
+  "pet-reminder.png",
+  "projects/linlan-desktop-pet/pet-reminder.png",
+  "image/png"
+);
+
+const linlanDesktopPetPanelImage = createStaticAsset(
+  "linlan-desktop-pet-panel",
+  "panel-pomodoro.png",
+  "projects/linlan-desktop-pet/panel-pomodoro.png",
+  "image/png"
+);
+
+const linlanDesktopPetPackage = createExternalAsset(
+  "linlan-desktop-pet-package",
+  "linlan-desktop-pet-v0.1.0-win-x64.zip",
+  "https://github.com/Wilfredox/self-introduction/releases/download/linlan-desktop-pet-v0.1.0/linlan-desktop-pet-v0.1.0-win-x64.zip",
+  "application/zip"
+);
+
 export const portfolioProjects: PortfolioProjectEntry[] = [
+  createProject({
+    id: "linlan-desktop-pet",
+    slug: "linlan-desktop-pet",
+    title: "林岚桌宠",
+    excerpt: "一个 Windows 桌面陪伴小工具，把透明桌宠、互动提醒、番茄钟、喝水记录和待办管理放进轻量本地应用。",
+    period: "2026.05",
+    tone: "rust",
+    role: "独立开发 / Electron 桌面应用 / 本地状态持久化",
+    description:
+      "林岚桌宠是我用 Electron 做的一款 Windows 桌面陪伴应用。它通过透明置顶窗口把小老虎留在桌面底部，支持单击互动、双击打开小面板、右键托盘菜单管理，并把番茄钟、喝水提醒、待办和稍后提醒整合到本地小工具里。项目重点不只是可爱的视觉素材，而是把桌面窗口控制、状态持久化、提醒计时和日常效率功能连成一个能直接运行的便携版应用。",
+    highlights: ["Electron 桌面应用", "透明置顶桌宠窗口", "番茄钟 / 喝水 / 待办"],
+    notes: ["当前提供 Windows x64 便携版压缩包，下载后解压并运行根目录的「林岚.exe」即可。"],
+    coverAsset: linlanDesktopPetCover,
+    downloadAsset: linlanDesktopPetPackage,
+    downloadLabel: "下载林岚桌宠 Windows 便携版",
+    imageAssets: [
+      { asset: linlanDesktopPetReminderImage, caption: "桌宠窗口负责桌面陪伴和提醒反馈，气泡会把喝水、倒计时和自定义事项集中提示给用户。" },
+      { asset: linlanDesktopPetPanelImage, caption: "林岚小面板把番茄钟、喝水、待办、提醒和设置放在同一个本地界面里，适合日常轻量使用。" }
+    ]
+  }),
   createProject({
     id: "water-daily",
     slug: "water-daily-site",

@@ -1,6 +1,6 @@
 import { PublicProfile, ResumeContent } from "../types/content";
 
-export const siteContentVersion = "2026-04-27T23:59:00+08:00";
+export const siteContentVersion = "2026-05-05T00:00:00+08:00";
 
 export const siteProfile: PublicProfile = {
   name: "汪浩翔",

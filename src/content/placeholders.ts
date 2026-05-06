@@ -137,3 +137,19 @@ export function createStaticAsset(
     downloadUrl: url
   };
 }
+
+export function createExternalAsset(
+  id: string,
+  fileName: string,
+  url: string,
+  mimeType?: string
+): PublicAssetRef {
+  return {
+    assetId: id,
+    fileName,
+    mimeType,
+    url,
+    previewUrl: url,
+    downloadUrl: url
+  };
+}

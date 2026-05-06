@@ -117,7 +117,7 @@ export function WorkDetailPage() {
             <section className="detail-panel">
               <p className="eyebrow">作品下载</p>
               <strong>{downloadLabel}</strong>
-              <p className="muted">可下载作品补充资料，包含报告、方案、课设文档或其他附件。</p>
+              <p className="muted">可下载作品补充资料或交付包，包含报告、方案、安装包、课设文档或其他附件。</p>
               <a className="button button--full" href={downloadAsset.downloadUrl} download={downloadAsset.fileName}>
                 {downloadLabel} / {getFileExtension(downloadAsset.fileName)}
               </a>

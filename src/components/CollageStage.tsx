@@ -16,7 +16,8 @@ const PLACEMENTS = [
   { x: 320, y: 760, width: 210, rotate: 4 },
   { x: 650, y: 680, width: 220, rotate: -6 },
   { x: 960, y: 860, width: 225, rotate: 5 },
-  { x: 1300, y: 760, width: 210, rotate: -5 }
+  { x: 1215, y: 815, width: 210, rotate: -5 },
+  { x: 1260, y: 1060, width: 210, rotate: 4 }
 ];
 
 function clamp(value: number, min: number, max: number) {

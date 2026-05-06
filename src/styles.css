@@ -556,6 +556,11 @@ button {
   aspect-ratio: 16 / 10;
 }
 
+.detail-media-card__visual img {
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.62);
+}
+
 .detail-media-card figcaption {
   color: var(--muted);
   line-height: 1.7;
