@@ -1,6 +1,6 @@
 import { PublicProfile, ResumeContent } from "../types/content";
 
-export const siteContentVersion = "2026-05-05T00:00:00+08:00";
+export const siteContentVersion = "2026-05-10T00:00:00+08:00";
 
 export const siteProfile: PublicProfile = {
   name: "汪浩翔",
@@ -35,7 +35,7 @@ export const resumeContent: ResumeContent = {
     assetId: "resume-pdf",
     fileName: "wang-haoxiang-resume.pdf",
     url: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume.pdf`,
-    previewUrl: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume-vertical-preview.pdf#page=1&view=FitV&zoom=page-fit&toolbar=0&navpanes=0&scrollbar=0`,
+    previewUrl: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume.pdf#page=1&view=FitV&zoom=page-fit&toolbar=0&navpanes=0&scrollbar=0`,
     downloadUrl: `${import.meta.env.BASE_URL}resume/wang-haoxiang-resume.pdf`,
     updatedAt: siteContentVersion
   }
